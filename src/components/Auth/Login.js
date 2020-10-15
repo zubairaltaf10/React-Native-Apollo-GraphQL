@@ -9,6 +9,11 @@ class Login extends Component {
     state = {
      
     };
+    componentDidMount(){
+      this.timeout = setTimeout(async () => {
+          this.props.navigation.navigate("Intro");
+      },10);
+  }
     render() {
   
         return (

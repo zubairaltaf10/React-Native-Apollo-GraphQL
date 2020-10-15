@@ -1,5 +1,6 @@
 import Splash from "../components/Splash/Splash";
 import Login from "../components/Auth/Login";
+import Intro from "../components/Auth/Intro";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -16,6 +17,7 @@ const SplashNavigator = createStackNavigator(
   const AuthNavigator = createSwitchNavigator(
     {
       Login,
+      Intro
     //  Signup,
       
     },
