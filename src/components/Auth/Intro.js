@@ -4,17 +4,19 @@ import {
   View,
   Text,
   StyleSheet,
-  Image
+  Image,
+  ImageBackground
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import AppIntroSlider from 'react-native-app-intro-slider';
-
+import { withAuth } from "../../store/hoc/withAuth";
+import LinearGradient from "react-native-linear-gradient";
 
 const data = [
     {
       title: 'Title 1',
       text: 'Description.\nSay something cool',
-      image: require('../../assets/Login/2.png'),
+      image: require('../../assets/Intro/food.jpg'),
       bg: '#59b2ab',
     },
     {
@@ -36,22 +38,23 @@ const data = [
   const styles = StyleSheet.create({
     slide: {
       flex: 1,
-      alignItems: 'center',
+      flexDirection: 'column',
   //    justifyContent: 'center',
     },
     image: {
-        width:'100%',
-        height:'100%',
-        resizeMode: 'cover'
+        flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center"
     },
     text: {
       color: '#000',
       textAlign: 'center',
+      marginTop:'5%'
     },
     title: {
       fontSize: 22,
-      flex:1,
-      color: 'white',
+    //  flex:1,
+      color: 'black',
       textAlign: 'center',
     },
     buttonCircle: {
@@ -62,13 +65,31 @@ const data = [
       justifyContent: 'center',
       alignItems: 'center',
     },
+    introContainer : {
+       borderRadius:15, 
+       margin:'10%',
+    //   backgroundColor:'yellow',
+       justifyContent:'flex-end'
+    },
+    linearGradient: {
+        position: 'relative',
+         left: 0,
+        right: 0,
+        top: 0,
+        height: '50%',
+        borderRadius:25,
+        justifyContent:'center',
+    }
   });
 
 class Intro extends React.Component {
     state = {
        
     };
-
+    _onDone = () => {
+        console.log("done")
+        this.props.navigation.navigate("Packages")
+      }
     _renderItem = ({item}) => {
         return (
           <View
@@ -78,9 +99,16 @@ class Intro extends React.Component {
                 backgroundColor: item.bg,
               },
             ]}>
+            <ImageBackground source={require('../../assets/Intro/food.jpg')} style={styles.image}>
+            <View style={styles.introContainer}>
+            <LinearGradient
+                    colors={['#a9a8ac', '#cdd4da']}
+                    style={styles.linearGradient}>
             <Text style={styles.title}>{item.title}</Text>
-            <Image source={item.image} style={styles.image} />
-            <Text style={styles.text}>{item.text}</Text>
+                        <Text style={styles.text}>{item.text}</Text>
+                        </LinearGradient>
+            </View>
+            </ImageBackground>  
           </View>
         );
       };
@@ -114,11 +142,14 @@ class Intro extends React.Component {
               renderNextButton={this._renderNextButton}
               renderItem={this._renderItem}
               data={data}
-            />
+              dotStyle={{backgroundColor: 'grey'}}
+              activeDotStyle={{backgroundColor: 'white'}}
+              onDone={this._onDone}
+              />
           </View>
         );
       }
     }
 
-export default Intro;
+export default withAuth(Intro);
 
