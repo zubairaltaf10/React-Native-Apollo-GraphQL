@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
+import React, {Component,useState} from 'react';
 import {
   Text,
   LayoutAnimation,
   View,
   TouchableOpacity,
   Image,
+  Switch
 } from 'react-native';
 // import TopHeader from '../../Components/TopHeader';
 // import Header from '../../Components/Header';
@@ -17,10 +18,12 @@ import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
 import {withAuth} from '../../store/hoc/withAuth';
+import ToggleSwitch from 'toggle-switch-react-native'
 class Signup extends Component {
+  
   constructor(props) {
     super(props);
-
+   
     this.state = {
       formData: {
         fullName: '',
@@ -37,7 +40,8 @@ class Signup extends Component {
       errors: ['errors'],
     };
   }
-
+  
+  
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
     // remove error
@@ -59,8 +63,23 @@ class Signup extends Component {
   };
 
   render() {
+    
     return (
         <Content>
+        <View style={{flex: 3, alignItems: 'center', marginTop:'15%'}}>
+     <Image 
+                source={require('../../assets/logo_signup.png')}
+                style={styles.logo}
+              />
+              </View>
+              <View style={{ marginBottom:'10%', marginTop:'5%'}}>
+          <Text style={styles.logintopLabel}>
+          Welcome, 
+            </Text>
+            <Text style={styles.logintopLabel}>
+            Let's setup an account
+            </Text>
+            </View>
           <Form style={styles.form}>
             <Input
               placeholder="Full Name"
@@ -115,38 +134,22 @@ class Signup extends Component {
               </TouchableOpacity>
             </View>
             {ErrorLabel('password', this.state.errors)}
-            <View style={styles.passwordFieldContainer}>
-              <Input
-                placeholder="Confirm Password"
-                value={this.state.formData.confirmPassword}
-                style={ApplicationStyles.textbox}
-                maxLength={16}
-                secureTextEntry={this.state.isConfirmPasswordFieldSecure}
-                onChangeText={val => this.onTextInput('confirmPassword', val)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() =>
-                  this.setState({
-                    isConfirmPasswordFieldSecure: !this.state
-                      .isConfirmPasswordFieldSecure,
-                  })
-                }>
-                {!this.state.isConfirmPasswordFieldSecure && (
-                  <Icon
-                    name="eye"
-                    style={{fontSize: 18, color: COLORS.primary}}
-                  />
-                )}
-                {this.state.isConfirmPasswordFieldSecure && (
-                  <Image
-                    source={require('../../assets/icons/forms/eye-close-fill.png')}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-
-            {ErrorLabel('confirmPassword', this.state.errors)}
+            <Text style={styles.termandconLabel}>
+            I agree with all?{' '}
+              <Text
+                onPress={() => this.props.navigation.navigate('Login')}>
+                Terms & Conditions
+              </Text>
+              <ToggleSwitch style={{   }}
+  isOn={true}
+  onColor="#FFBD59"
+  offColor="green"
+  labelStyle={{ color: "black", fontWeight: "900" }}
+  size="small"
+  onToggle={isOn => console.log("changed to : ", isOn)}
+/>
+            </Text>
+  
             <PrimaryButton
               loading={this.props.auth.loadingSignup}
               title="Sign up"

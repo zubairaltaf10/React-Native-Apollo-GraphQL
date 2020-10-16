@@ -88,7 +88,7 @@ class Intro extends React.Component {
     };
     _onDone = () => {
         console.log("done")
-        this.props.navigation.navigate("Packages")
+        this.props.navigation.navigate("Login")
       }
     _renderItem = ({item}) => {
         return (

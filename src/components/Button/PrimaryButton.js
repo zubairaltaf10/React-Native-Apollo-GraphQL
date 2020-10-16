@@ -26,7 +26,7 @@ const PrimaryButton = ({title, onPress, marginTop = 4, disabled, loading}) => {
 const styles = StyleSheet.create({
   touchable: {
     backgroundColor: COLORS.primary,
-    borderRadius: 6,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    color: 'white',
+    color: '#28292F',
     fontSize: FONTSIZES.btnLabel,
     fontFamily: FONTFAMILY.bold,
   },

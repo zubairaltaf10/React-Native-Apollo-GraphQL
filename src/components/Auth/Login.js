@@ -7,7 +7,7 @@ import {
   Alert,
   LayoutAnimation,
 } from 'react-native';
-import {Content, Form, Item, Input, Icon, Spinner} from 'native-base';
+import {Content, Form, Item, Input, Icon, Spinner, Label} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/auth.styles';
@@ -59,9 +59,24 @@ class Login extends Component {
    
     return (
       <Content>
+       <View style={{flex: 3, alignItems: 'center', marginTop:'15%'}}>
+     <Image 
+                source={require('../../assets/logo_signup.png')}
+                style={styles.logo}
+              />
+              </View>
           <Form style={styles.form}>
+          <View style={{ marginBottom:'10%'}}>
+          <Text style={styles.logintopLabel}>
+          Welcome Back,
+            </Text>
+            <Text style={styles.logintopLabel}>
+         
+       Login to your account
+            </Text>
+            </View>
             <Input
-              placeholder="Email/Username"
+              placeholder="Email" 
               keyboardType="default"
               style={ApplicationStyles.textbox}
               onChangeText={val => this.onTextInput('userNameOrEmail', val)}
@@ -102,14 +117,14 @@ class Login extends Component {
             </TouchableOpacity>
 
             <PrimaryButton
-              title="Sign In"
+              title="Login"
               onPress={this.onSubmit}
               marginTop={4.1}
              // loading={this.props.auth.loadingLogin}
             />
 
             <Text style={styles.alreadyAccountLabel}>
-              Don't have an account?{' '}
+            Already have an account?{' '}
               <Text
                 style={styles.redText}
                 onPress={() => this.props.navigation.navigate('Signup')}>

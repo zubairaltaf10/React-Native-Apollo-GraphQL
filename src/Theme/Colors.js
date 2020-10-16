@@ -1,7 +1,7 @@
 const COLORS = {
-  primary: '#ad1e23',
-  blackText: '#6A6A6A',
-  gray: '#6A6A6A',
+  primary: '#FFBD59',
+  blackText: '#474956',
+  gray: '#868CA9',
 };
 
 export default COLORS;

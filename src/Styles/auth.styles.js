@@ -13,8 +13,14 @@ export default StyleSheet.create({
     marginTop: 22,
     fontFamily: FONTFAMILY.medium,
   },
+  termandconLabel: {
+    textAlign: 'left',
+    marginTop: 22,
+    margin:'5%',
+    fontFamily: FONTFAMILY.medium,
+  },
   redText: {
-    color: COLORS.primary,
+    color: COLORS.blackText,
     fontWeight: 'bold',
   },
   forgotBtn: {
@@ -23,7 +29,7 @@ export default StyleSheet.create({
     padding: 6,
   },
   forgotTxt: {
-    color: COLORS.primary,
+    color: COLORS.blackText,
     fontFamily: FONTFAMILY.bold,
   },
   topLabel: {
@@ -33,13 +39,26 @@ export default StyleSheet.create({
     paddingHorizontal: '5%',
     fontFamily: FONTFAMILY.medium,
   },
+  logintopLabel: {
+    color: COLORS.blackText,
+    textAlign: 'left',
+    fontSize: 22,
+    paddingHorizontal: '5%',
+    paddingEnd:'5%',
+    fontFamily: FONTFAMILY.medium,
+    
+  },
   passwordFieldContainer: {
     flex: 1,
   },
   eyeIcon: {
     position: 'absolute',
     right: 15,
-    top: 27,
+    top: 23,
     padding: 6,
+  },
+  logo: {
+    width: 112,
+    height: 62,
   },
 });

@@ -13,6 +13,7 @@ import ForgotPassword from '../components/Auth/ForgotPassword';
 import WideBanner from '../components/Ads/WideBanner';
 import styles from '../Styles/NavigationStyles';
 import ResetPassword from '../components/Auth/ResetPassword';
+import SignupOptionsScreen from '../components/Auth/signupoptions';
 const TabNav = createBottomTabNavigator(
   {
    
@@ -120,11 +121,15 @@ const AuthStack = createStackNavigator(
     Intro :{
       screen: Intro,
       navigationOptions : {header : null}
+    },
+    SignupOptions :{
+      screen: SignupOptionsScreen,
+      navigationOptions : {header : null}
     }
   },
   {
     transitionConfig: () => fromRight(500),
-    initialRouteName: 'Login',
+    initialRouteName: 'SignupOptions',
     headerLayoutPreset: 'center',
     navigationOptions: {
       headerStyle: styles.header,
