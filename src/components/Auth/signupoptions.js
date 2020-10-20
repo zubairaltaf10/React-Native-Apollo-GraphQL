@@ -15,16 +15,20 @@ import {FONTFAMILY} from '../../Theme/Fonts';
 import PrimaryButton from '../Button/PrimaryButton';
 
 import styles from '../../Styles/signupoptions.styles';
+//WebBrowser.maybeCompleteAuthSession();
 
+const FB_APP_ID = "688909198411382";
 class SignupOptions extends Component {
+  
     constructor(props) {
       super(props);
     }
-  
-    render() {
-   
-        return (
 
+    
+    render() {
+     
+        return (
+       
       <ImageBackground style={styles.image} source={require('../../assets/signupoptions/background.png')} >
         <View style={{flex: 3, alignItems: 'center', marginTop:'10%'}}>
      <Image 
@@ -55,6 +59,8 @@ class SignupOptions extends Component {
    
          <View  animationType="fade"  style={styles.introContainer}>
             <TouchableOpacity 
+            
+           
           style={styles.buttonFacebookStyle}
           activeOpacity={0.5}>
           <Image

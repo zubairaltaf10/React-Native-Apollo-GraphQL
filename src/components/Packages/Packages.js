@@ -117,17 +117,17 @@ class Packages extends Component {
                   scrollEventThrottle={16}
                   showsHorizontalScrollIndicator={false}
                   horizontal={true}>
-            <View style={{marginLeft:10,height:height(17),width:width(55),borderRadius:20,backgroundColor:'#fff',marginTop:10}}>
+            <View style={{marginLeft:10,height:height(17),width:width(55),borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
             <Text style={styles.planstext}>Basic</Text>
         <Text style={styles.plantext2}>No cost</Text>
         <Text style={styles.plantext2}>Upgrade anytime</Text>
             </View>
-            <View style={{marginLeft:10,height:height(17),width:width(55),borderRadius:20,backgroundColor:'#fff',marginTop:10}}>
+            <View style={{marginLeft:10,height:height(17),width:width(55),borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
             <Text style={styles.planstext}>Standard</Text>
         <Text style={styles.plantext2}>30 Days free trial</Text>
         <Text style={styles.plantext2}>Cancel anytime</Text>
             </View>
-            <View style={{marginLeft:10,marginRight:10,height:height(17),width:width(55),borderRadius:20,backgroundColor:'#fff',marginTop:10}}>
+            <View style={{marginLeft:10,marginRight:10,height:height(17),width:width(55),borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
             <Text style={styles.planstext}>Basic</Text>
         <Text style={styles.plantext2}>No cost</Text>
         <Text style={styles.plantext2}>Upgrade anytime</Text>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   slide2: {
-    flex: 0.35,
+    flex: 0.95,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   slide3: {
-    flex: 0.35,
+    flex: 0.95,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
