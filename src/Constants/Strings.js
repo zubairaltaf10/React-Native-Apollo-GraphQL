@@ -1,7 +1,6 @@
 export const signupValidation = {
-  fullName: 'Please enter a valid full name',
-  userName:
-    "Username should contain at least 5 characters, spaces aren't allowed",
+  firstName: 'Please enter a valid first name',
+  lastName:  "Please enter a valid last name",
   email: 'Please enter a valid email address',
   usernameEmail: 'Please enter a valid username or email',
   password:

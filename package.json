@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/blur": "^3.6.0",
+    "@react-native-community/cli-platform-android": "^4.13.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.7.6",
     "axios": "^0.20.0",
+    "core-util-is": "^1.0.2",
     "native-base": "^2.13.14",
     "react": "16.13.1",
     "react-native": "0.63.3",
