@@ -96,35 +96,35 @@ const AuthStack = createStackNavigator(
   {
     Login: {
       screen: LoginScreen,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     Signup: {
       screen: SignupScreen,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     Verification: {
       screen: VerificationScreen,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     Packages: {
       screen: PackagesScreen,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     Forgot: {
       screen: ForgotPassword,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     ResetPassword: {
       screen: ResetPassword,
-      navigationOptions: {header: null},
+      navigationOptions: {header: false},
     },
     Intro :{
       screen: Intro,
-      navigationOptions : {header : null}
+      navigationOptions : {header : false}
     },
     SignupOptions :{
       screen: SignupOptionsScreen,
-      navigationOptions : {header : null}
+      navigationOptions : {header : false}
     }
   },
   {

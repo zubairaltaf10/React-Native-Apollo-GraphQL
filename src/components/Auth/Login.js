@@ -49,7 +49,7 @@ class Login extends Component {
     //     this.props.login(this.state.formData, this.showSecurityQuestionModel);
     //   }
     // });
-    this.props.navigation.navigate("Intro");
+    this.props.navigation.navigate("SignupOptions");
   };
 
 

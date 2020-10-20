@@ -38,7 +38,9 @@ class Signup extends Component {
       isPasswordFieldSecure: true,
       isConfirmPasswordFieldSecure: true,
       errors: ['errors'],
+      isOnToggleSwitch: false,
     };
+    
   }
   
   
@@ -51,6 +53,7 @@ class Signup extends Component {
       newErrors.splice(errIndex, 1);
       this.setState({errors: newErrors});
     }
+    
   };
 
   onSubmit = () => {
@@ -61,12 +64,14 @@ class Signup extends Component {
       }
     });
   };
-
+  onToggle(isOn) {
+    console.log("Changed to " + isOn);
+  }
   render() {
     
     return (
         <Content>
-        <View style={{flex: 3, alignItems: 'center', marginTop:'15%'}}>
+        <View style={{flex: 3, alignItems: 'center', marginTop:'10%'}}>
      <Image 
                 source={require('../../assets/logo_signup.png')}
                 style={styles.logo}
@@ -82,19 +87,19 @@ class Signup extends Component {
             </View>
           <Form style={styles.form}>
             <Input
-              placeholder="Full Name"
+              placeholder="First Name"
               style={ApplicationStyles.textbox}
               value={this.state.formData.fullName}
               onChangeText={val => this.onTextInput('fullName', val)}
             />
-            {ErrorLabel('fullName', this.state.errors)}
+            {ErrorLabel('firstName', this.state.errors)}
             <Input
-              placeholder="Username"
+              placeholder="Last Name"
               style={ApplicationStyles.textbox}
               value={this.state.formData.userName}
               onChangeText={val => this.onTextInput('userName', val)}
             />
-            {ErrorLabel('userName', this.state.errors)}
+            {ErrorLabel('lastName', this.state.errors)}
             <Input
               placeholder="Email"
               keyboardType="email-address"
@@ -134,21 +139,37 @@ class Signup extends Component {
               </TouchableOpacity>
             </View>
             {ErrorLabel('password', this.state.errors)}
+
+            <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.termandconLabel}>
             I agree with all?{' '}
-              <Text
+              <Text 
                 onPress={() => this.props.navigation.navigate('Login')}>
                 Terms & Conditions
+                       
+                
               </Text>
-              <ToggleSwitch style={{   }}
-  isOn={true}
-  onColor="#FFBD59"
-  offColor="green"
-  labelStyle={{ color: "black", fontWeight: "900" }}
-  size="small"
-  onToggle={isOn => console.log("changed to : ", isOn)}
-/>
+              
+  
             </Text>
+            <ToggleSwitch 
+ 
+ isOn={this.state.isOnToggleSwitch}
+ onColor="#FFBD59"
+ offColor="#868CA9"
+ labelStyle={{ color: "black", fontWeight: "900" }}
+ size="small" 
+ 
+ onToggle={isOnToggleSwitch => {
+           this.setState({ isOnToggleSwitch });
+           this.onToggle(isOnToggleSwitch);
+         }}
+ 
+/>
+        </View>
+           
+
+           
   
             <PrimaryButton
               loading={this.props.auth.loadingSignup}

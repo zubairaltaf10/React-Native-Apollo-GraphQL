@@ -77,16 +77,52 @@ class Verification extends React.Component {
   colors = ['#ff595f', '#e42959'];
 
   render() {
-    console.log('verificationCode', this.state.verificationCode);
+    //console.log('verificationCode', this.state.verificationCode);
     return (
      
-        <Content>
-          return (
-            <View>
-                <Text style={{fontSize:20}}>Login</Text>
+            <Content>
+          <View style={styles.container}>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputSubLabel}>
+              Enter the verification code we just sent to your email.
+              </Text>
+              <CodeInput
+                blurOnSubmit={false}
+                variant="clear"
+                codeLength={4}
+                keyboardType="numeric"
+                cellProps={this.cellProps}
+                containerProps={this.containerProps}
+                onFulfill={this.onCodeInput}
+              />
+              <TouchableOpacity
+                style={styles.resendBtn}
+                onPress={this.resendCode}
+                disabled={this.state.resendTime === 0 ? false : true}>
+                <Text style={styles.resendText}>Resend Code</Text>
+                {this.state.resendTime !== 0 && (
+                  <CountdownCircle
+                    seconds={this.state.resendTime}
+                    radius={10}
+                    borderWidth={2}
+                    color="gray"
+                    bgColor="#fff"
+                    textStyle={{fontSize: 10}}
+                    onTimeElapsed={() => this.setState({resendTime: 0})}
+                  />
+                )}
+              </TouchableOpacity>
+
+              <PrimaryButton
+                title="Verify"
+                loading={this.props.auth.loadingEmailVerify}
+                marginTop={10}
+                onPress={this.verifyCode}
+              />
             </View>
-            );
+          </View>
         </Content>
+       
     );
   }
 }

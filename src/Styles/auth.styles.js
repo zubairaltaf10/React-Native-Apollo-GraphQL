@@ -3,7 +3,7 @@ import COLORS from '../Theme/Colors';
 import {FONTFAMILY} from '../Theme/Fonts';
 export default StyleSheet.create({
   form: {
-    paddingTop: 40,
+    paddingTop: 15,
     paddingHorizontal: 12,
     // paddingTop: 60,
     // paddingBottom: 10,
@@ -18,6 +18,7 @@ export default StyleSheet.create({
     marginTop: 22,
     margin:'5%',
     fontFamily: FONTFAMILY.medium,
+    
   },
   redText: {
     color: COLORS.blackText,
@@ -61,4 +62,8 @@ export default StyleSheet.create({
     width: 112,
     height: 62,
   },
+  alternativeLayoutButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
 });

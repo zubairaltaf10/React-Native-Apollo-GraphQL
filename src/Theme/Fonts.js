@@ -1,8 +1,8 @@
 const FONTFAMILY = {
-  medium: 'Montserrat-Medium',
-  regular: 'Montserrat-Regular',
-  bold: 'Montserrat-SemiBold',
-  extraBold: 'Montserrat-Bold',
+  medium: 'Poppins-Medium',
+  regular: 'Poppins-Regular',
+  bold: 'Poppins-SemiBold',
+  extraBold: 'Poppins-Bold',
 };
 
 const FONTSIZES = {
