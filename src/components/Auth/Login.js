@@ -127,7 +127,7 @@ class Login extends Component {
             Already have an account?{' '}
               <Text
                 style={styles.redText}
-                onPress={() => this.props.navigation.navigate('Signup')}>
+                onPress={() => this.props.navigation.navigate('Packages')}>
                 Sign Up
               </Text>
             </Text>

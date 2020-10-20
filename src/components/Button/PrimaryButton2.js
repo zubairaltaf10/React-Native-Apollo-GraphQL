@@ -4,7 +4,8 @@ import {StyleSheet} from 'react-native';
 import COLORS from '../../Theme/Colors';
 import {FONTSIZES, FONTFAMILY} from '../../Theme/Fonts';
 import {Metrics} from '../../Theme';
-const PrimaryButton = ({title, onPress, marginTop = 4, disabled, loading}) => {
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+const PrimaryButton2 = ({title, onPress, marginTop = 4, disabled, loading}) => {
   return (
     <View style={{marginTop: Metrics.screenHeight / marginTop}}>
       <TouchableOpacity
@@ -25,13 +26,16 @@ const PrimaryButton = ({title, onPress, marginTop = 4, disabled, loading}) => {
 
 const styles = StyleSheet.create({
   touchable: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.white,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    paddingHorizontal: 45,
+    paddingHorizontal: 50,
     paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+
   },
   row: {
     flexDirection: 'row',
@@ -39,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    color: '#28292F',
+    color: COLORS.primary,
     fontSize: FONTSIZES.btnLabel,
     fontFamily: FONTFAMILY.bold,
     fontWeight:'bold'
@@ -48,4 +52,4 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
 });
-export default PrimaryButton;
+export default PrimaryButton2;
