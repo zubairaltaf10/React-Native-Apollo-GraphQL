@@ -154,20 +154,22 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   slide2: {
-    flex: 0.35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    margin:height(3.5),
-    borderRadius:5
+    flex: 0.95,
+    // height:'60%',  
+     justifyContent: 'center',
+       alignItems: 'center',
+       backgroundColor: '#fff',
+       margin:height(3.5),
+       borderRadius:5
   },
   slide3: {
-    flex: 0.35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    margin:height(3.5),
-    borderRadius:5
+    flex: 0.95,
+    // height:'60%',  
+     justifyContent: 'center',
+       alignItems: 'center',
+       backgroundColor: '#fff',
+       margin:height(3.5),
+       borderRadius:5
   },
   text: {
     color: 'black',
