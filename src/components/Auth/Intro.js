@@ -154,15 +154,16 @@ class Intro extends React.Component {
     };
     
     _onDone = () => {
-        console.log(this.state.currentSlide)
-      //  this.props.navigation.navigate("Login")
+      //  console.log(this.state.currentSlide)
+        this.props.navigation.navigate("Login")
       }
      handleNext = () => {
        if (this.state.currentSlide == 0){       
           this.state.dotsArray[0].isActive = false
         this.state.dotsArray[1].isActive = true
         console.log(this.state.currentSlide)
-         this._slider.goToSlide(1)         
+         this._slider.goToSlide(1)    
+         this.state.currentSlide      
        }
        if (this.state.currentSlide == 1){
         this.state.dotsArray[1].isActive = false
