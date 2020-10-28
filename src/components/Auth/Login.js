@@ -5,9 +5,8 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-  LayoutAnimation,
 } from 'react-native';
-import {Content, Form, Item, Input, Icon, Spinner, Label} from 'native-base';
+import {Content, Form, Item, Input, Spinner, Button} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/auth.styles';
@@ -18,6 +17,18 @@ import COLORS from '../../Theme/Colors';
 //import AsyncStorage from '@react-native-community/async-storage';
 import {withAuth} from '../../store/hoc/withAuth';
 import SNACKBAR from '../../Helpers/SNACKBAR';
+import Icon from "react-native-vector-icons/FontAwesome";
+import {
+  LoginButton,
+  AccessToken,
+  LoginManager,
+  GraphRequest,
+  GraphRequestManager,
+} from "react-native-fbsdk";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-community/google-signin";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -30,6 +41,17 @@ class Login extends Component {
       inputSecurityAnswer: '',
     };
   }
+
+  componentDidMount() {
+    GoogleSignin.configure({
+      //  scopes: ["profile", "email"],
+      androidClientId:
+        "310912297952-pfosgk7mrc4d2fj57rll2tr1m5kqhogb.apps.googleusercontent.com",
+      offlineAccess: false,
+      forceCodeForRefreshToken: true,
+    });
+  }
+
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
     // remove error
@@ -38,6 +60,65 @@ class Login extends Component {
     if (errIndex !== -1) {
       newErrors.splice(errIndex, 1);
       this.setState({errors: newErrors});
+    }
+  };
+
+  handleFacebookLogin = async () => {
+    // try {
+    //   LoginManager.setLoginBehavior(Platform.OS ==='ios' ? 'native': 'NATIVE_ONLY');
+    // } catch (error) {
+    //   LoginManager.setLoginBehavior('WEB_ONLY');
+    // }
+    // LoginManager.setLoginBehavior(Platform.OS ==='ios' ? 'native': 'NATIVE_ONLY');
+    // LoginManager.setLoginBehavior('NATIVE_ONLY');
+    let behavior = Platform.OS === "ios" ? "browser" : "WEB_ONLY";
+    LoginManager.setLoginBehavior(behavior);
+    LoginManager.logInWithPermissions(["public_profile", "email"]).then(
+      result => {
+        if (result.isCancelled) {
+          console.log("Login cancelled");
+        } else {
+          AccessToken.getCurrentAccessToken().then(data => {
+            const { accessToken } = data;
+            console.log(accessToken);
+          });
+        }
+      },
+      function(error) {
+        console.log("Login fail with error: " + error);
+      },
+    );
+  };  
+
+  _signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn({
+        offlineAccess: true,
+        webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
+      });
+      const email = userInfo.user.email;
+      console.log(email)
+      const name = userInfo.user.name;
+
+     // const password = userInfo.user.id + name;
+
+    } catch (error) {
+      console.log(error);
+      console.log("error");
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        errorMessage = error.code;
+      
+      
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+        console.log(error);
+      }
     }
   };
 
@@ -115,7 +196,42 @@ class Login extends Component {
               onPress={() => this.props.navigation.navigate('Forgot')}>
               <Text style={styles.forgotTxt}>Forgot Password?</Text>
             </TouchableOpacity>
-
+            <View style={{flexDirection:'row', flex: 0,justifyContent: "space-evenly"}}>
+                <View>
+                  <Button
+                    style={styles.fbbtn}
+                    onPress={() => this.handleFacebookLogin()}>
+                    <Icon
+                      name="facebook"
+                      type="AntDesign"
+                      style={styles.google}
+                    />
+                  </Button>
+                  {/* <LoginButton
+                    onLoginFinished={(error, result) => {
+                      if (error) {
+                        console.log("login has error: " + result.error);
+                      } else if (result.isCancelled) {
+                        console.log("login is cancelled.");
+                      } else {
+                        AccessToken.getCurrentAccessToken().then(data => {
+                          console.log(data.accessToken.toString());
+                        });
+                      }
+                    }}
+                    onLogoutFinished={() => console.log("logout.")}
+                  /> */}
+                </View>
+                <View>
+                  <Button
+                    style={
+                      styles.socialMediaButton
+                    }
+                    onPress={this._signIn}>
+                    <Icon name="google" type="AntDesign" style={styles.google} />
+                  </Button>
+                </View>
+              </View>
             <PrimaryButton
               title="Login"
               onPress={this.onSubmit}
@@ -127,7 +243,7 @@ class Login extends Component {
             Already have an account?{' '}
               <Text
                 style={styles.redText}
-                onPress={() => this.props.navigation.navigate('Packages')}>
+                onPress={() => this.props.navigation.navigate('Signup')}>
                 Sign Up
               </Text>
             </Text>
