@@ -11,6 +11,18 @@ import Axios from 'axios';
 import API from '../../Constants/API';
 import {checkEmail} from '../../Helpers/Validations';
 import {withAuth} from '../../store/hoc/withAuth';
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 class ForgotPassword extends React.Component {
   constructor(props) {
     super(props);
@@ -21,16 +33,24 @@ class ForgotPassword extends React.Component {
   }
 
   handleContinueBtn = async () => {
-    const {email} = this.state.formData;
-    const res = await this.props.sendVerificationCode(email);
-    if (res) {
-      const {verificationCode} = res;
+    const email = this.state.formData.email;
+    this.props
+    .mutate({
+      variables: {
+        email:email,
+      },
+    })
+    .then((res) => {
+      //console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
       this.props.navigation.navigate('Verification', {
-        verificationCode,
         type: 'ResetPassword',
         email: email,
       });
-    }
+    })
+    .catch((err) => {
+     // SNACKBAR.simple(err.graphQLErrors);
+      console.log(JSON.stringify(err));
+    });
   };
 
   render() {
@@ -38,8 +58,11 @@ class ForgotPassword extends React.Component {
     return (
         <Content>
           <Form style={styles.form}>
+          <Text style={styles.topheadingLabel}>
+              Forgot Password
+            </Text>
             <Text style={styles.topLabel}>
-              Please enter your email address below to reset your password!
+            Enter your email address to receive a verification code.
             </Text>
             <Input
               placeholder="Email"
@@ -61,4 +84,15 @@ class ForgotPassword extends React.Component {
     );
   }
 }
-export default withAuth(ForgotPassword);
+const mutation = gql`
+mutation forgotPassword($email: String!){
+  forgotPassword(input: {
+    email: $email,
+  }){
+    status,
+    message
+  }
+}
+`;
+const ForgotPasswordTab = graphql(mutation)(ForgotPassword);
+export default withAuth(ForgotPasswordTab);

@@ -7,8 +7,6 @@ import {
   Image,
   Switch
 } from 'react-native';
-// import TopHeader from '../../Components/TopHeader';
-// import Header from '../../Components/Header';
 import {Content, Form, Input, Icon} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
@@ -18,7 +16,21 @@ import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
 import {withAuth} from '../../store/hoc/withAuth';
-import ToggleSwitch from 'toggle-switch-react-native'
+import ToggleSwitch from 'toggle-switch-react-native';
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
+
+
 class Signup extends Component {
   
   constructor(props) {
@@ -26,14 +38,12 @@ class Signup extends Component {
    
     this.state = {
       formData: {
-        fullName: '',
-        userName: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
         roleId: 1,
-        security_question_id: 1,
-        security_question_answer: 'answer',
       },
       isPasswordFieldSecure: true,
       isConfirmPasswordFieldSecure: true,
@@ -42,8 +52,6 @@ class Signup extends Component {
     };
     
   }
-  
-  
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
     // remove error
@@ -53,20 +61,44 @@ class Signup extends Component {
       newErrors.splice(errIndex, 1);
       this.setState({errors: newErrors});
     }
-    
   };
-
+  
   onSubmit = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+      console.log(this.state.errors.length)
+      if(this.state.isOnToggleSwitch == false)
+      {
+        SNACKBAR.simple("Please check term and condition.");
+        return;
+      }
+      
       if (this.state.errors.length === 0) {
-        this.props.signup(this.state.formData);
+        let firstName = this.state.formData.firstName;
+        let lastName = this.state.formData.lastName; 
+        let email = this.state.formData.email;
+        let password = this.state.formData.password; 
+        this.props
+      .mutate({
+        variables: {
+          firstname: firstName,
+          lastname:lastName,
+          email:email,
+          password: password,
+        },
+      })
+      .then((res) => {
+        console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
+        NavigationService.navigate('Verification');
+       
+      })
+      .catch((err) => {
+       // SNACKBAR.simple(err.graphQLErrors);
+        console.log(JSON.stringify(err));
+      });
       }
     });
   };
-  onToggle(isOn) {
-    console.log("Changed to " + isOn);
-  }
   render() {
     
     return (
@@ -89,15 +121,15 @@ class Signup extends Component {
             <Input
               placeholder="First Name"
               style={ApplicationStyles.textbox}
-              value={this.state.formData.fullName}
-              onChangeText={val => this.onTextInput('fullName', val)}
+              value={this.state.formData.firstName}
+              onChangeText={val => this.onTextInput('firstName', val)}
             />
             {ErrorLabel('firstName', this.state.errors)}
             <Input
               placeholder="Last Name"
               style={ApplicationStyles.textbox}
-              value={this.state.formData.userName}
-              onChangeText={val => this.onTextInput('userName', val)}
+              value={this.state.formData.lastName}
+              onChangeText={val => this.onTextInput('lastName', val)}
             />
             {ErrorLabel('lastName', this.state.errors)}
             <Input
@@ -146,11 +178,7 @@ class Signup extends Component {
               <Text 
                 onPress={() => this.props.navigation.navigate('Login')}>
                 Terms & Conditions
-                       
-                
               </Text>
-              
-  
             </Text>
             <ToggleSwitch 
  
@@ -162,15 +190,11 @@ class Signup extends Component {
  
  onToggle={isOnToggleSwitch => {
            this.setState({ isOnToggleSwitch });
-           this.onToggle(isOnToggleSwitch);
+          
          }}
  
 />
         </View>
-           
-
-           
-  
             <PrimaryButton
               loading={this.props.auth.loadingSignup}
               title="Sign up"
@@ -192,4 +216,27 @@ class Signup extends Component {
     );
   }
 }
-export default withAuth(Signup);
+
+const mutation = gql`
+mutation register($firstname: String!, $lastname: String! ,$email: String!, $password: String!){
+  register(input: {
+    first_name: $firstname,
+    last_name: $lastname,
+    email: $email,
+    password: $password,
+    password_confirmation: $password
+  }){
+    tokens{
+      access_token,
+      user{
+        id,
+        name,
+        email
+      }
+    },
+    status
+  }
+}
+`;
+const SignupTab = graphql(mutation)(Signup);
+export default withAuth(SignupTab);

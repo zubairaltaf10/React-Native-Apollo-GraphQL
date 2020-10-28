@@ -17,18 +17,18 @@ import COLORS from '../../Theme/Colors';
 //import AsyncStorage from '@react-native-community/async-storage';
 import {withAuth} from '../../store/hoc/withAuth';
 import SNACKBAR from '../../Helpers/SNACKBAR';
-import Icon from "react-native-vector-icons/FontAwesome";
-import {
-  LoginButton,
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager,
-} from "react-native-fbsdk";
-import {
-  GoogleSignin,
-  statusCodes,
-} from "@react-native-community/google-signin";
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import NavigationService from '../../routes/Routes';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -39,6 +39,11 @@ class Login extends Component {
       hidePassword: true,
       showSecurityQuestionModel: false,
       inputSecurityAnswer: '',
+      password: '',
+      name: '',
+      email: '',
+      resultRegister: '',
+      resultLogin: '',
     };
   }
 
@@ -54,6 +59,7 @@ class Login extends Component {
 
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
+    this.setState({key : val}) 
     // remove error
     const newErrors = this.state.errors;
     let errIndex = newErrors.indexOf(key);
@@ -63,84 +69,51 @@ class Login extends Component {
     }
   };
 
-  handleFacebookLogin = async () => {
-    // try {
-    //   LoginManager.setLoginBehavior(Platform.OS ==='ios' ? 'native': 'NATIVE_ONLY');
-    // } catch (error) {
-    //   LoginManager.setLoginBehavior('WEB_ONLY');
-    // }
-    // LoginManager.setLoginBehavior(Platform.OS ==='ios' ? 'native': 'NATIVE_ONLY');
-    // LoginManager.setLoginBehavior('NATIVE_ONLY');
-    let behavior = Platform.OS === "ios" ? "browser" : "WEB_ONLY";
-    LoginManager.setLoginBehavior(behavior);
-    LoginManager.logInWithPermissions(["public_profile", "email"]).then(
-      result => {
-        if (result.isCancelled) {
-          console.log("Login cancelled");
-        } else {
-          AccessToken.getCurrentAccessToken().then(data => {
-            const { accessToken } = data;
-            console.log(accessToken);
-          });
-        }
-      },
-      function(error) {
-        console.log("Login fail with error: " + error);
-      },
-    );
-  };  
-
-  _signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn({
-        offlineAccess: true,
-        webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
-      });
-      const email = userInfo.user.email;
-      console.log(email)
-      const name = userInfo.user.name;
-
-     // const password = userInfo.user.id + name;
-
-    } catch (error) {
-      console.log(error);
-      console.log("error");
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        errorMessage = error.code;
-      
-      
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-        console.log(error);
-      }
-    }
-  };
-
   onSubmit = () => {
-    //this.props.navigation.navigate('App');
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-    //   if (this.state.errors.length === 0) {
-    //     this.props.login(this.state.formData, this.showSecurityQuestionModel);
-    //   }
-    // });
-    this.props.navigation.navigate("SignupOptions");
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+    
+      if (this.state.errors.length === 0) {
+        let email = this.state.formData.userNameOrEmail;
+        let password = this.state.formData.loginPassword; 
+        this.props.mutate({
+        variables: {
+          email: email,
+          password: password,
+        },
+      })
+      .then((res) => {
+       // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
+        console.log("userInfo ", JSON.stringify(res.data.login.user))
+        // if(res.data.login.user.email_verified_at != null)
+        // {
+        //   this.props.navigation.navigate('App');
+        // }else
+        // {
+          NavigationService.navigate('Verification', {
+            type: 'UnverifiedLogin',
+          });
+        //}        
+      })
+      .catch((err) => {
+        if(err.graphQLErrors != null)
+        {
+          if(err.graphQLErrors.length > 0)
+          {
+            SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
+          }
+        }
+      });
+      }
+    });
   };
-
-
- 
-
   render() {
    
     return (
+  
       <Content>
-       <View style={{flex: 3, alignItems: 'center', marginTop:'15%'}}>
+      
+       <View style={{flex: 3, alignItems: 'center', marginTop:'15%', marginBottom:'8%'}}>
      <Image 
                 source={require('../../assets/logo_signup.png')}
                 style={styles.logo}
@@ -161,6 +134,8 @@ class Login extends Component {
               keyboardType="default"
               style={ApplicationStyles.textbox}
               onChangeText={val => this.onTextInput('userNameOrEmail', val)}
+              // onChangeText={val => this.onTextInput('email', val)}
+                  //value={this.state.type}
             />
             {ErrorLabel('userNameOrEmail', this.state.errors)}
             <View style={styles.passwordFieldContainer}>
@@ -168,7 +143,9 @@ class Login extends Component {
                 placeholder="Password"
                 secureTextEntry={this.state.hidePassword}
                 style={ApplicationStyles.textbox}
-                onChangeText={val => this.onTextInput('loginPassword', val)}
+               // onChangeText={(text) => this.setState({ password: text })}
+               onChangeText={val => this.onTextInput('loginPassword', val)}
+                 // value={this.state.type}
                 maxLength={16}
               />
 
@@ -248,9 +225,25 @@ class Login extends Component {
               </Text>
             </Text>
           </Form>
+         
           </Content>
     );
   }
 }
 
-export default withAuth(Login);
+const mutation = gql`
+mutation login($email: String!, $password: String!){
+  login(input: {
+    username: $email,
+    password: $password
+  }){
+    access_token,
+    user{
+      name,
+      email
+    }
+  }
+}
+`;
+const LoginTab = graphql(mutation)(Login);
+export default LoginTab;

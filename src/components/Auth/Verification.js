@@ -86,15 +86,7 @@ class Verification extends React.Component {
               <Text style={styles.inputSubLabel}>
               Enter the verification code we just sent to your email.
               </Text>
-              <CodeInput
-                blurOnSubmit={false}
-                variant="clear"
-                codeLength={4}
-                keyboardType="numeric"
-                cellProps={this.cellProps}
-                containerProps={this.containerProps}
-                onFulfill={this.onCodeInput}
-              />
+              
               <TouchableOpacity
                 style={styles.resendBtn}
                 onPress={this.resendCode}

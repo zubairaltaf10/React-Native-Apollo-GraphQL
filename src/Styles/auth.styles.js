@@ -42,6 +42,15 @@ export default StyleSheet.create({
     paddingHorizontal: '5%',
     fontFamily: FONTFAMILY.medium,
   },
+  topheadingLabel: {
+    color: COLORS.blackText,
+    textAlign: 'center',
+    fontSize: 18,
+    paddingHorizontal: '5%',
+    fontFamily: FONTFAMILY.bold,
+    marginBottom:'20%',
+    marginTop:'5%'
+  },
   logintopLabel: {
     color: COLORS.blackText,
     textAlign: 'left',
