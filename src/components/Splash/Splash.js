@@ -23,7 +23,7 @@ render() {
             alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            height:height(24.5),
+            height:height(25),
             width: width(80),
           }}
         />
