@@ -1,6 +1,6 @@
 export const signupValidation = {
-  firstName: 'Please enter a valid first name',
-  lastName:  "Please enter a valid last name",
+  firstName: 'Please enter first name',
+  lastName:  "Please enter last name",
   email: 'Please enter a valid email address',
   usernameEmail: 'Please enter a valid username or email',
   password:

@@ -14,52 +14,11 @@ import WideBanner from '../components/Ads/WideBanner';
 import styles from '../Styles/NavigationStyles';
 import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
-const TabNav = createBottomTabNavigator(
-  {
-   
-    VoiceOptions: {screen: LoginScreen},
-    
-  },
-  {
-    tabBarOptions: {
-      showLabel: false,
-    },
-    defaultNavigationOptions: ({navigation}) => ({
-      tabBarIcon: ({focused}) => {
-        const {routeName} = navigation.state;
-        let iconName;
-        if (focused) {
-          iconName = icons[routeName].hover;
-        } else {
-          iconName = icons[routeName].simple;
-        }
-        return (
-          <Image
-            source={iconName}
-            style={{width: 24, height: 24, marginTop: 4}}
-          />
-        );
-      },
-    }),
-  },
-);
-const TabWithAds = props => {
-  return (
-    <>
-    <TabNav {...props} />
-      <WideBanner />
-    </>
-  );
-};
-//<TabNav {...props} />
-TabWithAds.router = TabNav.router;
+import HomeScreen from '../components/Home/ingredentsinput';
 
 const AppStack = createStackNavigator(
   {
-    Home: {
-      screen: TabWithAds,
-      navigationOptions: {header: null},
-    },
+    
     
     // Type: {
     //   screen: Type,
@@ -73,10 +32,10 @@ const AppStack = createStackNavigator(
     //   screen: DocumentUploaded,
     //   navigationOptions: {header: null},
     // },
-    // Packages: {
-    //   screen: PackagesScreen,
-    //   navigationOptions: {header: null},
-    // },
+    Home: {
+      screen: HomeScreen,
+      navigationOptions: {header: null},
+    },
     // Library: {
     //   screen: Library,
     //   navigationOptions: {header: null},
@@ -94,6 +53,10 @@ const AppStack = createStackNavigator(
 
 const AuthStack = createStackNavigator(
   {
+    Verification: {
+      screen: VerificationScreen,
+      navigationOptions: {header: false},
+    },
     Login: {
       screen: LoginScreen,
       navigationOptions: {header: false},
@@ -102,17 +65,15 @@ const AuthStack = createStackNavigator(
       screen: SignupScreen,
       navigationOptions: {header: false},
     },
-    Verification: {
-      screen: VerificationScreen,
-      navigationOptions: {header: false},
-    },
+   
     Packages: {
       screen: PackagesScreen,
       navigationOptions: {header: false},
     },
     Forgot: {
       screen: ForgotPassword,
-      navigationOptions: {header: false},
+      navigationOptions: {header: true, headerBackTitleVisible:true },
+      
     },
     ResetPassword: {
       screen: ResetPassword,
@@ -129,7 +90,7 @@ const AuthStack = createStackNavigator(
   },
   {
     transitionConfig: () => fromRight(500),
-    initialRouteName: 'SignupOptions',
+    initialRouteName: 'Verification',
     headerLayoutPreset: 'center',
     navigationOptions: {
       headerStyle: styles.header,

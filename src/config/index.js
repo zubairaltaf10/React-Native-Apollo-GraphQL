@@ -1,0 +1,1 @@
+export const NETWORK_INTERFACE = 'http://whatyougot.5stardesigners.net/graphql';
