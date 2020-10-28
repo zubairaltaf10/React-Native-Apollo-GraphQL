@@ -25,10 +25,10 @@ import { ApolloProvider, Mutation } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
-// const client = new ApolloClient({
-//   link: new HttpLink({ uri: NETWORK_INTERFACE }),
-//   cache: new InMemoryCache()
-// })
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 
 
 class Signup extends Component {

@@ -5,9 +5,8 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-  LayoutAnimation,
 } from 'react-native';
-import {Content, Form, Item, Input, Icon, Spinner, Label} from 'native-base';
+import {Content, Form, Item, Input, Spinner, Button} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/auth.styles';
@@ -30,21 +29,6 @@ const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
 })
-const login = gql`
-mutation login($email: String!, $password: String!){
-  login(input: {
-    username: $email,
-    password: $password
-  }){
-    access_token,
-    user{
-      name,
-      email
-    }
-  }
-}
-`
-
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -62,6 +46,17 @@ class Login extends Component {
       resultLogin: '',
     };
   }
+
+  componentDidMount() {
+    GoogleSignin.configure({
+      //  scopes: ["profile", "email"],
+      androidClientId:
+        "310912297952-pfosgk7mrc4d2fj57rll2tr1m5kqhogb.apps.googleusercontent.com",
+      offlineAccess: false,
+      forceCodeForRefreshToken: true,
+    });
+  }
+
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
     this.setState({key : val}) 
@@ -81,8 +76,7 @@ class Login extends Component {
       if (this.state.errors.length === 0) {
         let email = this.state.formData.userNameOrEmail;
         let password = this.state.formData.loginPassword; 
-        this.props
-      .mutate({
+        this.props.mutate({
         variables: {
           email: email,
           password: password,
@@ -179,7 +173,42 @@ class Login extends Component {
               onPress={() => this.props.navigation.navigate('Forgot')}>
               <Text style={styles.forgotTxt}>Forgot Password?</Text>
             </TouchableOpacity>
-
+            <View style={{flexDirection:'row', flex: 0,justifyContent: "space-evenly"}}>
+                <View>
+                  <Button
+                    style={styles.fbbtn}
+                    onPress={() => this.handleFacebookLogin()}>
+                    <Icon
+                      name="facebook"
+                      type="AntDesign"
+                      style={styles.google}
+                    />
+                  </Button>
+                  {/* <LoginButton
+                    onLoginFinished={(error, result) => {
+                      if (error) {
+                        console.log("login has error: " + result.error);
+                      } else if (result.isCancelled) {
+                        console.log("login is cancelled.");
+                      } else {
+                        AccessToken.getCurrentAccessToken().then(data => {
+                          console.log(data.accessToken.toString());
+                        });
+                      }
+                    }}
+                    onLogoutFinished={() => console.log("logout.")}
+                  /> */}
+                </View>
+                <View>
+                  <Button
+                    style={
+                      styles.socialMediaButton
+                    }
+                    onPress={this._signIn}>
+                    <Icon name="google" type="AntDesign" style={styles.google} />
+                  </Button>
+                </View>
+              </View>
             <PrimaryButton
               title="Login"
               onPress={this.onSubmit}

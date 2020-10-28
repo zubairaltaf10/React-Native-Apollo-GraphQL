@@ -11,6 +11,18 @@ import Axios from 'axios';
 import API from '../../Constants/API';
 import {checkEmail} from '../../Helpers/Validations';
 import {withAuth} from '../../store/hoc/withAuth';
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 class ForgotPassword extends React.Component {
   constructor(props) {
     super(props);

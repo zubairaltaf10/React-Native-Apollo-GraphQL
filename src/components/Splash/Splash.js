@@ -10,21 +10,24 @@ state = {
 }
 componentDidMount(){
     this.timeout = setTimeout(async () => {
-        this.props.navigation.navigate("Login");
+        this.props.navigation.navigate("Intro");
     },1000);
 }
 render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1,backgroundColor:'#FFBD59' }}>
+        <View style={{flex:1,justifyContent:'center'}}>
         <Image
-          source={require("../../assets/Login/2.png")}
+          source={require("../../assets/splash/logo_splash.png")}
           style={{
-            flex: 1,
+            alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            width: width(100),
+            height:height(24.5),
+            width: width(80),
           }}
         />
+        </View>
       </View>
     );
   }

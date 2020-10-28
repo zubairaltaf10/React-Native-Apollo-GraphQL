@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
 import COLORS from '../Theme/Colors';
 import {FONTFAMILY} from '../Theme/Fonts';
+import { height,width,totalSize } from "react-native-dimension";
+
 export default StyleSheet.create({
   form: {
     paddingTop: 15,
@@ -74,5 +76,30 @@ export default StyleSheet.create({
   alternativeLayoutButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between'
+  },
+  socialMediaButton: {
+    //  flex: 2,
+    width: width(25),
+    borderRadius: 25,
+    paddingVertical: height(1.5),
+    marginTop: height(3),
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft:width(5),
+    backgroundColor: "#eb1a43" 
+    },
+  google: {
+    color: "#fff",
+    fontSize: totalSize(2.2),
+  },
+  fbbtn : {
+    backgroundColor: "#3b5998",
+    width: width(25),
+    borderRadius: 25,
+    paddingVertical: height(1.5),
+    marginTop: height(3),
+
+    alignItems: "center",
+    justifyContent: "center",
   }
 });
