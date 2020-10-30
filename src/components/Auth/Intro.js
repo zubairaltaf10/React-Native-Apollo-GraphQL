@@ -142,12 +142,15 @@ class Intro extends React.Component {
        currentSlide:0,
        dotsArray : [
          {
+           id:0,
          "isActive":true
        },
        {
+         id:1,
         "isActive":false
       },
       {
+        id:2,
         "isActive":false
       }
     ]
@@ -161,14 +164,14 @@ class Intro extends React.Component {
        if (this.state.currentSlide == 0){       
           this.state.dotsArray[0].isActive = false
         this.state.dotsArray[1].isActive = true
-        console.log(this.state.currentSlide)
          this._slider.goToSlide(1)    
-         this.state.currentSlide      
+         this.state.currentSlide = 1     
        }
-       if (this.state.currentSlide == 1){
+       else{
+        this.state.currentSlide = 2
+        this._slider.goToSlide(2)
         this.state.dotsArray[1].isActive = false
         this.state.dotsArray[2].isActive = true
-        this._slider.goToSlide(2)
        }
      }
       renderPagination = () => {
@@ -196,7 +199,7 @@ class Intro extends React.Component {
           </View> 
           <View style={{flex:1}} >
           <View style={styles.buttonCircle}>
-            {this.state.currentSlide <2 ?
+            {this.state.currentSlide < 2 ?
           <Icon style={{fontSize:20}}
          onPress={()=>this.handleNext()}
            name="arrowright"
@@ -229,8 +232,11 @@ class Intro extends React.Component {
             ]}>
             <View style={styles.introContainer}>
             <LinearGradient
-                    colors={['#a9a8ac', '#cdd4da']}
-                    style={styles.linearGradient}>
+                    colors={['#cdd4da', '#acadb2']}
+                    style={styles.linearGradient}
+                   
+                    
+                    >
             <Text style={styles.title}>{item.title}</Text>
                         <Text style={styles.text}>{item.text}</Text>
                         </LinearGradient>
@@ -265,11 +271,11 @@ class Intro extends React.Component {
             <ImageBackground source={require('../../assets/Intro/background.png')} style={styles.image}>
             <AppIntroSlider
               keyExtractor={this._keyExtractor}
-              renderDoneButton={this._renderDoneButton}
-              renderNextButton={this._renderNextButton}
+          //    renderDoneButton={this._renderDoneButton}
+           //   renderNextButton={this._renderNextButton}
               renderItem={this._renderItem}
               data={data}
-              onDone={this._onDone}
+            //  onDone={this._onDone}
               ref={(ref) => this._slider = ref}
               renderPagination={this.renderPagination}
               onSlideChange={(index) => { 
