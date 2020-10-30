@@ -9,9 +9,9 @@ state = {
 
 }
 componentDidMount(){
-    this.timeout = setTimeout(async () => {
-        this.props.navigation.navigate("Intro");
-    },1000);
+    // this.timeout = setTimeout(async () => {
+    //     this.props.navigation.navigate("Intro");
+    // },1000);
 }
 render() {
     return (
@@ -23,8 +23,8 @@ render() {
             alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            height:height(25),
-            width: width(80),
+            height:"25%",
+            width: "75%",
           }}
         />
         </View>
