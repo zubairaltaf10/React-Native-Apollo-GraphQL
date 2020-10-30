@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
-import CodeInput from 'react-native-confirmation-code-field';
+//import { CodeInput } from 'react-native-confirmation-code-field';
+import CodeInput from 'react-native-code-input';
+
 import styles from '../../Styles/verification.styles.js';
 import PrimaryButton from '../Button/PrimaryButton.js';
 import {Content} from 'native-base';
@@ -10,6 +12,30 @@ import Axios from 'axios';
 import API from '../../Constants/API.js';
 import AsyncStorage from '@react-native-community/async-storage';
 import {withAuth} from '../../store/hoc/withAuth.js';
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
+
+const mutation = gql`
+mutation verifyCode($email: String!, $code: String!){
+    verifyCode(input:{
+      verification_code: $code,
+      email: $email
+    }){
+      status
+    }
+  }
+`;
+
 class Verification extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +43,7 @@ class Verification extends React.Component {
     this.state = {
       userInput: '',
       resendTime: 0,
-      verificationCode: props.navigation.getParam('verificationCode'),
+      //verificationCode: props.navigation.getParam('verificationCode'),
     };
   }
 
@@ -26,22 +52,43 @@ class Verification extends React.Component {
   };
 
   verifyCode = () => {
-    if (Number(this.state.userInput) === this.state.verificationCode) {
-      const type = this.props.navigation.getParam('type');
+    
+      this.props.mutate({
+        variables: {
+          email: this.props.navigation.getParam('email'),
+          code: this.state.userInput,
+        },
+      })
+      .then((res) => {
+        const type = this.props.navigation.getParam('type');
+        console.log(type)
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
         });
       } else if (type === 'Signup') {
-        this.props.verifyEmail(this.props.auth.user.user_id, type);
+        this.props.navigation.navigate('Packages');
       } else if (type === 'UnverifiedLogin') {
-        this.props.verifyEmail(this.props.auth.user.user_id, type);
+        this.props.navigation.navigate('App');
       }
-    } else {
-      return Alert.alert('Oops!', 'Invalid code!', [{text: 'OK'}], {
-        cancelable: false,
+     else {
+          return Alert.alert('Oops!', 'Invalid code!', [{text: 'OK'}], {
+            cancelable: false,
+          });
+         }        
+      })
+      .catch((err) => {
+        if(err.graphQLErrors != null)
+        {
+          if(err.graphQLErrors.length > 0)
+          {
+            SNACKBAR.simple(err);
+          }
+        }
       });
-    }
+      
+      
+    
   };
 
   cellProps = ({/*index, isFocused,*/ hasValue}) => {
@@ -82,11 +129,37 @@ class Verification extends React.Component {
      
             <Content>
           <View style={styles.container}>
+          <Text style={styles.inputLabel}>Verify your email</Text>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputSubLabel}>
               Enter the verification code we just sent to your email.
               </Text>
+     
+         <CodeInput
+             
+              activeColor='rgba(49, 180, 4, 1)'
+              inactiveColor='rgba(9, 56, 149, 0.1)'
+              autoFocus={false}
+              codeLength="4"
+              inputPosition='center'
+              borderType="clear"
+              size={50}
+              onFulfill={this.onCodeInput}
+              containerStyle={{ marginTop: 30 }} 
+              codeInputStyle={{ borderWidth: 1.5 }}
+              containerProps={this.containerProps}
+              cellProps={this.cellProps}
+            />
+              {/* <CodeInput
+                blurOnSubmit={false}
+                variant="clear"
               
+                keyboardType="numeric"
+                cellProps={this.cellProps}
+                containerProps={this.containerProps}
+                onFulfill={this.onCodeInput}
+              /> */}
+           
               <TouchableOpacity
                 style={styles.resendBtn}
                 onPress={this.resendCode}
@@ -107,7 +180,7 @@ class Verification extends React.Component {
 
               <PrimaryButton
                 title="Verify"
-                loading={this.props.auth.loadingEmailVerify}
+              //  loading={this.props.auth.loadingEmailVerify}
                 marginTop={10}
                 onPress={this.verifyCode}
               />
@@ -118,4 +191,6 @@ class Verification extends React.Component {
     );
   }
 }
-export default withAuth(Verification);
+const VerificationTab = graphql(mutation)(Verification);
+export default withAuth(VerificationTab);
+

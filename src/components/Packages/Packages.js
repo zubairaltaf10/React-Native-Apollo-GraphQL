@@ -15,14 +15,27 @@ import PrimaryButton2 from '../Button/PrimaryButton2';
 import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
 import Icon from 'react-native-vector-icons/Entypo';
-
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 class Packages extends Component {
   constructor(props) {
     super(props);
   }
   render() {
-
+    const { subscriptions } = this.props.data;
+    console.log(subscriptions)
     return (
+     
       <View style={{ flex: 1 }}>
         <View style={{ flex: 0.2, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
@@ -82,18 +95,20 @@ class Packages extends Component {
               />
             }
           >
+           {subscriptions.map((subscription) => (
             <View style={styles.slide1}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  Unlimited{"\n"}ingredients</Text>
+              <Text style={styles.text}>  {subscription.ingredient_limit} ingredients</Text>
             </View>
-            <View style={styles.slide2}>
+           ))}
+            {/* <View style={styles.slide2}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
               <Text style={styles.text}>  Unlimited{"\n"}ingredients</Text>
             </View>
             <View style={styles.slide3}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
               <Text style={styles.text}>  Unlimited{"\n"}ingredients</Text>
-            </View>
+            </View> */}
           </Swiper>
         </View>
         <View style={{ flex: 0.2 }}>
@@ -117,21 +132,19 @@ class Packages extends Component {
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}
               horizontal={true}>
-              <View style={{ marginLeft: 10, height: height(17), width: width(55), borderRadius: 10, backgroundColor: '#fff', marginTop: 10 }}>
-                <Text style={styles.planstext}>Basic</Text>
-                <Text style={styles.plantext2}>No cost</Text>
-                <Text style={styles.plantext2}>Upgrade anytime</Text>
+               {subscriptions.map((subscription) => (
+                <TouchableOpacity onPress={this._onPressButton}>
+            <View style={{ marginLeft: 10}} >
+            <View  style={{ marginLeft: 1, height: height(16), width: width(45), borderRadius: 10, backgroundColor: '#fff', marginTop: 10 }}>
+                <Text style={styles.planstext}>{subscription.name}</Text>
+                <Text style={styles.plantext2}>{subscription.amount}</Text>
+                <Text style={styles.plantext2}>{subscription.description}</Text>
               </View>
-              <View style={{ marginLeft: 10, height: height(17), width: width(55), borderRadius: 10, backgroundColor: '#fff', marginTop: 10 }}>
-                <Text style={styles.planstext}>Standard</Text>
-                <Text style={styles.plantext2}>30 Days free trial</Text>
-                <Text style={styles.plantext2}>Cancel anytime</Text>
-              </View>
-              <View style={{ marginLeft: 10, marginRight: 10, height: height(17), width: width(55), borderRadius: 10, backgroundColor: '#fff', marginTop: 10 }}>
-                <Text style={styles.planstext}>Basic</Text>
-                <Text style={styles.plantext2}>No cost</Text>
-                <Text style={styles.plantext2}>Upgrade anytime</Text>
-              </View>
+            </View>
+            </TouchableOpacity>
+           ))}
+             
+              
             </ScrollView>
           </View>
           <Text style={styles.footertext}>Your plan will be automatically subscribed after {'\n'}trial period</Text>
@@ -150,7 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    margin: height(3.5),
+    margin: height(5.5),
     borderRadius: 5
   },
   slide2: {
@@ -211,4 +224,42 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   }
 })
-export default withAuth(Packages);
+
+const query = gql`
+
+  query{ subscriptions
+    {
+      id,
+      type,
+      person_limit,
+    ingredient_limit,
+    amount,
+    amount_per_year,
+    amount_per_month,
+    name,
+    trial_days,
+    description
+       
+    }
+  }
+`;
+const mutation = gql`
+mutation{
+  addUserSubscription(input:{
+    user_id: 1,
+    subscription_id: 1
+  }){
+    user{
+      name
+    }
+    subscription{
+    	type amount 
+    }
+  }
+}
+`;
+export default graphql(mutation)(
+  graphql(query)(Packages)
+);
+//  const PackagesTab = graphql(query)(Packages);
+//   export default withAuth(PackagesTab);

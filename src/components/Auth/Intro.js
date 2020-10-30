@@ -155,7 +155,7 @@ class Intro extends React.Component {
     
     _onDone = () => {
         console.log(this.state.currentSlide)
-      //  this.props.navigation.navigate("Login")
+       this.props.navigation.navigate("SignupOptions")
       }
      handleNext = () => {
        if (this.state.currentSlide == 0){       
