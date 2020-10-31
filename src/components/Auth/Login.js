@@ -44,6 +44,7 @@ class Login extends Component {
       email: '',
       resultRegister: '',
       resultLogin: '',
+      loading:false
     };
   }
 
@@ -62,42 +63,46 @@ class Login extends Component {
 
   onSubmit = () => {
     //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    this.props.navigation.navigate('Packages');
-    // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-    //   if (this.state.errors.length === 0) {
-    //     let email = this.state.formData.userNameOrEmail;
-    //     let password = this.state.formData.loginPassword; 
-    //     this.props.mutate({
-    //     variables: {
-    //       email: email,
-    //       password: password,
-    //     },
-    //   })
-    //   .then((res) => {
-    //    // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
-    //     console.log("userInfo ", JSON.stringify(res.data.login.user))
-    //     if(res.data.login.user.email_verified_at != null)
-    //     {
-    //       this.props.navigation.navigate('App');
-    //     }else
-    //     {
-    //       this.props.navigation.navigate('Verification', {
-    //         type: 'UnverifiedLogin',
-    //         email:res.data.login.user.email
-    //       });
-    //     }        
-    //   })
-    //   .catch((err) => {
-    //     if(err.graphQLErrors != null)
-    //     {
-    //       if(err.graphQLErrors.length > 0)
-    //       {
-    //         SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
-    //       }
-    //     }
-    //   });
-    //   }
-    // });
+   // this.props.navigation.navigate('Packages');
+    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+      if (this.state.errors.length === 0) {
+        this.setState({loading:true})
+        let email = this.state.formData.userNameOrEmail;
+        let password = this.state.formData.loginPassword; 
+        this.props.mutate({
+        variables: {
+          email: email,
+          password: password,
+        },
+      })
+      .then((res) => {
+       // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
+        console.log("userInfo ", JSON.stringify(res.data.login.user))
+        if(res.data.login.user.email_verified_at != null)
+        {
+          this.setState({loading:false})
+          this.props.navigation.navigate('App');
+        }else
+        {
+          this.setState({loading:false})
+          this.props.navigation.navigate('Verification', {
+            type: 'UnverifiedLogin',
+            email:res.data.login.user.email
+          });
+        }        
+      })
+      .catch((err) => {
+        if(err.graphQLErrors != null)
+        {
+          this.setState({loading:false})
+          if(err.graphQLErrors.length > 0)
+          {
+            SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
+          }
+        }
+      });
+      }
+    });
   };
   render() {
    
@@ -170,7 +175,7 @@ class Login extends Component {
               title="Login"
               onPress={this.onSubmit}
               marginTop={4.1}
-             // loading={this.props.auth.loadingLogin}
+              loading={this.state.loading}
             />
 
             <Text style={styles.alreadyAccountLabel}>
