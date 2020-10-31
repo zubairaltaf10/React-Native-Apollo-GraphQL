@@ -57,6 +57,7 @@ class SignupOptions extends Component {
       LoginManager.setLoginBehavior(behavior);
       LoginManager.logInWithPermissions(["public_profile", "email"]).then(
         result => {
+          console.log(result)
           if (result.isCancelled) {
             console.log("Login cancelled");
           } else {

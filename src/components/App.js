@@ -7,8 +7,6 @@ const STATUSBAR_HEIGHT = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
 export default class MainApp extends Component {
  
   render() {
-    
-
     return (
         
           <Routes/>

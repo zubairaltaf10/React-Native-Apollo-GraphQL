@@ -17,7 +17,12 @@ const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
 })
-
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 class App extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', BackButtonHandler);

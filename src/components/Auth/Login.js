@@ -203,7 +203,10 @@ mutation login($email: String!, $password: String!){
     user{
       name,
       email,
-      email_verified_at
+      email_verified_at,
+      subscription{
+        name
+      }
     }
   }
 }
