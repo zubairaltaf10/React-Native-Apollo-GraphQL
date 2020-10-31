@@ -5,7 +5,7 @@ import {FONTFAMILY} from '../Theme/Fonts';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+   // backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -15,11 +15,9 @@ export default StyleSheet.create({
     paddingBottom: 20,
   },
   inputLabel: {
-    paddingTop: 100,
-    paddingBottom: 10,
-    color: '#fff',
-    fontSize: 25,
-    fontWeight: '700',
+    paddingBottom: 80,
+    
+    fontSize: 18,
     textAlign: 'center',
   },
   inputSubLabel: {
@@ -29,6 +27,7 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     fontFamily: FONTFAMILY.medium,
   },
+  
   inputWrapStyle: {
     height: 50,
     marginTop: 60,

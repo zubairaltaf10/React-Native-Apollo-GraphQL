@@ -23,8 +23,8 @@ render() {
             alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            height:height(25),
-            width: width(80),
+            height:"25%",
+            width: "75%",
           }}
         />
         </View>

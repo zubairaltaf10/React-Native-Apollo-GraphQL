@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {Content, Form, Item, Input, Spinner, Button} from 'native-base';
+import {Content, Form, Item, Input, Icon, Spinner, Button} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/auth.styles';
@@ -47,16 +47,7 @@ class Login extends Component {
     };
   }
 
-  componentDidMount() {
-    GoogleSignin.configure({
-      //  scopes: ["profile", "email"],
-      androidClientId:
-        "310912297952-pfosgk7mrc4d2fj57rll2tr1m5kqhogb.apps.googleusercontent.com",
-      offlineAccess: false,
-      forceCodeForRefreshToken: true,
-    });
-  }
-
+  
   onTextInput = (key, val) => {
     this.setState({formData: {...this.state.formData, [key]: val}});
     this.setState({key : val}) 
@@ -70,42 +61,43 @@ class Login extends Component {
   };
 
   onSubmit = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-    
-      if (this.state.errors.length === 0) {
-        let email = this.state.formData.userNameOrEmail;
-        let password = this.state.formData.loginPassword; 
-        this.props.mutate({
-        variables: {
-          email: email,
-          password: password,
-        },
-      })
-      .then((res) => {
-       // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
-        console.log("userInfo ", JSON.stringify(res.data.login.user))
-        // if(res.data.login.user.email_verified_at != null)
-        // {
-        //   this.props.navigation.navigate('App');
-        // }else
-        // {
-          NavigationService.navigate('Verification', {
-            type: 'UnverifiedLogin',
-          });
-        //}        
-      })
-      .catch((err) => {
-        if(err.graphQLErrors != null)
-        {
-          if(err.graphQLErrors.length > 0)
-          {
-            SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
-          }
-        }
-      });
-      }
-    });
+    //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.props.navigation.navigate('Packages');
+    // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+    //   if (this.state.errors.length === 0) {
+    //     let email = this.state.formData.userNameOrEmail;
+    //     let password = this.state.formData.loginPassword; 
+    //     this.props.mutate({
+    //     variables: {
+    //       email: email,
+    //       password: password,
+    //     },
+    //   })
+    //   .then((res) => {
+    //    // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
+    //     console.log("userInfo ", JSON.stringify(res.data.login.user))
+    //     if(res.data.login.user.email_verified_at != null)
+    //     {
+    //       this.props.navigation.navigate('App');
+    //     }else
+    //     {
+    //       this.props.navigation.navigate('Verification', {
+    //         type: 'UnverifiedLogin',
+    //         email:res.data.login.user.email
+    //       });
+    //     }        
+    //   })
+    //   .catch((err) => {
+    //     if(err.graphQLErrors != null)
+    //     {
+    //       if(err.graphQLErrors.length > 0)
+    //       {
+    //         SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
+    //       }
+    //     }
+    //   });
+    //   }
+    // });
   };
   render() {
    
@@ -173,42 +165,7 @@ class Login extends Component {
               onPress={() => this.props.navigation.navigate('Forgot')}>
               <Text style={styles.forgotTxt}>Forgot Password?</Text>
             </TouchableOpacity>
-            <View style={{flexDirection:'row', flex: 0,justifyContent: "space-evenly"}}>
-                <View>
-                  <Button
-                    style={styles.fbbtn}
-                    onPress={() => this.handleFacebookLogin()}>
-                    <Icon
-                      name="facebook"
-                      type="AntDesign"
-                      style={styles.google}
-                    />
-                  </Button>
-                  {/* <LoginButton
-                    onLoginFinished={(error, result) => {
-                      if (error) {
-                        console.log("login has error: " + result.error);
-                      } else if (result.isCancelled) {
-                        console.log("login is cancelled.");
-                      } else {
-                        AccessToken.getCurrentAccessToken().then(data => {
-                          console.log(data.accessToken.toString());
-                        });
-                      }
-                    }}
-                    onLogoutFinished={() => console.log("logout.")}
-                  /> */}
-                </View>
-                <View>
-                  <Button
-                    style={
-                      styles.socialMediaButton
-                    }
-                    onPress={this._signIn}>
-                    <Icon name="google" type="AntDesign" style={styles.google} />
-                  </Button>
-                </View>
-              </View>
+           
             <PrimaryButton
               title="Login"
               onPress={this.onSubmit}
@@ -240,7 +197,8 @@ mutation login($email: String!, $password: String!){
     access_token,
     user{
       name,
-      email
+      email,
+      email_verified_at
     }
   }
 }

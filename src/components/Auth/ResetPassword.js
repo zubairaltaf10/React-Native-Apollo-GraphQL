@@ -4,9 +4,6 @@ import {Text, Alert, Image, TouchableOpacity} from 'react-native';
 import styles from '../../Styles/auth.styles';
 import PrimaryButton from '../Button/PrimaryButton.js';
 import {Content, Input, Form, Icon, View} from 'native-base';
-// import WideBanner from '../../Components/Ads/WideBanner.js';
-// import TopHeader from '../../Components/TopHeader/index.js';
-// import Header from '../../Components/Header/index.js';
 import {ApplicationStyles} from '../../Theme/index.js';
 import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
@@ -15,6 +12,18 @@ import API from '../../Constants/API';
 import COLORS from '../../Theme/Colors';
 import authStyles from '../../Styles/auth.styles';
 import {withAuth} from '../../store/hoc/withAuth';
+import { NETWORK_INTERFACE } from '../../config';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, Mutation } from 'react-apollo'
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import SNACKBAR from '../../Helpers/SNACKBAR';
+const client = new ApolloClient({
+  link: new HttpLink({ uri: NETWORK_INTERFACE }),
+  cache: new InMemoryCache()
+})
 class ResetPassword extends React.Component {
   constructor(props) {
     super(props);
@@ -31,14 +40,25 @@ class ResetPassword extends React.Component {
   }
 
   onSubmit = async () => {
+   
+
     await this.setState(
       {errors: GetSignupErrors(this.state.formData)},
       async () => {
         if (this.state.errors.length === 0) {
-          const email = this.props.navigation.getParam('email');
-          const newPassword = this.state.formData.password;
-          await this.props.updatePassword({email, newPassword});
-          this.props.navigation.navigate('Login');
+          this.props.mutate({
+            variables: {
+              email:this.props.navigation.getParam('email'),
+              password: this.state.formData.password
+            }
+          })
+          .then((res) => {
+            this.props.navigation.navigate('Login');
+          })
+          .catch((err) => {
+           // SNACKBAR.simple(err.graphQLErrors);
+            console.log(JSON.stringify(err));
+          });
         }
       },
     );
@@ -142,4 +162,18 @@ class ResetPassword extends React.Component {
     );
   }
 }
-export default withAuth(ResetPassword);
+
+const mutation = gql`
+mutation updateForgottenPassword($email: String!, $password: String!){
+  updateForgottenPassword(input: {
+    email: $email
+  }){
+    status,
+    message
+  }
+}
+`;
+
+const ResetPasswordTab = graphql(mutation)(ResetPassword);
+export default withAuth(ResetPasswordTab);
+

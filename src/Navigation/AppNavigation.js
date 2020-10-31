@@ -90,7 +90,7 @@ const AuthStack = createStackNavigator(
   },
   {
     transitionConfig: () => fromRight(500),
-    initialRouteName: 'Verification',
+    initialRouteName: 'Login',
     headerLayoutPreset: 'center',
     navigationOptions: {
       headerStyle: styles.header,

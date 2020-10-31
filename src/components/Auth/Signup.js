@@ -88,12 +88,14 @@ class Signup extends Component {
         },
       })
       .then((res) => {
-        console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
-        NavigationService.navigate('Verification');
+        //console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
+        this.props.navigation.navigate('Verification', {
+          type: 'Signup',
+          email:email});
        
       })
       .catch((err) => {
-       // SNACKBAR.simple(err.graphQLErrors);
+        SNACKBAR.simple(err);
         console.log(JSON.stringify(err));
       });
       }
@@ -102,6 +104,7 @@ class Signup extends Component {
   render() {
     
     return (
+      <ApolloProvider>
         <Content>
         <View style={{flex: 3, alignItems: 'center', marginTop:'10%'}}>
      <Image 
@@ -213,6 +216,7 @@ class Signup extends Component {
             {/* <WideBanner /> */}
           </Form>
         </Content>
+        </ApolloProvider>
     );
   }
 }
