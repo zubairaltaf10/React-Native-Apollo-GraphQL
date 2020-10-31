@@ -50,9 +50,9 @@ class Verification extends React.Component {
   onCodeInput = code => {
     this.setState({userInput: code});
   };
-
+   
   verifyCode = () => {
-    
+     console.log(this.state.userInput) 
       this.props.mutate({
         variables: {
           email: this.props.navigation.getParam('email'),
@@ -78,13 +78,14 @@ class Verification extends React.Component {
          }        
       })
       .catch((err) => {
-        if(err.graphQLErrors != null)
-        {
-          if(err.graphQLErrors.length > 0)
-          {
-            SNACKBAR.simple(err);
-          }
-        }
+        console.log(err)
+        // if(err.graphQLErrors != null)
+        // {
+        //   if(err.graphQLErrors.length > 0)
+        //   {
+        //     SNACKBAR.simple(err);
+        //   }
+        // }
       });
       
       
@@ -103,20 +104,18 @@ class Verification extends React.Component {
   };
 
   resendCode = () => {
-    Axios.post(API.sendVerificationCode, {
-      email:
-        this.props.navigation.getParam('email') || this.props.auth.user.email,
+    const email = this.props.navigation.getParam('email');
+    this.props.mutate({
+      variables: {
+        email:email,
+      },
     })
-      .then(res => {
-        this.setState({verificationCode: res.data.data.code});
-        Alert.alert('Success', res.data.message);
-      })
-      .catch(e =>
-        Alert.alert(
-          'Error',
-          'Unable to send verification email, Please retry later.',
-        ),
-      );
+    .then((res) => {
+      SNACKBAR.simple("Verification code sent to your email");
+    })
+    .catch((err) => {
+      console.log(JSON.stringify(err));
+    });
     this.setState({resendTime: 60});
   };
   containerProps = {style: styles.inputWrapStyle};
@@ -134,7 +133,7 @@ class Verification extends React.Component {
               <Text style={styles.inputSubLabel}>
               Enter the verification code we just sent to your email.
               </Text>
-     
+{/*      
          <CodeInput
              
               activeColor='rgba(49, 180, 4, 1)'
@@ -149,16 +148,20 @@ class Verification extends React.Component {
               codeInputStyle={{ borderWidth: 1.5 }}
               containerProps={this.containerProps}
               cellProps={this.cellProps}
-            />
-              {/* <CodeInput
+            /> */}
+               <CodeInput
+               activeColor='rgba(49, 180, 4, 1)'
+              inactiveColor='rgba(9, 56, 149, 0.1)'
+              containerStyle={{ marginTop: 30 }} 
+              codeInputStyle={{ borderWidth: 1.5 }}
                 blurOnSubmit={false}
                 variant="clear"
-              
+                codeLength={4}
                 keyboardType="numeric"
                 cellProps={this.cellProps}
                 containerProps={this.containerProps}
                 onFulfill={this.onCodeInput}
-              /> */}
+              />
            
               <TouchableOpacity
                 style={styles.resendBtn}

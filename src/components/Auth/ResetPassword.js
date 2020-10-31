@@ -7,8 +7,6 @@ import {Content, Input, Form, Icon, View} from 'native-base';
 import {ApplicationStyles} from '../../Theme/index.js';
 import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
-import Axios from 'axios';
-import API from '../../Constants/API';
 import COLORS from '../../Theme/Colors';
 import authStyles from '../../Styles/auth.styles';
 import {withAuth} from '../../store/hoc/withAuth';
@@ -56,7 +54,7 @@ class ResetPassword extends React.Component {
             this.props.navigation.navigate('Login');
           })
           .catch((err) => {
-           // SNACKBAR.simple(err.graphQLErrors);
+            SNACKBAR.simple(err.graphQLErrors);
             console.log(JSON.stringify(err));
           });
         }
@@ -80,9 +78,9 @@ class ResetPassword extends React.Component {
      
         <Content>
           <Form style={styles.form}>
+          <Text style={styles.inputLabel}>Reset password</Text>
             <Text style={styles.topLabel}>
-              Choose a strong new password. Make sure it includes a number and a
-              capital letter
+            Choose a strong new password. Make sure it's unique!
             </Text>
 
             <View style={authStyles.passwordFieldContainer}>

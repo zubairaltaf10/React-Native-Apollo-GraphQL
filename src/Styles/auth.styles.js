@@ -35,12 +35,19 @@ export default StyleSheet.create({
     color: COLORS.blackText,
     fontFamily: FONTFAMILY.bold,
   },
+  inputLabel: {
+    paddingBottom: 80,
+    paddingTop:10,
+    fontSize: 18,
+    textAlign: 'center',
+  },
   topLabel: {
     color: COLORS.blackText,
     textAlign: 'center',
     fontSize: 16,
-    paddingHorizontal: '5%',
+    paddingHorizontal: '17%',
     fontFamily: FONTFAMILY.medium,
+    paddingBottom:30
   },
   topheadingLabel: {
     color: COLORS.blackText,

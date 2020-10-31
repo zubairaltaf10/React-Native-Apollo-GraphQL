@@ -62,42 +62,49 @@ class Login extends Component {
 
   onSubmit = () => {
     //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    this.props.navigation.navigate('Packages');
-    // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-    //   if (this.state.errors.length === 0) {
-    //     let email = this.state.formData.userNameOrEmail;
-    //     let password = this.state.formData.loginPassword; 
-    //     this.props.mutate({
-    //     variables: {
-    //       email: email,
-    //       password: password,
-    //     },
-    //   })
-    //   .then((res) => {
-    //    // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
-    //     console.log("userInfo ", JSON.stringify(res.data.login.user))
-    //     if(res.data.login.user.email_verified_at != null)
-    //     {
-    //       this.props.navigation.navigate('App');
-    //     }else
-    //     {
-    //       this.props.navigation.navigate('Verification', {
-    //         type: 'UnverifiedLogin',
-    //         email:res.data.login.user.email
-    //       });
-    //     }        
-    //   })
-    //   .catch((err) => {
-    //     if(err.graphQLErrors != null)
-    //     {
-    //       if(err.graphQLErrors.length > 0)
-    //       {
-    //         SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
-    //       }
-    //     }
-    //   });
-    //   }
-    // });
+    //this.props.navigation.navigate('Packages');
+    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+      if (this.state.errors.length === 0) {
+        let email = this.state.formData.userNameOrEmail;
+        let password = this.state.formData.loginPassword; 
+        this.props.mutate({
+        variables: {
+          email: email,
+          password: password,
+        },
+      })
+      .then((res) => {
+       // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
+        console.log("userInfo ", JSON.stringify(res.data.login.user))
+        if(res.data.login.user.email_verified_at != null)
+        {
+          if(res.data.login.user.subscription.name == null)
+            {
+              this.props.navigation.navigate('Packages');
+            }else
+            {
+              this.props.navigation.navigate('App');
+            }
+        }else
+        {
+          this.props.navigation.navigate('Verification', {
+            type: 'UnverifiedLogin',
+            email:res.data.login.user.email
+          });
+        }        
+      })
+      .catch((err) => {
+        console.log(err)
+        if(err.graphQLErrors != null)
+        {
+          if(err.graphQLErrors.length > 0)
+          {
+            SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
+          }
+        }
+      });
+      }
+    });
   };
   render() {
    
@@ -198,7 +205,10 @@ mutation login($email: String!, $password: String!){
     user{
       name,
       email,
-      email_verified_at
+      email_verified_at,
+      subscription{
+        name
+      }
     }
   }
 }
