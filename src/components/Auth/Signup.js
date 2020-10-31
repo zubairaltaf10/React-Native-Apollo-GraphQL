@@ -64,7 +64,7 @@ class Signup extends Component {
   };
   
   onSubmit = () => {
-    this.props.navigation.navigate('ResetPassword');
+    //this.props.navigation.navigate('ResetPassword');
    
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetSignupErrors(this.state.formData)}, () => {

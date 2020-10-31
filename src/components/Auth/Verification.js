@@ -39,7 +39,6 @@ mutation verifyCode($email: String!, $code: String!){
 class Verification extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       userInput: '',
       resendTime: 0,
