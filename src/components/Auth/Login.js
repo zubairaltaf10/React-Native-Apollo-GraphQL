@@ -14,7 +14,7 @@ import styles from '../../Styles/auth.styles';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import {GetSignupErrors} from '../../Helpers/GetErrors';
 import COLORS from '../../Theme/Colors';
-//import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage';
 import {withAuth} from '../../store/hoc/withAuth';
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import { NETWORK_INTERFACE } from '../../config';
@@ -71,8 +71,8 @@ class Login extends Component {
         let password = this.state.formData.loginPassword; 
         this.props.mutate({
         variables: {
-          email: email,
-          password: password,
+          email: "testuser1@mailinator.com",
+          password: "P@ssw0rd",
         },
       })
       .then((res) => {
@@ -81,7 +81,19 @@ class Login extends Component {
         if(res.data.login.user.email_verified_at != null)
         {
           this.setState({loading:false})
+         // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
+             AsyncStorage.setItem('user', JSON.stringify(res.data.login.user)).then(
+        () => {
+          if(res.data.login.user.subscription.name == null)
+          {
+            this.props.navigation.navigate('Packages');
+          }else
+          {
           this.props.navigation.navigate('App');
+          }
+        },
+      );
+          
         }else
         {
           this.setState({loading:false})
@@ -201,6 +213,7 @@ mutation login($email: String!, $password: String!){
   }){
     access_token,
     user{
+      id,
       name,
       email,
       email_verified_at,

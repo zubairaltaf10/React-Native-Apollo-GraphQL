@@ -78,7 +78,7 @@ class ResetPassword extends React.Component {
      
         <Content>
           <Form style={styles.form}>
-          <Text style={styles.inputLabel}>Reset password</Text>
+          <Text style={styles.inputLabel}>Reset passwordm,l</Text>
             <Text style={styles.topLabel}>
             Choose a strong new password. Make sure it's unique!
             </Text>
@@ -164,7 +164,10 @@ class ResetPassword extends React.Component {
 const mutation = gql`
 mutation updateForgottenPassword($email: String!, $password: String!){
   updateForgottenPassword(input: {
-    email: $email
+    email: $email,
+    token:"",
+    password:$password,
+    password_confirmation:$password
   }){
     status,
     message

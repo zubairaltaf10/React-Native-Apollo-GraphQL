@@ -23,6 +23,9 @@ import { ApolloProvider, Mutation } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
+import AsyncStorage from '@react-native-community/async-storage';
+import Snackbar from "react-native-snackbar";
+import { parse } from "graphql";
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -33,18 +36,44 @@ class Packages extends Component {
     this.state = {
       cardClicked: "",
       cardName:'Basic',
-      default:'Basic'
+      default:'Basic',
+      subscription_id :1
     }
   }
 
-  _onPressButton = async (name) => {
+  _onPressButton = async (model) => {
+    console.log(model)
     this.setState({default:''})
-    this.setState({cardClicked:name})
-    this.setState({cardName:name})
+    this.setState({cardClicked:model.name})
+    this.setState({cardName:model.name})
+    this.setState({subscription_id:model.id})
 
     console.log(this.state.cardClicked)
   }
-
+  _onSaveUserSubscription = async (name) => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+    console.log(user.id)
+    console.log(this.state.subscription_id)
+    this.props
+    .mutate({
+      variables: {
+        user_id: user.id,
+        subscription_id:this.state.subscription_id
+      },
+    })
+    .then((res) => {
+      //Snackbar.simple("Package subscribed successfully. ")
+      this.props.navigation.navigate('App');
+     
+    })
+    .catch((err) => {
+      console.log(JSON.stringify(err));
+    });
+  }
+  onBasicSubmit = () => {
+    this._onSaveUserSubscription();
+  };
 
   render() {
     const { subscriptions } = this.props.data ? this.props.data : null;
@@ -113,27 +142,20 @@ class Packages extends Component {
               />
             }
           >
-           {subscriptions?.map((subscription) => (
+           {subscriptions.map((subscription) => (
             <View style={styles.slide1}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
               <Text style={styles.text}>  {subscription.ingredient_limit} ingredients</Text>
             </View>
            ))}
-            {/* <View style={styles.slide2}>
-              <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  Unlimited{"\n"}ingredients</Text>
-            </View>
-            <View style={styles.slide3}>
-              <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  Unlimited{"\n"}ingredients</Text>
-            </View> */}
+            
           </Swiper>
         </View>
         {this.state.cardName == 'Basic' ?
           <View style={{ flex: 0.12,marginTop:height(5) }}>
           <PrimaryButton
             title="Continue"
-            // onPress={this.onSubmit}
+             onPress={this.onBasicSubmit}
             marginTop={height(40)}
           // loading={this.props.auth.loadingLogin}
           />
@@ -163,7 +185,7 @@ class Packages extends Component {
               showsHorizontalScrollIndicator={false}
               horizontal={true}>
                {subscriptions.map((subscription) => (
-                <TouchableOpacity onPress={() => this._onPressButton(subscription.name)}>
+                <TouchableOpacity onPress={() => this._onPressButton(subscription)}>
             <View style={{ marginLeft: 10}} >
             <View style={this.state.cardClicked == subscription.name || this.state.default == subscription.name ? styles.cardStyleClicked : styles.cardStyleSimple}>
                 <Text style={styles.planstext}>{subscription.name}</Text>
@@ -293,16 +315,16 @@ const query = gql`
   }
 `;
 const mutation = gql`
-mutation{
+mutation addUserSubscription($userid: int!, $subid: int!){
   addUserSubscription(input:{
-    user_id: 1,
-    subscription_id: 1
+    user_id: $userid,
+    subscription_id: $subid
   }){
     user{
       name
-    }
+    },
     subscription{
-    	type amount 
+      name
     }
   }
 }
