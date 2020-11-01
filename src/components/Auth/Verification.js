@@ -7,7 +7,7 @@ import styles from '../../Styles/verification.styles.js';
 import PrimaryButton from '../Button/PrimaryButton.js';
 import {Content} from 'native-base';
 //import WideBanner from '../../Components/Ads/WideBanner.js';
-
+import CountdownCircle from 'react-native-countdown-circle';
 import Axios from 'axios';
 import API from '../../Constants/API.js';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -36,12 +36,24 @@ mutation verifyCode($email: String!, $code: String!){
   }
 `;
 
+const mutations = gql`
+mutation forgotPassword($email: String!){
+  forgotPassword(input: {
+    email: $email,
+  }){
+    status,
+    message
+  }
+}
+`;
+
 class Verification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       userInput: '',
       resendTime: 0,
+      loading:false
       //verificationCode: props.navigation.getParam('verificationCode'),
     };
   }
@@ -52,6 +64,7 @@ class Verification extends React.Component {
    
   verifyCode = () => {
      console.log(this.state.userInput) 
+     this.setState({loading:true})
       this.props.mutate({
         variables: {
           email: this.props.navigation.getParam('email'),
@@ -59,16 +72,18 @@ class Verification extends React.Component {
         },
       })
       .then((res) => {
+        this.setState({loading:false})
         const type = this.props.navigation.getParam('type');
         console.log(type)
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
+          code: this.state.userInput
         });
       } else if (type === 'Signup') {
         this.props.navigation.navigate('Packages');
       } else if (type === 'UnverifiedLogin') {
-        this.props.navigation.navigate('App');
+        this.props.navigation.navigate('Packages');
       }
      else {
           return Alert.alert('Oops!', 'Invalid code!', [{text: 'OK'}], {
@@ -77,6 +92,8 @@ class Verification extends React.Component {
          }        
       })
       .catch((err) => {
+        this.setState({loading:false})
+        SNACKBAR.simple(JSON.stringify(err));
         console.log(err)
         // if(err.graphQLErrors != null)
         // {
@@ -104,7 +121,7 @@ class Verification extends React.Component {
 
   resendCode = () => {
     const email = this.props.navigation.getParam('email');
-    this.props.mutate({
+    this.props.mutations({
       variables: {
         email:email,
       },
@@ -132,22 +149,7 @@ class Verification extends React.Component {
               <Text style={styles.inputSubLabel}>
               Enter the verification code we just sent to your email.
               </Text>
-{/*      
-         <CodeInput
-             
-              activeColor='rgba(49, 180, 4, 1)'
-              inactiveColor='rgba(9, 56, 149, 0.1)'
-              autoFocus={false}
-              codeLength="4"
-              inputPosition='center'
-              borderType="clear"
-              size={50}
-              onFulfill={this.onCodeInput}
-              containerStyle={{ marginTop: 30 }} 
-              codeInputStyle={{ borderWidth: 1.5 }}
-              containerProps={this.containerProps}
-              cellProps={this.cellProps}
-            /> */}
+
                <CodeInput
                activeColor='rgba(49, 180, 4, 1)'
               inactiveColor='rgba(9, 56, 149, 0.1)'
@@ -182,7 +184,7 @@ class Verification extends React.Component {
 
               <PrimaryButton
                 title="Verify"
-              //  loading={this.props.auth.loadingEmailVerify}
+               loading={this.state.loading}
                 marginTop={10}
                 onPress={this.verifyCode}
               />
@@ -193,6 +195,6 @@ class Verification extends React.Component {
     );
   }
 }
-const VerificationTab = graphql(mutation)(Verification);
+const VerificationTab = graphql(mutation, mutations)(Verification);
 export default withAuth(VerificationTab);
 

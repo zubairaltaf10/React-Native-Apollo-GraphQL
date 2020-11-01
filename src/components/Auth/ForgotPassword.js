@@ -29,10 +29,12 @@ class ForgotPassword extends React.Component {
 
     this.state = {
       formData: {email: ''},
+      loading:false
     };
   }
 
   handleContinueBtn = async () => {
+    this.setState({loading:true})
     const email = this.state.formData.email;
     this.props
     .mutate({
@@ -41,14 +43,15 @@ class ForgotPassword extends React.Component {
       },
     })
     .then((res) => {
-      //console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
+      this.setState({loading:false})
       this.props.navigation.navigate('Verification', {
         type: 'ResetPassword',
         email: email,
       });
     })
     .catch((err) => {
-     // SNACKBAR.simple(err.graphQLErrors);
+      SNACKBAR.simple(JSON.stringify(err));
+      this.setState({loading:false})
       console.log(JSON.stringify(err));
     });
   };
@@ -76,7 +79,7 @@ class ForgotPassword extends React.Component {
               title="Continue"
               marginTop={6}
               disabled={isBtnDisabled}
-              loading={this.props.auth.loadingSendVerifCode}
+              loading={this.state.loading}
               onPress={this.handleContinueBtn}
             />
           </Form>

@@ -44,6 +44,7 @@ class Signup extends Component {
         password: '',
         confirmPassword: '',
         roleId: 1,
+        loading:false
       },
       isPasswordFieldSecure: true,
       isConfirmPasswordFieldSecure: true,
@@ -76,6 +77,7 @@ class Signup extends Component {
       }
       
       if (this.state.errors.length === 0) {
+        this.setState({loading:true})
         let firstName = this.state.formData.firstName;
         let lastName = this.state.formData.lastName; 
         let email = this.state.formData.email;
@@ -90,13 +92,13 @@ class Signup extends Component {
         },
       })
       .then((res) => {
-        //console.log("userInfo ", JSON.stringify(res.data.register.tokens.user))
+        this.setState({loading:false})
         this.props.navigation.navigate('Verification', {
           type: 'Signup',
           email:email});
-       
       })
       .catch((err) => {
+        this.setState({loading:false})
         SNACKBAR.simple(err);
         console.log(JSON.stringify(err));
       });
@@ -201,7 +203,7 @@ class Signup extends Component {
 />
         </View>
             <PrimaryButton
-              loading={this.props.auth.loadingSignup}
+              loading={this.state.loading}
               title="Sign up"
               onPress={this.onSubmit}
               marginTop={8}

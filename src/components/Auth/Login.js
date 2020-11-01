@@ -71,8 +71,8 @@ class Login extends Component {
         let password = this.state.formData.loginPassword; 
         this.props.mutate({
         variables: {
-          email: "testuser1@mailinator.com",
-          password: "P@ssw0rd",
+          email: email,
+          password: password,
         },
       })
       .then((res) => {

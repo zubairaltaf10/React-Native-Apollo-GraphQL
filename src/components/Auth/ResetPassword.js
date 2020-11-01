@@ -30,6 +30,7 @@ class ResetPassword extends React.Component {
       formData: {
         password: '',
         confirmPassword: '',
+        loading:false
       },
       errors: ['email'],
       isPasswordFieldSecure: true,
@@ -44,17 +45,21 @@ class ResetPassword extends React.Component {
       {errors: GetSignupErrors(this.state.formData)},
       async () => {
         if (this.state.errors.length === 0) {
+          this.setState({loading:true})
           this.props.mutate({
             variables: {
               email:this.props.navigation.getParam('email'),
-              password: this.state.formData.password
+              password: this.state.formData.password,
+              token:this.props.navigation.getParam('code')
             }
           })
           .then((res) => {
+            this.setState({loading:false})
             this.props.navigation.navigate('Login');
           })
-          .catch((err) => {
-            SNACKBAR.simple(err.graphQLErrors);
+          .catch((err) => {            
+            this.setState({loading:false})
+            SNACKBAR.simple(JSON.stringify(err));
             console.log(JSON.stringify(err));
           });
         }
@@ -75,7 +80,6 @@ class ResetPassword extends React.Component {
 
   render() {
     return (
-     
         <Content>
           <Form style={styles.form}>
           <Text style={styles.inputLabel}>Reset passwordm,l</Text>
@@ -153,7 +157,7 @@ class ResetPassword extends React.Component {
               title="Continue"
               marginTop={5}
               onPress={this.onSubmit}
-              loading={this.props.auth.loadingUpdatePassword}
+              loading={this.state.loading}
             />
           </Form>
         </Content>
@@ -162,10 +166,10 @@ class ResetPassword extends React.Component {
 }
 
 const mutation = gql`
-mutation updateForgottenPassword($email: String!, $password: String!){
+mutation updateForgottenPassword($email: String!, $password: String! , $token: String!){
   updateForgottenPassword(input: {
     email: $email,
-    token:"",
+    token:$token,
     password:$password,
     password_confirmation:$password
   }){

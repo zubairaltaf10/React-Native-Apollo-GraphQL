@@ -1,17 +1,42 @@
 import React from "react";
-import { View, Text, Image, AsyncStorage } from "react-native";
+import { View, Text, Image } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Toast } from "native-base";
-
+import AsyncStorage from '@react-native-community/async-storage';
+// const logout =  async ()  => {
+//   await AsyncStorage.clear();
+// };
 class Splash extends React.Component {
 
 state = {
 
 }
+
 componentDidMount(){
-    this.timeout = setTimeout(async () => {
-        this.props.navigation.navigate("Intro");
-    },1000);
+  
+// AsyncStorage.getItem('user').then((user) => {
+//     user = JSON.parse(user) ;
+//     if(user)
+//     {
+//       this.timeout = setTimeout(async () => {
+//         this.props.navigation.navigate("App");
+//         },1000);
+//        this.logout;
+//     }else
+//     {
+//       this.timeout = setTimeout(async () => {
+//         this.props.navigation.navigate("Intro");
+//       },1000);
+//     }
+// }).catch((err) => {
+//   this.timeout = setTimeout(async () => {
+//   this.props.navigation.navigate("Intro");
+// },1000);
+// });
+
+this.timeout = setTimeout(async () => {
+  this.props.navigation.navigate("Intro");
+},1000);
 }
 render() {
     return (
