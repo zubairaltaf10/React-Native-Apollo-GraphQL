@@ -32,4 +32,5 @@ render() {
     );
   }
 }
+
 export default Splash;

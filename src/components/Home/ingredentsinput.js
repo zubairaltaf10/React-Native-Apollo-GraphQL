@@ -11,8 +11,9 @@ class InGredentsInput extends React.Component {
 
 render() {
     return (
-      <View style={{ flex: 1 }}>
-       <Text>Home </Text>
+      <View style={{ flex: 1, paddingTop:"50%"  }}>
+        
+       <Text style={{ textAlign: "center" , textAlignVertical: "center" }}>App Home, TBC </Text>
       </View>
     );
   }
