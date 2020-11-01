@@ -37,9 +37,18 @@ class Packages extends Component {
       cardClicked: "",
       cardName:'Basic',
       default:'Basic',
-      subscription_id :1
+      subscription_id :1,
+      loading:false,
+     // subscriptions :[]
     }
   }
+  // componentDidUpdate = async () => {
+  //   console.log(this.props.data);
+  // }
+  //  componentDidMount = async () =>{
+  //    console.log(this.props.data)
+  //   await this.setState({subscriptions:this.props.data ? this.props.data : null})
+  // } 
 
   _onPressButton = async (model) => {
     console.log(model)
@@ -50,35 +59,36 @@ class Packages extends Component {
 
     console.log(this.state.cardClicked)
   }
-  _onSaveUserSubscription = async (name) => {
+  _onSaveUserSubscription = async () => {
+    this.setState({loading:true})
     let user = await AsyncStorage.getItem('user');
     user = JSON.parse(user);
-    console.log(user.id)
-    console.log(this.state.subscription_id)
+    console.log((Number)(user.id))
+    console.log((Number)(this.state.subscription_id))
     this.props
     .mutate({
       variables: {
-        user_id: user.id,
-        subscription_id:this.state.subscription_id
+        user_id: (Number)(user.id),
+        subscription_id:(Number)(this.state.subscription_id)
       },
     })
     .then((res) => {
-      //Snackbar.simple("Package subscribed successfully. ")
+      this.setState({loading:false})
       this.props.navigation.navigate('App');
-     
     })
     .catch((err) => {
+      this.setState({loading:false})
       console.log(JSON.stringify(err));
     });
   }
   onBasicSubmit = () => {
-    this._onSaveUserSubscription();
+     // var res = this._onSaveUserSubscription();
   };
 
   render() {
     const { subscriptions } = this.props.data ? this.props.data : null;
   //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
-  //  console.log(subscriptions)
+    console.log(subscriptions)
     return (
      
       <View style={{ flex: 1 }}>
@@ -142,7 +152,7 @@ class Packages extends Component {
               />
             }
           >
-           {subscriptions.map((subscription) => (
+           {subscriptions?.map((subscription) => (
             <View style={styles.slide1}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
               <Text style={styles.text}>  {subscription.ingredient_limit} ingredients</Text>
@@ -155,9 +165,9 @@ class Packages extends Component {
           <View style={{ flex: 0.12,marginTop:height(5) }}>
           <PrimaryButton
             title="Continue"
-             onPress={this.onBasicSubmit}
+             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(40)}
-          // loading={this.props.auth.loadingLogin}
+          // loading={this.state.loading}
           />
          
         </View>
@@ -165,15 +175,15 @@ class Packages extends Component {
         <View style={{ flex: 0.2 }}>
           <PrimaryButton
             title="Subscribe $3.49/MONTH"
-            // onPress={this.onSubmit}
+            onPress={() => this._onSaveUserSubscription()}
             marginTop={height(50)}
           // loading={this.props.auth.loadingLogin}
           />
           <PrimaryButton2
             title="Subscribe $3.49/YEAR"
-            // onPress={this.onSubmit}
+            onPress={() => this._onSaveUserSubscription()}
             marginTop={height(10)}
-          // loading={this.props.auth.loadingLogin}
+           //loading={this.props.auth.loadingLogin}
           />
         </View>
       }
@@ -184,7 +194,7 @@ class Packages extends Component {
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}
               horizontal={true}>
-               {subscriptions.map((subscription) => (
+               {subscriptions?.map((subscription) => (
                 <TouchableOpacity onPress={() => this._onPressButton(subscription)}>
             <View style={{ marginLeft: 10}} >
             <View style={this.state.cardClicked == subscription.name || this.state.default == subscription.name ? styles.cardStyleClicked : styles.cardStyleSimple}>
@@ -315,7 +325,7 @@ const query = gql`
   }
 `;
 const mutation = gql`
-mutation addUserSubscription($userid: int!, $subid: int!){
+mutation addUserSubscription($userid: Number!, $subid: Number!){
   addUserSubscription(input:{
     user_id: $userid,
     subscription_id: $subid
