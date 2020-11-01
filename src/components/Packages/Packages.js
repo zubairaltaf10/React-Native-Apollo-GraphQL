@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import { withAuth } from "../../store/hoc/withAuth";
 import Swiper from 'react-native-swiper'
@@ -26,6 +27,8 @@ import SNACKBAR from '../../Helpers/SNACKBAR';
 import AsyncStorage from '@react-native-community/async-storage';
 import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -34,7 +37,7 @@ class Packages extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardClicked: "",
+      cardClicked: "Basic",
       cardName:'Basic',
       default:'Basic',
       subscription_id :1,
@@ -51,13 +54,13 @@ class Packages extends Component {
   // } 
 
   _onPressButton = async (model) => {
-    console.log(model)
-    this.setState({default:''})
-    this.setState({cardClicked:model.name})
-    this.setState({cardName:model.name})
-    this.setState({subscription_id:model.id})
+    console.log("nameee"+model.name)
+   await this.setState({default:''})
+   await this.setState({cardClicked:model.name})
+   await this.setState({cardName:model.name})
+   await this.setState({subscription_id:model.id})
 
-    console.log(this.state.cardClicked)
+    console.log("dsadasdasd" +this.state.cardClicked)
   }
   _onSaveUserSubscription = async () => {
     this.setState({loading:true})
@@ -88,7 +91,8 @@ class Packages extends Component {
   render() {
     const { subscriptions } = this.props.data ? this.props.data : null;
     if (!subscriptions) {
-      return <Text>Loading...</Text> ;
+      return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
+
     }
   //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
     //console.log(subscriptions)
@@ -305,8 +309,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     backgroundColor: '#fff', 
     marginTop: 10 
+  },
+  spinner: {
+    marginRight: 20,
   }
-
 })
 
 const query = gql`
