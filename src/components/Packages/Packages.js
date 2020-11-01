@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import { withAuth } from "../../store/hoc/withAuth";
 import Swiper from 'react-native-swiper'
@@ -26,6 +27,7 @@ import SNACKBAR from '../../Helpers/SNACKBAR';
 import AsyncStorage from '@react-native-community/async-storage';
 import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
+
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -86,7 +88,7 @@ class Packages extends Component {
   };
 
   render() {
-    const { subscriptions } = this.props.data ? this.props.data : null;
+    const { subscriptions } = this.props ? this.props.data : null;
   //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
     console.log(subscriptions)
     return (
