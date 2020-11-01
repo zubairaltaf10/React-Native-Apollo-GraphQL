@@ -105,6 +105,7 @@ class SignupOptions extends Component {
       }
     };
 
+
     render() {
      
         return (
@@ -119,13 +120,14 @@ class SignupOptions extends Component {
        
        <View style={styles.emailview}>
       <TouchableOpacity
+      
         activeOpacity={0.8}
-        
+        onPress={() => this.props.navigation.navigate('Signup')}
         > 
         <Text style={styles.GooglebuttonTextStyle}>
          REGISTER WITH EMAIL
           </Text>
-       
+          
       </TouchableOpacity>
     </View>
 
@@ -186,8 +188,8 @@ class SignupOptions extends Component {
             Already have an account?{' '}
               <Text
                 style={styles.redText}
-                onPress={() => this.props.navigation.navigate('Signup')}>
-                Sign Up
+                onPress={() => this.props.navigation.navigate('Login')}>
+                Login
               </Text>
             </Text>
          </View>
@@ -196,7 +198,7 @@ class SignupOptions extends Component {
         
               <Text
                 style={styles.redText}
-                onPress={() => this.props.navigation.navigate('Login')}>
+                onPress={() => this.props.navigation.navigate('App')}>
               Skip account setup
               </Text>
             </Text>

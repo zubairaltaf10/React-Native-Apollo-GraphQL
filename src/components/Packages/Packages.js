@@ -87,8 +87,11 @@ class Packages extends Component {
 
   render() {
     const { subscriptions } = this.props.data ? this.props.data : null;
+    if (!subscriptions) {
+      return <Text>Loading...</Text> ;
+    }
   //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
-    console.log(subscriptions)
+    //console.log(subscriptions)
     return (
      
       <View style={{ flex: 1 }}>
@@ -342,5 +345,16 @@ mutation addUserSubscription($userid: Number!, $subid: Number!){
 export default graphql(mutation)(
   graphql(query)(Packages)
 );
+
+// export default graphql(mutation)(
+//   graphql(query, {
+//     options: (props) => {
+//       //const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+//       // return {
+//       //   variables: { userId: userInfo.id },
+//       // };
+//     },
+//   })(Packages)
+// );
 //  const PackagesTab = graphql(query)(Packages);
 //   export default withAuth(PackagesTab);
