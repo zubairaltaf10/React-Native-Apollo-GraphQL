@@ -16,7 +16,7 @@ import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider, Mutation } from 'react-apollo'
+import { ApolloProvider, Mutation  } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
@@ -128,6 +128,7 @@ class Verification extends React.Component {
     })
     .then((res) => {
       SNACKBAR.simple("Verification code sent to your email");
+      SNACKBAR.simple("Verification code sent to your email");
     })
     .catch((err) => {
       console.log(JSON.stringify(err));
@@ -163,10 +164,15 @@ class Verification extends React.Component {
                 containerProps={this.containerProps}
                 onFulfill={this.onCodeInput}
               />
-           
+            <Mutation
+            mutation={mutations}
+            variables={{ email: this.props.navigation.getParam('email') }}
+            onCompleted={ () => { SNACKBAR.simple("Verification code sent to your email")} }
+          >
+            {mutation => (
               <TouchableOpacity
                 style={styles.resendBtn}
-                onPress={this.resendCode}
+                onPress={mutation}
                 disabled={this.state.resendTime === 0 ? false : true}>
                 <Text style={styles.resendText}>Resend Code</Text>
                 {this.state.resendTime !== 0 && (
@@ -181,7 +187,11 @@ class Verification extends React.Component {
                   />
                 )}
               </TouchableOpacity>
+            )}
+            
 
+          </Mutation>
+              
               <PrimaryButton
                 title="Verify"
                loading={this.state.loading}
@@ -195,6 +205,9 @@ class Verification extends React.Component {
     );
   }
 }
-const VerificationTab = graphql(mutation, mutations)(Verification);
+
+
+
+const VerificationTab = graphql(mutation)(Verification);
 export default withAuth(VerificationTab);
 

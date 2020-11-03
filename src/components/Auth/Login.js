@@ -84,7 +84,7 @@ class Login extends Component {
          // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
              AsyncStorage.setItem('user', JSON.stringify(res.data.login.user)).then(
         () => {
-          if(res.data.login.user.subscription.name == null)
+          if(res.data.login.user.user_subscription == null)
           {
             this.props.navigation.navigate('Packages');
           }else
@@ -104,6 +104,8 @@ class Login extends Component {
         }        
       })
       .catch((err) => {
+        SNACKBAR.simple(JSON.stringify(err));
+        console.log(err)
         if(err.graphQLErrors != null)
         {
           this.setState({loading:false})
@@ -217,8 +219,10 @@ mutation login($email: String!, $password: String!){
       name,
       email,
       email_verified_at,
-      subscription{
-        name
+      user_subscription{
+        subscription{
+          name
+        }
       }
     }
   }

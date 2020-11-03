@@ -139,7 +139,7 @@ class SignupOptions extends Component {
        
     </View>
    
-         <View  animationType="fade"  style={styles.introContainer}>
+         <View  animationType="fade"  opacity={0.8} style={styles.introContainer}>
             <TouchableOpacity 
             onPress={() => this.handleFacebookLogin()}
           style={styles.buttonFacebookStyle}

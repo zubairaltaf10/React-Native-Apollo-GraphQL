@@ -334,10 +334,10 @@ const query = gql`
   }
 `;
 const mutation = gql`
-mutation addUserSubscription($userid: Number!, $subid: Number!){
+mutation addUserSubscription($user_id: Number, $subscription_id: Number){
   addUserSubscription(input:{
-    user_id: 4,
-    subscription_id: 1
+    user_id: $user_id,
+    subscription_id:$subscription_id
   }){
     user{
       name

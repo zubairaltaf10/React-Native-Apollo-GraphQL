@@ -288,7 +288,6 @@ class Intro extends React.Component {
                   }
                 });
                 this.state.dotsArray[0].isActive = true
-                
               }
               if (index == 1) {
                 this.state.dotsArray.find((element)=> {
