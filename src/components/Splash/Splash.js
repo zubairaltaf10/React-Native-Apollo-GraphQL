@@ -34,9 +34,9 @@ componentDidMount(){
 // },1000);
 // });
 
-this.timeout = setTimeout(async () => {
-  this.props.navigation.navigate("Intro");
-},1000);
+// this.timeout = setTimeout(async () => {
+//   this.props.navigation.navigate("Intro");
+// },1000);
 }
 render() {
     return (
@@ -48,8 +48,8 @@ render() {
             alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            height:"25%",
-            width: "75%",
+            height:"26%",
+            width: "82%",
           }}
         />
         </View>
