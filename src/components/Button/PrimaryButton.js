@@ -39,10 +39,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    color: '#28292F',
-    fontSize: FONTSIZES.btnLabel,
-    fontFamily: FONTFAMILY.bold,
-    fontWeight:'bold'
+    color: 'rgba(40, 41, 47, 1)',
+    fontSize: 13,
+    fontFamily: FONTFAMILY.bold
   },
   spinner: {
     marginRight: 20,

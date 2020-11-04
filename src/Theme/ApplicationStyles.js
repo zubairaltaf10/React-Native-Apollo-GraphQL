@@ -21,10 +21,10 @@ const ApplicationStyles = StyleSheet.create({
     borderRadius: 12,
     height: 50,
     color:'rgba(134, 140, 169, 1)',
-    marginTop: 10,
-    fontSize: FONTSIZES.inputLabel,
+    marginTop: 15,
+    fontSize: 13,
     fontFamily: FONTFAMILY.regular,
-    paddingLeft: 15,
+    paddingLeft: 10,
   },
   blackTextCenter: {
     color: 'rgba(106, 106, 106, 1)',
@@ -33,6 +33,7 @@ const ApplicationStyles = StyleSheet.create({
   errorLabel: {
     color: COLORS.primary,
     fontFamily: FONTFAMILY.medium,
+    fontSize:12
   },
 });
 

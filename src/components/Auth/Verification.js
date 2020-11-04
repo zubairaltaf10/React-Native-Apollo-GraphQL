@@ -142,7 +142,7 @@ class Verification extends React.Component {
     //console.log('verificationCode', this.state.verificationCode);
     return (
      
-            <Content>
+            <Content style={styles.container}>
             <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
