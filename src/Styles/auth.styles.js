@@ -7,7 +7,8 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F6F6F6',
-    fontSize:12
+    fontSize:12,
+     marginHorizontal:'3%'
   },
   form: {
     paddingTop: 15,
@@ -17,21 +18,30 @@ export default StyleSheet.create({
   },
   alreadyAccountLabel: {
     textAlign: 'center',
-    marginTop: 22,
-    fontFamily: FONTFAMILY.medium,
+    marginTop: 18,
+    fontFamily: FONTFAMILY.regular,
     fontSize:11
   },
   termandconLabel: {
     textAlign: 'left',
     marginTop: 18,
+    marginVertical:'5%',
+    fontFamily: FONTFAMILY.medium,
+    fontSize:12
+    
+  },
+  termandconlink: {
+    textAlign: 'left',
+    marginTop: 18,
     margin:'5%',
     fontFamily: FONTFAMILY.medium,
-    
+    fontSize:13,
+    textDecorationLine: 'underline',
+    fontWeight:'bold'
   },
   backarrow: {
     textAlign: 'left',
     marginTop: 42,
-    margin:'5%',
     fontSize:10
 
   },
@@ -43,18 +53,20 @@ export default StyleSheet.create({
 
   },
   redText: {
-    color: COLORS.blackText,
     fontWeight: 'bold',
-    fontSize:12
+    fontSize:12,
+    fontFamily:FONTFAMILY.extraBold
   },
   forgotBtn: {
     alignSelf: 'flex-end',
     marginTop: 20,
     padding: 6,
+    
   },
   forgotTxt: {
     color: COLORS.blackText,
-    fontFamily: FONTFAMILY.bold,
+    fontFamily: FONTFAMILY.regular,
+    fontSize:12
   },
   inputLabel: {
     paddingBottom: 80,
@@ -102,6 +114,11 @@ export default StyleSheet.create({
     height: 62,
   },
   alternativeLayoutButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal:'3%'
+  },
+  topheader: {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },

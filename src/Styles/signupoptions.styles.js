@@ -102,6 +102,15 @@ justifyContent: "center"
     width: 20,
     resizeMode: 'stretch',
   },
+  termandconlink: {
+    textAlign: 'left',
+    marginTop: 18,
+    margin:'5%',
+    fontFamily: FONTFAMILY.medium,
+    fontSize:14,
+    textDecorationLine: 'underline',
+    fontWeight:'bold'
+  },
   buttonTextStyle: {
     color: '#fff',
     fontFamily: FONTFAMILY.bold,

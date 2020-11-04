@@ -191,7 +191,7 @@ class SignupOptions extends Component {
          <Text style={styles.alreadyAccountLabel}>
          If you already have an account.{' '}
               <Text
-                style={styles.redText}
+                style={styles.termandconlink}
                 onPress={() => this.props.navigation.navigate('Login')}>
                 Login
               </Text>

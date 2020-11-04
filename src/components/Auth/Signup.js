@@ -47,7 +47,7 @@ class Signup extends Component {
         roleId: 1,
         loading:false
       },
-      isPasswordFieldSecure: true,
+      isPasswordFieldSecure: false,
       isConfirmPasswordFieldSecure: true,
       errors: ['errors'],
       isOnToggleSwitch: false,
@@ -99,9 +99,17 @@ class Signup extends Component {
           email:email});
       })
       .catch((err) => {
+
         this.setState({loading:false})
-        SNACKBAR.simple(err);
-        console.log(JSON.stringify(err));
+        var error = JSON.stringify(err);
+        if(error.graphQLErrors.length > 0)
+        {
+          var mess = error.graphQLErrors[0].message
+          if(str.includes("Validation")){
+            SNACKBAR.simple("Email address already exist");
+          }
+        }
+        
       });
       }
     });
@@ -127,7 +135,7 @@ class Signup extends Component {
               </View>
         </View>
         
-              <View style={{ marginBottom:'10%', marginTop:'5%'}}>
+              <View style={{ marginBottom:'8%', marginTop:'5%'}}>
           <Text style={styles.logintopLabel}>
           Welcome, 
             </Text>
@@ -193,7 +201,7 @@ class Signup extends Component {
             <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.termandconLabel}>
             I agree with all?{' '}
-              <Text 
+              <Text style={styles.termandconlink}
                 onPress={() => this.props.navigation.navigate('Login')}>
                 Terms & Conditions
               </Text>
