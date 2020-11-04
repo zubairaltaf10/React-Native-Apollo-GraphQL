@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { withAuth } from "../../store/hoc/withAuth";
-import {BlurView} from '@react-native-community/blur';
+import LinearGradient from "react-native-linear-gradient";
 import {FONTFAMILY} from '../../Theme/Fonts';
 import PrimaryButton from '../Button/PrimaryButton';
 
@@ -81,7 +81,7 @@ class SignupOptions extends Component {
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
         const email = userInfo.user.email;
-        console.log(email)
+        console.log(userInfo)
         const name = userInfo.user.name;
   
        // const password = userInfo.user.id + name;
@@ -138,9 +138,12 @@ class SignupOptions extends Component {
           </Text>
        
     </View>
-   
-         <View  animationType="fade"  opacity={0.8} style={styles.introContainer}>
-            <TouchableOpacity 
+    <LinearGradient 
+                    colors={['#F4F4F8' , '#a9a8a9']}
+                    style={styles.introContainer}
+                    start={{ x: 0.2, y: 0.2 }}
+                    >
+               <TouchableOpacity 
             onPress={() => this.handleFacebookLogin()}
           style={styles.buttonFacebookStyle}
           activeOpacity={0.5}>
@@ -181,11 +184,12 @@ class SignupOptions extends Component {
             </Text>
             </TouchableOpacity>
 
-         </View>
+                        </LinearGradient>
+         
 
          <View>
          <Text style={styles.alreadyAccountLabel}>
-            Already have an account?{' '}
+         If you already have an account.{' '}
               <Text
                 style={styles.redText}
                 onPress={() => this.props.navigation.navigate('Login')}>

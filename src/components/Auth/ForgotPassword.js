@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import styles from '../../Styles/auth.styles';
 import PrimaryButton from '../Button/PrimaryButton.js';
-import {Content, Input, Form} from 'native-base';
+import {Content, Form, Input, Icon} from 'native-base';
 // import WideBanner from '../../Components/Ads/WideBanner.js';
 // import TopHeader from '../../Components/TopHeader/index.js';
 // import Header from '../../Components/Header/index.js';
@@ -59,11 +59,22 @@ class ForgotPassword extends React.Component {
   render() {
     const isBtnDisabled = !checkEmail(this.state.formData.email);
     return (
-        <Content>
-          <Form style={styles.form}>
-          <Text style={styles.topheadingLabel}>
+        <Content style={styles.container}>
+        <View style={styles.alternativeLayoutButtonContainer}>
+            <Text style={styles.backarrowforgot}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          </TouchableOpacity>
+            </Text>
+            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+        
+            <Text style={styles.topheadingLabel}>
               Forgot Password
             </Text>
+              </View>
+        </View>
+          <Form style={styles.form}>
+          
             <Text style={styles.topLabel}>
             Enter your email address to receive a verification code.
             </Text>

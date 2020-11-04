@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Fonts } from '../Theme';
 import COLORS from '../Theme/Colors';
 import {FONTFAMILY} from '../Theme/Fonts';
 
@@ -8,6 +9,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+    fontSize:12
   },
   emailview:{
     backgroundColor: '#FFFFFF',
@@ -16,7 +18,8 @@ export default StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     paddingHorizontal: 30,
-    paddingVertical: 12,
+    paddingVertical: 12 ,
+    marginBottom:10
   },
   text: {
     fontSize: 20,
@@ -59,7 +62,9 @@ justifyContent: "center"
     borderRadius: 25,
     margin: 5,
     paddingHorizontal:20,
-    paddingVertical:5
+    paddingVertical:5,
+    fontFamily: FONTFAMILY.bold,
+    fontSize:10
   },
   buttonGoogleStyle: {
     flexDirection: 'row',
@@ -71,7 +76,9 @@ justifyContent: "center"
     borderRadius: 25,
     margin: 5,
     paddingHorizontal:22,
-    paddingVertical:5
+    paddingVertical:5,
+    fontFamily: FONTFAMILY.bold,
+    fontSize:12
   },
   buttonAppleStyle: {
     flexDirection: 'row',
@@ -83,7 +90,9 @@ justifyContent: "center"
     borderRadius: 25,
     margin: 5,
     paddingHorizontal:22,
-    paddingVertical:5
+    paddingVertical:5,
+    fontFamily: FONTFAMILY.bold,
+    fontSize:12
     
   },
   buttonImageIconStyle: {
@@ -96,10 +105,12 @@ justifyContent: "center"
   buttonTextStyle: {
     color: '#fff',
     fontFamily: FONTFAMILY.bold,
+    fontSize:12
   },
   GooglebuttonTextStyle: {
     color: '#28292F',
     fontFamily: FONTFAMILY.bold,
+    fontSize:12
   },
   
   logo: {
@@ -109,28 +120,34 @@ justifyContent: "center"
   introContainer : {
     borderRadius:15, 
     marginHorizontal:'10%',
-    marginVertical:'10%',
-   backgroundColor:'#eaeaea',
+   backgroundColor:'#fff',
+   fontSize:12,
     paddingHorizontal:15,
     paddingVertical:15,
+    marginTop:10,
+    marginBottom:30
  },
  skipAccountLabel:{
   textAlign: 'center',
   marginTop: 22,
   marginBottom: 22,
+  fontStyle:'italic',
+  textDecorationLine: 'underline',
   fontFamily: FONTFAMILY.medium,
-  color:COLORS.primary
+  color:COLORS.primary,
+  fontSize:12
  },
  alreadyAccountLabel: {
   textAlign: 'center',
   marginTop: 22,
   fontFamily: FONTFAMILY.medium,
+  fontSize:12,
   color:'#F4F4F8'
 },
 orview:{
   textAlign: 'center',
   alignItems: 'center',
-  margin:20
+  margin:20,
 },
 absolute: {
   position: "absolute",

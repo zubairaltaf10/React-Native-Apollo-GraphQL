@@ -120,4 +120,20 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: COLORS.primary,
   },
+  backarrow: {
+    textAlign: 'left',
+    marginTop: 42,
+    margin:'5%',
+    fontSize:10
+
+  },
+  alternativeLayoutButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  icon: {
+    color: '#333',
+    fontSize: 22,
+  },
+  
 });

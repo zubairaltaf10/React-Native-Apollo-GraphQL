@@ -1,1 +1,1 @@
-export const NETWORK_INTERFACE = 'http://104.219.248.13/graphql';
+export const NETWORK_INTERFACE = 'http://whatyougot.5stardesigners.net/graphql';

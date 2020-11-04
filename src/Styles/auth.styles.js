@@ -4,6 +4,11 @@ import {FONTFAMILY} from '../Theme/Fonts';
 import { height,width,totalSize } from "react-native-dimension";
 
 export default StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F6F6',
+    fontSize:12
+  },
   form: {
     paddingTop: 15,
     paddingHorizontal: 12,
@@ -14,17 +19,33 @@ export default StyleSheet.create({
     textAlign: 'center',
     marginTop: 22,
     fontFamily: FONTFAMILY.medium,
+    fontSize:11
   },
   termandconLabel: {
     textAlign: 'left',
-    marginTop: 22,
+    marginTop: 18,
     margin:'5%',
     fontFamily: FONTFAMILY.medium,
     
   },
+  backarrow: {
+    textAlign: 'left',
+    marginTop: 42,
+    margin:'5%',
+    fontSize:10
+
+  },
+  backarrowforgot: {
+    textAlign: 'left',
+    marginTop: 32,
+    margin:'5%',
+    fontSize:10
+
+  },
   redText: {
     color: COLORS.blackText,
     fontWeight: 'bold',
+    fontSize:12
   },
   forgotBtn: {
     alignSelf: 'flex-end',
@@ -56,15 +77,15 @@ export default StyleSheet.create({
     paddingHorizontal: '5%',
     fontFamily: FONTFAMILY.bold,
     marginBottom:'20%',
-    marginTop:'5%'
+   
   },
   logintopLabel: {
-    color: COLORS.blackText,
+    color: '#28292F',
     textAlign: 'left',
-    fontSize: 22,
+    fontSize: 20,
     paddingHorizontal: '5%',
     paddingEnd:'5%',
-    fontFamily: FONTFAMILY.medium,
+    fontFamily: FONTFAMILY.regular,
     
   },
   passwordFieldContainer: {
@@ -108,5 +129,11 @@ export default StyleSheet.create({
 
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
+  icon: {
+    color: '#333',
+    fontSize: 22,
+  },
+  
+
 });

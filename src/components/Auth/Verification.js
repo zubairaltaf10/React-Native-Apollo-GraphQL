@@ -2,10 +2,9 @@ import React from 'react';
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
 //import { CodeInput } from 'react-native-confirmation-code-field';
 import CodeInput from 'react-native-code-input';
-
 import styles from '../../Styles/verification.styles.js';
 import PrimaryButton from '../Button/PrimaryButton.js';
-import {Content} from 'native-base';
+import {Content, Form, Input, Icon} from 'native-base';
 //import WideBanner from '../../Components/Ads/WideBanner.js';
 import CountdownCircle from 'react-native-countdown-circle';
 import Axios from 'axios';
@@ -144,8 +143,19 @@ class Verification extends React.Component {
     return (
      
             <Content>
+            <View style={styles.alternativeLayoutButtonContainer}>
+            <Text style={styles.backarrow}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          </TouchableOpacity>
+            </Text>
+            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+        
+            <Text style={styles.inputLabel}>Verify your email</Text>
+              </View>
+        </View>
           <View style={styles.container}>
-          <Text style={styles.inputLabel}>Verify your email</Text>
+          
             <View style={styles.inputWrapper}>
               <Text style={styles.inputSubLabel}>
               Enter the verification code we just sent to your email.

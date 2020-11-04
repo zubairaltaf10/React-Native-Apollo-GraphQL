@@ -25,6 +25,7 @@ import { ApolloProvider, Mutation } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
+import Header from '../Header/index.js';
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -109,13 +110,23 @@ class Signup extends Component {
     
     return (
       <ApolloProvider>
-        <Content>
-        <View style={{flex: 3, alignItems: 'center', marginTop:'10%'}}>
+        
+        <Content style={styles.container}>
+        <View style={styles.alternativeLayoutButtonContainer}>
+            <Text style={styles.backarrow}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          </TouchableOpacity>
+            </Text>
+            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+        
      <Image 
                 source={require('../../assets/logo_signup.png')}
                 style={styles.logo}
               />
               </View>
+        </View>
+        
               <View style={{ marginBottom:'10%', marginTop:'5%'}}>
           <Text style={styles.logintopLabel}>
           Welcome, 
@@ -126,14 +137,14 @@ class Signup extends Component {
             </View>
           <Form style={styles.form}>
             <Input
-              placeholder="First Name"
+              placeholder="First Name" maxLength={12}
               style={ApplicationStyles.textbox}
               value={this.state.formData.firstName}
               onChangeText={val => this.onTextInput('firstName', val)}
             />
             {ErrorLabel('firstName', this.state.errors)}
             <Input
-              placeholder="Last Name"
+              placeholder="Last Name" maxLength={12}
               style={ApplicationStyles.textbox}
               value={this.state.formData.lastName}
               onChangeText={val => this.onTextInput('lastName', val)}
@@ -204,13 +215,13 @@ class Signup extends Component {
         </View>
             <PrimaryButton
               loading={this.state.loading}
-              title="Sign up"
+              title="Create Account"
               onPress={this.onSubmit}
               marginTop={8}
             />
 
             <Text style={styles.alreadyAccountLabel}>
-              Already have an account ?{' '}
+            If you already have an account?{' '}
               <Text
                 style={styles.redText}
                 onPress={() => this.props.navigation.navigate('Login')}>

@@ -63,7 +63,7 @@ const AuthStack = createStackNavigator(
     },
     Signup: {
       screen: SignupScreen,
-      navigationOptions: {header: false},
+      navigationOptions: {header: true},
     },
    
     Packages: {
@@ -92,6 +92,7 @@ const AuthStack = createStackNavigator(
     transitionConfig: () => fromRight(500),
     initialRouteName: 'Login',
     headerLayoutPreset: 'center',
+    cardStyle: { backgroundColor: '#FFFFFF' },
     navigationOptions: {
       headerStyle: styles.header,
     },

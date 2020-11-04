@@ -80,9 +80,21 @@ class ResetPassword extends React.Component {
 
   render() {
     return (
-        <Content>
+        <Content style={styles.container}>
+          <View style={styles.alternativeLayoutButtonContainer}>
+            <Text style={styles.backarrow}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          </TouchableOpacity>
+            </Text>
+            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+        
+            <Text style={styles.inputLabel}>Reset password</Text>
+              </View>
+        </View>
           <Form style={styles.form}>
-          <Text style={styles.inputLabel}>Reset passwordm,l</Text>
+
+          
             <Text style={styles.topLabel}>
             Choose a strong new password. Make sure it's unique!
             </Text>

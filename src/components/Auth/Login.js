@@ -122,7 +122,7 @@ class Login extends Component {
    
     return (
   
-      <Content>
+      <Content style={styles.container}>
       
        <View style={{flex: 3, alignItems: 'center', marginTop:'15%', marginBottom:'8%'}}>
      <Image 
