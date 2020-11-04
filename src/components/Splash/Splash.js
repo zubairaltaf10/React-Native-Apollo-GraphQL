@@ -34,9 +34,9 @@ componentDidMount(){
 // },1000);
 // });
 
-// this.timeout = setTimeout(async () => {
-//   this.props.navigation.navigate("Intro");
-// },1000);
+this.timeout = setTimeout(async () => {
+  this.props.navigation.navigate("Intro");
+},1000);
 }
 render() {
     return (

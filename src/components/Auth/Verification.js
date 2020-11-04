@@ -61,10 +61,14 @@ class Verification extends React.Component {
     this.setState({userInput: code});
   };
    
-  verifyCode = () => {
-     console.log(this.state.userInput) 
+  verifyCode = async () => {
+     console.log(this.state.userInput.length) 
+     if (this.state.userInput.length < 4){
+      SNACKBAR.simple('Please enter the provided code');
+      return;
+     }
      this.setState({loading:true})
-      this.props.mutate({
+     await this.props.mutate({
         variables: {
           email: this.props.navigation.getParam('email'),
           code: this.state.userInput,
@@ -72,8 +76,10 @@ class Verification extends React.Component {
       })
       .then((res) => {
         this.setState({loading:false})
-        const type = this.props.navigation.getParam('type');
-        console.log(type)
+        if (res.data.verifyCode.status) {
+          console.log(JSON.stringify(res.data.verifyCode.status))
+          const type = this.props.navigation.getParam('type');
+          console.log(type + "type")
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
@@ -84,24 +90,25 @@ class Verification extends React.Component {
       } else if (type === 'UnverifiedLogin') {
         this.props.navigation.navigate('Packages');
       }
+    }
      else {
           return Alert.alert('Oops!', 'Invalid code!', [{text: 'OK'}], {
             cancelable: false,
           });
-         }        
+         }  
+           
       })
       .catch((err) => {
+        console.log(err)
         this.setState({loading:false})
         SNACKBAR.simple(JSON.stringify(err));
         console.log(err)
-        // if(err.graphQLErrors != null)
-        // {
-        //   if(err.graphQLErrors.length > 0)
-        //   {
-        //     SNACKBAR.simple(err);
-        //   }
-        // }
-      });
+        if(err.graphQLErrors != null)
+        {
+          SNACKBAR.simple(err);
+
+        }
+       });
       
       
     
@@ -149,7 +156,7 @@ class Verification extends React.Component {
             <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
           </TouchableOpacity>
             </Text>
-            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'13%'}}>
         
             <Text style={styles.inputLabel}>Verify your email</Text>
               </View>
@@ -206,7 +213,7 @@ class Verification extends React.Component {
                 title="Verify"
                loading={this.state.loading}
                 marginTop={10}
-                onPress={this.verifyCode}
+                onPress={()=>this.verifyCode()}
               />
             </View>
           </View>
