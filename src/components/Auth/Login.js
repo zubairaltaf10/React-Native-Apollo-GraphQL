@@ -89,7 +89,7 @@ class Login extends Component {
             this.props.navigation.navigate('Packages');
           }else
           {
-          this.props.navigation.navigate('App');
+          this.props.navigation.navigate('Packages');
           }
         },
       );
@@ -104,14 +104,14 @@ class Login extends Component {
         }        
       })
       .catch((err) => {
-        SNACKBAR.simple(JSON.stringify(err));
+       // SNACKBAR.simple(JSON.stringify(err));
         console.log(err)
         if(err.graphQLErrors != null)
         {
           this.setState({loading:false})
           if(err.graphQLErrors.length > 0)
           {
-            SNACKBAR.simple(err.graphQLErrors[0].extensions.reason);
+            SNACKBAR.simple('Incorrect email or password');
           }
         }
       });
@@ -124,22 +124,31 @@ class Login extends Component {
   
       <Content style={styles.container}>
       
-       <View style={{flex: 3, alignItems: 'center', marginTop:'15%', marginBottom:'8%'}}>
+      <View style={styles.topheader}>
+            <Text style={styles.backarrow}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          </TouchableOpacity>
+            </Text>
+            <View style={{flex: 3, marginLeft:'28%', alignItems: 'flex-start', marginTop:'10%'}}>
+        
      <Image 
                 source={require('../../assets/logo_signup.png')}
                 style={styles.logo}
               />
               </View>
-          <Form style={styles.form}>
-          <View style={{ marginBottom:'10%'}}>
+        </View>
+        <View style={{ marginBottom:'10%'}}>
           <Text style={styles.logintopLabel}>
           Welcome Back,
             </Text>
-            <Text style={styles.logintopLabel}>
+            <Text style={styles.logintopLabel1}>
          
        Login to your account
             </Text>
             </View>
+          <Form style={styles.form}>
+          
             <Input
               placeholder="Email" 
               keyboardType="default"
@@ -186,7 +195,7 @@ class Login extends Component {
             </TouchableOpacity>
            
             <PrimaryButton
-              title="Login"
+              title="LOGIN"
               onPress={this.onSubmit}
               marginTop={4.1}
               loading={this.state.loading}
@@ -229,4 +238,4 @@ mutation login($email: String!, $password: String!){
 }
 `;
 const LoginTab = graphql(mutation)(Login);
-export default LoginTab;
+export default withAuth(LoginTab);

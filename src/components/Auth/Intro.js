@@ -52,8 +52,9 @@ const data = [
       fontFamily: FONTFAMILY.regular,
       textAlign: 'center',
       marginTop:'5%',
-      fontSize:16,
-      lineHeight:height(3.5)
+      fontSize:12,
+      lineHeight:height(3.5),
+      paddingHorizontal:'5%'
     },
     title: {
       fontSize: 22,
@@ -74,8 +75,9 @@ const data = [
     },
     introContainer : {
        borderRadius:15, 
-       marginHorizontal:'5%',
-       height:height(50),
+       marginHorizontal:'15%',
+       height:height(40),
+       
        marginTop:'50%',
   //     backgroundColor:'yellow',
        justifyContent:'flex-end',

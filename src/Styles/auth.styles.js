@@ -8,17 +8,17 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#F6F6F6',
     fontSize:12,
-     marginHorizontal:'3%'
+    
   },
   form: {
-    paddingTop: 15,
     paddingHorizontal: 12,
+    marginHorizontal:'4%'
     // paddingTop: 60,
     // paddingBottom: 10,
   },
   alreadyAccountLabel: {
     textAlign: 'center',
-    marginTop: 18,
+    marginTop: 10,
     fontFamily: FONTFAMILY.regular,
     fontSize:11
   },
@@ -48,7 +48,7 @@ export default StyleSheet.create({
   backarrowforgot: {
     textAlign: 'left',
     marginTop: 32,
-    margin:'5%',
+    marginVertical:'5%',
     fontSize:10
 
   },
@@ -77,8 +77,8 @@ export default StyleSheet.create({
   topLabel: {
     color: COLORS.blackText,
     textAlign: 'center',
-    fontSize: 16,
-    paddingHorizontal: '17%',
+    fontSize: 14,
+    paddingHorizontal: '13%',
     fontFamily: FONTFAMILY.medium,
     paddingBottom:30
   },
@@ -98,7 +98,15 @@ export default StyleSheet.create({
     paddingHorizontal: '5%',
     paddingEnd:'5%',
     fontFamily: FONTFAMILY.regular,
-    
+    marginTop:'10%'
+  },
+  logintopLabel1: {
+    color: '#28292F',
+    textAlign: 'left',
+    fontSize: 20,
+    paddingHorizontal: '5%',
+    paddingEnd:'5%',
+    fontFamily: FONTFAMILY.regular,
   },
   passwordFieldContainer: {
     flex: 1,
@@ -106,7 +114,7 @@ export default StyleSheet.create({
   eyeIcon: {
     position: 'absolute',
     right: 15,
-    top: 23,
+    top: 26,
     padding: 6,
   },
   logo: {
@@ -120,7 +128,8 @@ export default StyleSheet.create({
   },
   topheader: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginHorizontal:'5%'
   },
   socialMediaButton: {
     //  flex: 2,

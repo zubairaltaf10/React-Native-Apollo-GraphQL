@@ -36,9 +36,10 @@ mutation verifyEmail($email: String!, $code: String!){
 `;
 
 const mutations = gql`
-mutation sendVerificationCode($email: String!){
-  sendVerificationCode(
+mutation forgotPassword($email: String!){
+  forgotPassword(input: {
     email: $email
+    }
   ){
     status,
     message
@@ -46,7 +47,7 @@ mutation sendVerificationCode($email: String!){
 }
 `;
 
-class Verification extends React.Component {
+class VerificationForGotPassword extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -226,6 +227,6 @@ class Verification extends React.Component {
 
 
 
-const VerificationTab = graphql(mutation)(Verification);
-export default withAuth(VerificationTab);
+const VerificationForGorPasswordTab = graphql(mutation)(VerificationForGotPassword);
+export default withAuth(VerificationForGorPasswordTab);
 

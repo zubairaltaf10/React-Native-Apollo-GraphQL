@@ -44,7 +44,7 @@ class ForgotPassword extends React.Component {
     })
     .then((res) => {
       this.setState({loading:false})
-      this.props.navigation.navigate('Verification', {
+      this.props.navigation.navigate('VerificationForgotpass', {
         type: 'ResetPassword',
         email: email,
       });
@@ -60,7 +60,7 @@ class ForgotPassword extends React.Component {
     const isBtnDisabled = !checkEmail(this.state.formData.email);
     return (
         <Content style={styles.container}>
-        <View style={styles.alternativeLayoutButtonContainer}>
+        <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
@@ -87,7 +87,7 @@ class ForgotPassword extends React.Component {
             />
 
             <PrimaryButton
-              title="Continue"
+              title="SEND VERIFICATION CODE"
               marginTop={6}
               disabled={isBtnDisabled}
               loading={this.state.loading}

@@ -42,6 +42,8 @@ class Packages extends Component {
       default:'Basic',
       subscription_id :1,
       loading:false,
+      priceperyear:0,
+      pricepermonth:0
      // subscriptions :[]
     }
   }
@@ -59,6 +61,8 @@ class Packages extends Component {
    await this.setState({cardClicked:model.name})
    await this.setState({cardName:model.name})
    await this.setState({subscription_id:model.id})
+   await this.setState({priceperyear:model.amount_per_year})
+   await this.setState({pricepermonth:model.amount_per_month})
 
     console.log("dsadasdasd" +this.state.cardClicked)
   }
@@ -66,13 +70,13 @@ class Packages extends Component {
     this.setState({loading:true})
     let user = await AsyncStorage.getItem('user');
     user = JSON.parse(user);
-    console.log((Number)(user.id))
-    console.log((Number)(this.state.subscription_id))
+    console.log(user.id)
+    console.log(this.state.subscription_id)
     this.props
     .mutate({
       variables: {
-        user_id: (Number)(user.id),
-        subscription_id:(Number)(this.state.subscription_id)
+        user_id: user.id,
+        subscription_id:this.state.subscription_id
       },
     })
     .then((res) => {
@@ -162,7 +166,7 @@ class Packages extends Component {
            {subscriptions?.map((subscription) => (
             <View style={styles.slide1}>
               <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  {subscription.ingredient_limit} ingredients</Text>
+              <Text style={styles.text}>  {subscription.ingredient_limit == null ? "Unlimited" : subscription.ingredient_limit} ingredients</Text>
             </View>
            ))}
             
@@ -171,7 +175,7 @@ class Packages extends Component {
         {this.state.cardName == 'Basic' ?
           <View style={{ flex: 0.12,marginTop:height(5) }}>
           <PrimaryButton
-            title="Continue"
+            title="CONTINUE"
              onPress={() => this._onSaveUserSubscription()}
             marginTop={height(40)}
           // loading={this.state.loading}
@@ -181,13 +185,13 @@ class Packages extends Component {
         :
         <View style={{ flex: 0.2 }}>
           <PrimaryButton
-            title="Subscribe $3.49/MONTH"
+            title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(50)}
           // loading={this.props.auth.loadingLogin}
           />
           <PrimaryButton2
-            title="Subscribe $3.49/YEAR"
+            title={ "SUBSCRIBE £" + this.state.priceperyear + " / YEAR" }
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(10)}
            //loading={this.props.auth.loadingLogin}
@@ -206,7 +210,7 @@ class Packages extends Component {
             <View style={{ marginLeft: 10}} >
             <View style={this.state.cardClicked == subscription.name || this.state.default == subscription.name ? styles.cardStyleClicked : styles.cardStyleSimple}>
                 <Text style={styles.planstext}>{subscription.name}</Text>
-                <Text style={styles.plantext2}>{subscription.amount}</Text>
+                <Text style={styles.plantext2}>{subscription.amount_description}</Text>
                 <Text style={styles.plantext2}>{subscription.description}</Text>
               </View>
             </View>
@@ -260,15 +264,17 @@ const styles = StyleSheet.create({
   },
   planstext: {
     color: 'black',
-    fontSize: 20,
+    fontSize: 16,
     fontFamily: FONTFAMILY.bold,
     fontWeight: 'bold',
     marginTop: 10,
+    marginBottom:10,
     paddingLeft: 10
   },
   picktext: {
     color: '#868CA9',
-    fontSize: 15,
+    fontSize: 16,
+    marginBottom:10,
     fontFamily: FONTFAMILY.bold,
     fontWeight: 'bold',
     marginTop: height(5),
@@ -276,7 +282,7 @@ const styles = StyleSheet.create({
   },
   footertext: {
     color: '#868CA9',
-    fontSize: 14,
+    fontSize: 11,
     fontFamily: FONTFAMILY.regular,
     marginTop: height(3),
     alignSelf: 'center',
@@ -287,14 +293,14 @@ const styles = StyleSheet.create({
   },
   plantext2: {
     color: '#868CA9',
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: FONTFAMILY.medium,
-    marginTop: 8,
+    marginTop: 2,
     paddingLeft: 10,
   },
   cardStyleSimple : {
     marginLeft: 1, 
-    height: height(16), 
+    height: height(14), 
     width: width(45), 
     borderRadius: 10, 
     backgroundColor: '#fff', 
@@ -302,7 +308,7 @@ const styles = StyleSheet.create({
   },
   cardStyleClicked : {
     marginLeft: 1, 
-    height: height(16), 
+    height: height(14), 
     width: width(45), 
     borderRadius: 10,
     borderWidth: 1,
@@ -324,6 +330,7 @@ const query = gql`
       person_limit,
     ingredient_limit,
     amount,
+    amount_description,
     amount_per_year,
     amount_per_month,
     name,
@@ -334,7 +341,7 @@ const query = gql`
   }
 `;
 const mutation = gql`
-mutation addUserSubscription($user_id: Number, $subscription_id: Number){
+mutation addUserSubscription($user_id: Int!, $subscription_id: Int!){
   addUserSubscription(input:{
     user_id: $user_id,
     subscription_id:$subscription_id

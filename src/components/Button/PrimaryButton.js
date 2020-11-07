@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     paddingHorizontal: 45,
-    paddingVertical: 12,
+    paddingVertical: 8,
+    paddingTop:14,
   },
   row: {
     flexDirection: 'row',
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'rgba(40, 41, 47, 1)',
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: FONTFAMILY.bold
   },
   spinner: {
