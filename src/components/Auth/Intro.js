@@ -49,7 +49,7 @@ const data = [
     },
     text: {
   //    color: '#000',
-      fontFamily: FONTFAMILY.medium,
+      fontFamily: FONTFAMILY.regular,
       textAlign: 'center',
       marginTop:'5%',
       fontSize:16,
@@ -57,11 +57,9 @@ const data = [
     },
     title: {
       fontSize: 22,
-      fontFamily: FONTFAMILY.extraBold,
+      fontFamily: 'Lora-Bold',
     //  flex:1,
-     // color: 'black',
       textAlign: 'center',
-      fontWeight:'bold'
 
     },
     buttonCircle: {
@@ -198,7 +196,7 @@ class Intro extends React.Component {
           )}
           </View>
           {this.state.currentSlide > 0 ? 
-          <View style={{flex:4}}>
+          <View style={{flex:4.5}}>
           <Icon style={{fontSize:20,alignSelf:'flex-end',marginBottom:15,color:'white'}}
          onPress={()=>{
            if (this.state.currentSlide == 1) {
