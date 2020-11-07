@@ -36,9 +36,10 @@ mutation verifyEmail($email: String!, $code: String!){
 `;
 
 const mutations = gql`
-mutation sendVerificationCode($email: String!){
-  sendVerificationCode(
+mutation forgotPassword($email: String!){
+  forgotPassword(input: {
     email: $email
+    }
   ){
     status,
     message
