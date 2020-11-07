@@ -196,7 +196,29 @@ class Intro extends React.Component {
           size={100}
           />
           )}
-          </View> 
+          </View>
+          {this.state.currentSlide > 0 ? 
+          <View style={{flex:4}}>
+          <Icon style={{fontSize:20,alignSelf:'flex-end',marginBottom:15,color:'white'}}
+         onPress={()=>{
+           if (this.state.currentSlide == 1) {
+             this.state.currentSlide = 0
+            this._slider.goToSlide(0)
+            this.state.dotsArray[1].isActive = false
+            this.state.dotsArray[0].isActive = true
+           } else if (this.state.currentSlide == 2) {
+            this.state.currentSlide = 1
+            this._slider.goToSlide(1)
+            this.state.dotsArray[2].isActive = false
+            this.state.dotsArray[1].isActive = true
+           }
+         }}
+           name="arrowleft"
+           color="white"
+           type="AntDesign"
+         />
+         </View> 
+         : null }
           <View style={{flex:1}} >
           <View style={styles.buttonCircle}>
             {this.state.currentSlide < 2 ?
