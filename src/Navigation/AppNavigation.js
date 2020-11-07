@@ -15,6 +15,7 @@ import styles from '../Styles/NavigationStyles';
 import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
 import HomeScreen from '../components/Home/ingredentsinput';
+import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 
 const AppStack = createStackNavigator(
   {
@@ -57,10 +58,7 @@ const AuthStack = createStackNavigator(
       screen: VerificationScreen,
       navigationOptions: {header: false},
     },
-    Login: {
-      screen: LoginScreen,
-      navigationOptions: {header: false},
-    },
+    
     Signup: {
       screen: SignupScreen,
       navigationOptions: {header: true},
@@ -86,11 +84,21 @@ const AuthStack = createStackNavigator(
     SignupOptions :{
       screen: SignupOptionsScreen,
       navigationOptions : {header : false}
-    }
+    },
+    Login: {
+      screen: LoginScreen,
+      navigationOptions: {header: false},
+    },
+    VerificationForgotpass: {
+      screen: VerificationForgotpassScreen,
+      navigationOptions: {header: false},
+    },
+
+    
   },
   {
     transitionConfig: () => fromRight(500),
-    initialRouteName: 'Login',
+    initialRouteName: 'SignupOptions',
     headerLayoutPreset: 'center',
     cardStyle: { backgroundColor: '#FFFFFF' },
     navigationOptions: {

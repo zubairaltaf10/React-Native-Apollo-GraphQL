@@ -64,7 +64,7 @@ class SignupOptions extends Component {
             AccessToken.getCurrentAccessToken().then(data => {
               const { accessToken } = data;
               if (accessToken){
-                this.props.navigation.navigate('App')
+                this.props.navigation.navigate('Packages')
               }
               console.log(accessToken);
             });
@@ -83,7 +83,7 @@ class SignupOptions extends Component {
           offlineAccess: true,
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
-        this.props.navigation.navigate('App')
+        this.props.navigation.navigate('Packages')
         const email = userInfo.user.email;
         console.log(userInfo)
         const name = userInfo.user.name;

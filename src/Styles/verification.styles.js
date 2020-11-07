@@ -6,8 +6,6 @@ export default StyleSheet.create({
   container: {
     flex: 1,
    // backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingTop: 40,
   },
   inputWrapper: {
     alignItems: 'center',
@@ -16,16 +14,33 @@ export default StyleSheet.create({
   },
   inputLabel: {
     paddingBottom: 80,
-    
+    marginTop: 32,
     fontSize: 18,
     textAlign: 'center',
+  },
+  inputdigit: {
+   borderRadius:10,
+   borderColor:'#333'
+  },
+  backarrowforgot: {
+    textAlign: 'left',
+    marginTop: 32,
+    marginVertical:'5%',
+    fontSize:10
+
+  },
+  topheader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal:'5%'
   },
   inputSubLabel: {
     color: COLORS.blackText,
     textAlign: 'center',
     fontSize: 16,
-    paddingHorizontal: 10,
+    paddingHorizontal: 40,
     fontFamily: FONTFAMILY.medium,
+    marginBottom:50
   },
   
   inputWrapStyle: {

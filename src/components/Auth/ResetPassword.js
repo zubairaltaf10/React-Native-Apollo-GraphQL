@@ -59,6 +59,7 @@ class ResetPassword extends React.Component {
           })
           .catch((err) => {            
             this.setState({loading:false})
+            console.log(JSON.stringify(err));
             SNACKBAR.simple(JSON.stringify(err));
             console.log(JSON.stringify(err));
           });
@@ -91,7 +92,7 @@ class ResetPassword extends React.Component {
         
             <Text style={styles.inputLabel}>Reset password</Text>
               </View>
-        </View>
+          </View>
           <Form style={styles.form}>
 
           
@@ -166,7 +167,7 @@ class ResetPassword extends React.Component {
 
             {ErrorLabel('confirmPassword', this.state.errors)}
             <PrimaryButton
-              title="Continue"
+              title="RESET PASSWORD"
               marginTop={5}
               onPress={this.onSubmit}
               loading={this.state.loading}

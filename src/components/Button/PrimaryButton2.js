@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    paddingHorizontal: 50,
-    paddingVertical: 12,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: COLORS.primary,
 

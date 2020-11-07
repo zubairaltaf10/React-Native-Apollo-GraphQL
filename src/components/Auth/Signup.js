@@ -101,11 +101,12 @@ class Signup extends Component {
       .catch((err) => {
 
         this.setState({loading:false})
-        var error = JSON.stringify(err);
-        if(error.graphQLErrors.length > 0)
+       // var error = JSON.stringify(err);
+       // console.log(error)
+        if(err.graphQLErrors.length > 0)
         {
-          var mess = error.graphQLErrors[0].message
-          if(str.includes("Validation")){
+          var mess = err.graphQLErrors[0].message
+          if(mess.includes("Validation")){
             SNACKBAR.simple("Email address already exist");
           }
         }
@@ -120,13 +121,13 @@ class Signup extends Component {
       <ApolloProvider>
         
         <Content style={styles.container}>
-        <View style={styles.alternativeLayoutButtonContainer}>
+        <View style={styles.topheader}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
           </TouchableOpacity>
             </Text>
-            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+            <View style={{flex: 3, marginLeft:'28%', alignItems: 'flex-start', marginTop:'10%'}}>
         
      <Image 
                 source={require('../../assets/logo_signup.png')}
@@ -139,7 +140,7 @@ class Signup extends Component {
           <Text style={styles.logintopLabel}>
           Welcome, 
             </Text>
-            <Text style={styles.logintopLabel}>
+            <Text style={styles.logintopLabel1}>
             Let's setup an account
             </Text>
             </View>
@@ -223,17 +224,17 @@ class Signup extends Component {
         </View>
             <PrimaryButton
               loading={this.state.loading}
-              title="Create Account"
+              title="CREATE ACCOUNT"
               onPress={this.onSubmit}
               marginTop={8}
             />
 
             <Text style={styles.alreadyAccountLabel}>
-            If you already have an account?{' '}
+            Already have an account?{' '}
               <Text
                 style={styles.redText}
                 onPress={() => this.props.navigation.navigate('Login')}>
-                Sign In
+                Login
               </Text>
             </Text>
             {/* <WideBanner /> */}
