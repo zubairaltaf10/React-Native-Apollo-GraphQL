@@ -25,12 +25,13 @@ const client = new ApolloClient({
 })
 
 const mutation = gql`
-mutation verifyEmail($email: String!, $code: String!){
-  verifyEmail(input:{
+mutation verifyPasswordResetCode($email: String!, $code: String!){
+  verifyPasswordResetCode(input:{
       verification_code: $code,
       email: $email
     }){
-      status
+      status,
+      token
     }
   }
 `;
@@ -78,19 +79,15 @@ class VerificationForGotPassword extends React.Component {
       .then((res) => {
         console.log(res)
         this.setState({loading:false})
-        if (res.data.verifyEmail.status) {
-          console.log(JSON.stringify(res.data.verifyEmail.status))
+        if (res.data.verifyPasswordResetCode.status) {
+          console.log(JSON.stringify(res.data.verifyPasswordResetCode.status))
           const type = this.props.navigation.getParam('type');
           console.log(type + "type")
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
-          code: this.state.userInput
+          code: res.data.verifyPasswordResetCode.token
         });
-      } else if (type === 'Signup') {
-        this.props.navigation.navigate('Packages');
-      } else if (type === 'UnverifiedLogin') {
-        this.props.navigation.navigate('Packages');
       }
     }
      else {
@@ -105,8 +102,7 @@ class VerificationForGotPassword extends React.Component {
         //console.log(JSON.stringify(err))
         if(err.graphQLErrors != null)
         {
-         // SNACKBAR.simple(err);
-
+          SNACKBAR.simple(err);
         }
        });
       
