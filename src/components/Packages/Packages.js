@@ -180,7 +180,6 @@ class Packages extends Component {
             marginTop={height(40)}
           // loading={this.state.loading}
           />
-         
         </View>
         :
         <View style={{ flex: 0.2 }}>
