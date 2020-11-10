@@ -39,55 +39,11 @@ _keyboardDidHide() {
 }
   render() {
     return (
-<<<<<<< HEAD
-      // <View style={{ flex: 1, paddingTop:"50%"  }}>
-        
-      //  <Text style={{ textAlign: "center" , textAlignVertical: "center" }}>App Home, TBC </Text>
-      // </View>
-
-<Content style={styles.container}>
-        <View style={styles.topheader}>
-            <Text style={styles.backarrowforgot}>
-            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
-          </TouchableOpacity>
-            </Text>
-            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
-        
-            <Text style={styles.topheadingLabel}>
-              Forgot Password
-            </Text>
-              </View>
-        </View>
-          <Form style={styles.form}>
-          
-            <Text style={styles.topLabel}>
-            Enter your email address to receive a verification code.
-            </Text>
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              value={this.state.formData.email}
-              style={[ApplicationStyles.textbox, {marginTop: '15%'}]}
-              onChangeText={email => this.setState({formData: {email}})}
-            />
-
-            <PrimaryButton
-              title="SEND VERIFICATION CODE"
-              marginTop={6}
-              disabled={isBtnDisabled}
-              loading={this.state.loading}
-              onPress={this.handleContinueBtn}
-            />
-          </Form>
-        </Content>
-
-=======
       
       <View style={{ flex: 1 }} behavior="padding">
         <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }} onPress={()=>this.props.navigation.navigate('ModalScreen')}></Icon>
           </View>
           <View style={{ flex: 0.8 }}>
             <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
@@ -154,7 +110,6 @@ _keyboardDidHide() {
           </View>
         </View>
       </View>
->>>>>>> 2a662b6fdabcabdd6a3ef69ab2ad06cbac47c515
     );
   }
 }
