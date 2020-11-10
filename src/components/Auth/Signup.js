@@ -43,11 +43,10 @@ class Signup extends Component {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: '',
         roleId: 1,
         loading:false
       },
-      isPasswordFieldSecure: false,
+      isPasswordFieldSecure: true,
       isConfirmPasswordFieldSecure: true,
       errors: ['errors'],
       isOnToggleSwitch: false,
@@ -124,7 +123,7 @@ class Signup extends Component {
         <View style={styles.topheader}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
             <View style={{flex: 3, marginLeft:'28%', alignItems: 'flex-start', marginTop:'10%'}}>
@@ -185,10 +184,8 @@ class Signup extends Component {
                   })
                 }>
                 {!this.state.isPasswordFieldSecure && (
-                  <Icon
-                    name="eye"
-                    style={{fontSize: 18, color: COLORS.primary}}
-                  />
+                  <Icon name="eye" type="AntDesign" style={{fontSize: 16, color: COLORS.primary}}></Icon>
+                
                 )}
                 {this.state.isPasswordFieldSecure && (
                   <Image

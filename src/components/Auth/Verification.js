@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 //import { CodeInput } from 'react-native-confirmation-code-field';
 import CodeInput from 'react-native-code-input';
 import styles from '../../Styles/verification.styles.js';
@@ -19,6 +19,7 @@ import { ApolloProvider, Mutation  } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
+import COLORS from '../../Theme/Colors.js';
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -154,7 +155,7 @@ class Verification extends React.Component {
             <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
             <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start'}}>
@@ -204,6 +205,7 @@ class Verification extends React.Component {
                     onTimeElapsed={() => this.setState({resendTime: 0})}
                   />
                 )}
+               
               </TouchableOpacity>
             )}
             

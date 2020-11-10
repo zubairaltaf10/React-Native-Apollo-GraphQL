@@ -63,7 +63,7 @@ class ForgotPassword extends React.Component {
         <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
             <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>

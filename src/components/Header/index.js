@@ -21,7 +21,7 @@ const Header = ({title, navigation, hideBack = false}) => {
       <Left style={styles.left}>
         {!hideBack && (
           <TouchableOpacity onPress={() => navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+          <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
         )}
       </Left>

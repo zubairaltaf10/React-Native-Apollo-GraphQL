@@ -6,6 +6,8 @@ export default StyleSheet.create({
   container: {
     flex: 1,
    // backgroundColor: 'white',
+   
+   backgroundColor: '#F6F6F6',
   },
   inputWrapper: {
     alignItems: 'center',
@@ -17,6 +19,10 @@ export default StyleSheet.create({
     marginTop: 32,
     fontSize: 18,
     textAlign: 'center',
+  },
+  spinner: {
+    marginRight: 20,
+    fontSize:26
   },
   inputdigit: {
    borderRadius:10,

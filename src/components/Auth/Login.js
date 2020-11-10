@@ -89,7 +89,7 @@ class Login extends Component {
             this.props.navigation.navigate('Packages');
           }else
           {
-          this.props.navigation.navigate('Packages');
+          this.props.navigation.navigate('App');
           }
         },
       );
@@ -127,7 +127,7 @@ class Login extends Component {
       <View style={styles.topheader}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
             <View style={{flex: 3, marginLeft:'28%', alignItems: 'flex-start', marginTop:'10%'}}>
@@ -175,10 +175,7 @@ class Login extends Component {
                   this.setState({hidePassword: !this.state.hidePassword})
                 }>
                 {!this.state.hidePassword && (
-                  <Icon
-                    name="eye"
-                    style={{fontSize: 18, color: COLORS.primary}}
-                  />
+                  <Icon name="eye" type="AntDesign" style={{fontSize: 16, color: COLORS.primary}}></Icon>
                 )}
                 {this.state.hidePassword && (
                   <Image
@@ -202,7 +199,7 @@ class Login extends Component {
             />
 
             <Text style={styles.alreadyAccountLabel}>
-            Already have an account?{' '}
+            Don't have an account?{' '}
               <Text
                 style={styles.redText}
                 onPress={() => this.props.navigation.navigate('Signup')}>
