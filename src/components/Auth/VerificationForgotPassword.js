@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 //import { CodeInput } from 'react-native-confirmation-code-field';
 import CodeInput from 'react-native-code-input';
 import styles from '../../Styles/verification.styles.js';
@@ -27,7 +27,7 @@ const client = new ApolloClient({
 const mutation = gql`
 mutation verifyPasswordResetCode($email: String!, $code: String!){
   verifyPasswordResetCode(input:{
-      verification_code: $code,
+      token: $code,
       email: $email
     }){
       status,
@@ -37,7 +37,9 @@ mutation verifyPasswordResetCode($email: String!, $code: String!){
 `;
 
 const mutations = gql`
+
 mutation forgotPassword($email: String!){
+  
   forgotPassword(input: {
     email: $email
     }
@@ -54,7 +56,8 @@ class VerificationForGotPassword extends React.Component {
     this.state = {
       userInput: '',
       resendTime: 0,
-      loading:false
+      loading:false,
+      loadingresend:false
       //verificationCode: props.navigation.getParam('verificationCode'),
     };
   }
@@ -77,10 +80,10 @@ class VerificationForGotPassword extends React.Component {
         },
       })
       .then((res) => {
-        console.log(res)
+        console.log(res.data.verifyPasswordResetCode)
         this.setState({loading:false})
-        if (res.data.verifyPasswordResetCode.status) {
-          console.log(JSON.stringify(res.data.verifyPasswordResetCode.status))
+        if (res.data.verifyPasswordResetCode.status === "true") {
+          
           const type = this.props.navigation.getParam('type');
           console.log(type + "type")
       if (type === 'ResetPassword') {
@@ -151,7 +154,7 @@ class VerificationForGotPassword extends React.Component {
             <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
             <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start'}}>
@@ -182,12 +185,12 @@ class VerificationForGotPassword extends React.Component {
             <Mutation
             mutation={mutations}
             variables={{ email: this.props.navigation.getParam('email') }}
-            onCompleted={ () => { SNACKBAR.simple("Verification code sent to your email") ; this.setState({resendTime: 60});} }
+            onCompleted={ () => { SNACKBAR.simple("Verification code sent to your email") ; this.setState({resendTime: 60}); this.setState({loadingresend:false});} }
           >
             {mutation => (
               <TouchableOpacity
                 style={styles.resendBtn}
-                onPress={mutation}
+                onPress={mutation  }
                 disabled={this.state.resendTime === 0 ? false : true}>
                 <Text style={styles.resendText}>Resend Code</Text>
                 {this.state.resendTime !== 0 && (
@@ -201,6 +204,12 @@ class VerificationForGotPassword extends React.Component {
                     onTimeElapsed={() => this.setState({resendTime: 0})}
                   />
                 )}
+                <View style={styles.row}>
+                {this.state.loadingresend && (
+            <ActivityIndicator style={styles.spinner} color={"#FFBD59"}/>
+                )}
+          
+        </View>
               </TouchableOpacity>
             )}
             

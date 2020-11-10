@@ -85,10 +85,10 @@ class ResetPassword extends React.Component {
           <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-            <Icon name="md-arrow-back" style={styles.icon} type="Ionicons" />
+            <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18}}></Icon>
           </TouchableOpacity>
             </Text>
-            <View style={{flex: 3, marginLeft:60, alignItems: 'flex-start', marginTop:'10%'}}>
+            <View style={{flex: 1, marginLeft:'25%', alignItems: 'flex-start', marginTop:'10%'}}>
         
             <Text style={styles.inputLabel}>Reset password</Text>
               </View>
@@ -119,10 +119,7 @@ class ResetPassword extends React.Component {
                   })
                 }>
                 {!this.state.isPasswordFieldSecure && (
-                  <Icon
-                    name="eye"
-                    style={{fontSize: 18, color: COLORS.primary}}
-                  />
+                  <Icon name="eye" type="AntDesign" style={{fontSize: 16, color: COLORS.primary}}></Icon>
                 )}
                 {this.state.isPasswordFieldSecure && (
                   <Image
@@ -152,10 +149,7 @@ class ResetPassword extends React.Component {
                   })
                 }>
                 {!this.state.isConfirmPasswordFieldSecure && (
-                  <Icon
-                    name="eye"
-                    style={{fontSize: 18, color: COLORS.primary}}
-                  />
+                  <Icon name="eye" type="AntDesign" style={{fontSize: 16, color: COLORS.primary}}></Icon>
                 )}
                 {this.state.isConfirmPasswordFieldSecure && (
                   <Image

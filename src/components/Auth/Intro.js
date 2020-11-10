@@ -57,7 +57,7 @@ const data = [
       paddingHorizontal:'5%'
     },
     title: {
-      fontSize: 22,
+      fontSize: 18,
       fontFamily: 'Lora-Bold',
     //  flex:1,
       textAlign: 'center',
