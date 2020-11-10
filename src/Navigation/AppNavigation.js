@@ -14,7 +14,8 @@ import WideBanner from '../components/Ads/WideBanner';
 import styles from '../Styles/NavigationStyles';
 import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
-import HomeScreen from '../components/Home/ingredentsinput';
+// import HomeScreen from '../components/Home/ingredentsinput';
+import HomeScreen from '../components/Home/homecount';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 
 const AppStack = createStackNavigator(
