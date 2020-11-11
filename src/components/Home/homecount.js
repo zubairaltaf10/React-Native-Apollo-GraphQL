@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet,Platform, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView} from "react-native";
+import { View, Text, Image, StyleSheet,Platform, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal} from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -10,6 +10,8 @@ import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
 import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
+import RBSheet from "react-native-raw-bottom-sheet";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 
 class HomeCount extends React.Component {
@@ -21,13 +23,15 @@ class HomeCount extends React.Component {
     clicked: false,
     bottomHeight:0,
     clicks: 0,
-    show: true
+    show: true,
+    modal:false
   }
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
 }
 componentWillUnmount() {
+  this.RBSheet.open()
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
 }
@@ -48,13 +52,37 @@ IncrementItem = () => {
   ToggleClick = () => {
     this.setState({ show: !this.state.show });
   }
+  modalOpen = () => {
+    this.setState({modal:true})
+  }
   render() {
     return (
+      <View style={{ flex: 1,backgroundColor: this.state.modal ? "transparent" : null,opacity: this.state.modal ? 0.03 : 1}} behavior="padding">
+        
+       {/* //* Modal starts from here */}
 
-      <View style={{ flex: 1 }} behavior="padding">
+        <Modal 
+            animationType="fade"
+            transparent={true}
+            visible={this.state.modal}
+           // backdropOpacity={-1}
+           >
+          <View style={{flex: 1,justifyContent: "center", alignItems: "center"}}>
+                    <View style={{flex:2,justifyContent:'center',alignContent:'center'}}>
+                    <View style={{backgroundColor:'white',height:300,width:300}}>
+                      <Text>
+                      check
+                      </Text>
+                      </View>
+                    </View>
+          </View>
+        </Modal>
+
+        {/* /* ends here */}
+
         <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-            <Icon name="bars" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
+            <Icon name="bars" type="AntDesign" style={{ marginLeft: 10 }} onPress={() => this.RBSheet.open()}></Icon>
           </View>
          
           <View style={{flex:3, alignItems: 'center', marginTop:'8%',position: 'absolute', left: 0, right: 0}}>
@@ -94,11 +122,78 @@ IncrementItem = () => {
           <View style={{ flex: 0.9 ,alignItems: 'center',position: 'absolute', left: 0, right: 0, justifyContent: 'center' }}>
             <PrimaryButton
               title="CONTINUE"
-              //onPress={() => this._onSaveUserSubscription()}
+              onPress={() => this.modalOpen()}
               marginTop={height(40)}
             // loading={this.state.loading}
             />
           </View>
+        </View>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          height={370}
+          openDuration={400}
+          customStyles={{
+            container: {
+          //    justifyContent: "center",
+           //   alignItems: "center",
+              borderRadius:15
+            }
+          }}
+        >
+          <View style={{flex:0.24,backgroundColor:COLORS.primary,flexDirection:'row'}}>
+            <View style={{flex:0.2}}>
+            <View style={{margin:15,height:50,width:50,top:5,backgroundColor:'black',borderRadius:55,justifyContent:'center',alignItems:'center'}}>
+                <Icon name="user" type="FontAwesome" style={{fontSize: 25, color: COLORS.primary}}></Icon>
+            </View>
+            </View>
+            <View style={{flex:0.65,marginVertical:15,marginLeft:width(5),top:5}}>
+              <Text style={{fontFamily:FONTFAMILY.bold,fontSize:17,color:'#fff'}}>Hi,</Text>
+              <Text style={{fontFamily:FONTFAMILY.regular,fontSize:13,color:'#fff'}}>Sign in or create an account!</Text>
+            </View>
+            <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
+            <Icon name="user-plus" type="FontAwesome" style={{fontSize: 18,alignSelf:'flex-end'}}></Icon>
+            </View>
+          </View>
+          <View style={{flex:0.73}}>
+            <View style={{flex:0.25,flexDirection:'row',margin:7}}>
+            <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Manage Subscription</Text>
+            <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </View>
+            <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
+            </View>
+            <View style={{flex:0.24,flexDirection:'row',margin:7}}>
+            <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>My Favourites</Text>
+            <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </View>
+            <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
+            </View>
+            <View style={{flex:0.25,flexDirection:'row',margin:7}}>
+            <Icon name="adduser" type="AntDesign" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Invite Friends</Text>
+            <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </View>
+            <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
+            </View>
+            <View style={{flex:0.25,flexDirection:'row',margin:7}}>
+            <Icon name="star" type="EvilIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Rate Application</Text>
+            <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </View>
+            <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
+            </View>
+            <View style={{flex:0.25,flexDirection:'row',margin:7}}>
+            <Icon name="logout" type="MaterialIcons" style={{fontSize: 21,alignSelf:'center',color:COLORS.primary,left:8}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Logout</Text>
+            <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </View>
+          </View>
+        </RBSheet>
         </View>
       </View>
     );
