@@ -17,7 +17,8 @@ import SignupOptionsScreen from '../components/Auth/signupoptions';
 // import HomeScreen from '../components/Home/ingredentsinput';
 import HomeScreen from '../components/Home/homecount';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
-
+import UpdateProfileScreen from '../components/profile/updateprofile'
+import ManagePackageScreen from '../components/profile/MangeSubcription'
 const AppStack = createStackNavigator(
   {
     
@@ -38,10 +39,14 @@ const AppStack = createStackNavigator(
       screen: HomeScreen,
       navigationOptions: {header: null},
     },
-    // Library: {
-    //   screen: Library,
-    //   navigationOptions: {header: null},
-    // },
+    UpdateProfile: {
+      screen: UpdateProfileScreen,
+      navigationOptions: {header: null},
+    },
+    ManagePackge: {
+      screen: ManagePackageScreen,
+      navigationOptions: {header: null},
+    },
   },
   {
     transitionConfig: () => fromRight(500),

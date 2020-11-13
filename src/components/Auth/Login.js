@@ -30,6 +30,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 class Login extends Component {
+
   constructor(props) {
     super(props);
 
@@ -46,6 +47,8 @@ class Login extends Component {
       resultLogin: '',
       loading:false
     };
+
+     
   }
 
   
@@ -64,11 +67,11 @@ class Login extends Component {
   onSubmit = () => {
     //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
    // this.props.navigation.navigate('Packages');
-    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-      if (this.state.errors.length === 0) {
+   // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+     // if (this.state.errors.length === 0) {
         this.setState({loading:true})
-        let email = this.state.formData.userNameOrEmail;
-        let password = this.state.formData.loginPassword; 
+        let email = "askfaisal@outlook.com";
+        let password = "P@ssw0rd1"; 
         this.props.mutate({
         variables: {
           email: email,
@@ -115,11 +118,11 @@ class Login extends Component {
           }
         }
       });
-      }
-    });
+     // }
+   // });
   };
   render() {
-   
+    //this.setState({email:"askfaisal@outlook.com"})
     return (
   
       <Content style={styles.container}>
@@ -227,7 +230,17 @@ mutation login($email: String!, $password: String!){
       email_verified_at,
       user_subscription{
         subscription{
-          name
+          name,
+          id,
+          person_limit,
+          ingredient_limit,
+          amount,
+          amount_per_year,
+          amount_per_month,
+          name,
+          amount_description,
+          trial_days,
+          description
         }
       }
     }

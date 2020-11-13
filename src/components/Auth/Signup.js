@@ -198,7 +198,7 @@ class Signup extends Component {
 
             <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.termandconLabel}>
-            I agree with all?{' '}
+            I agree with all{' '}
               <Text style={styles.termandconlink}
                 onPress={() => this.props.navigation.navigate('Login')}>
                 Terms & Conditions

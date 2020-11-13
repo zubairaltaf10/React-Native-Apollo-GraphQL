@@ -5,17 +5,36 @@ import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
+  TouchableOpacity
 } from "native-base";
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
+import PlusButton from '../Button/PlusButton';
+import MinusButton from '../Button/MinusButton';
+import {ApplicationStyles} from '../../Theme';
 import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
-
+import AsyncStorage from '@react-native-community/async-storage';
+import AnimatedNumbers from 'react-native-animated-numbers';
+//const [animateToNumber, setAnimateToNumber] = 0;
 class HomeCount extends React.Component {
-
+  async componentWillMount() {
+       
+    let user = await AsyncStorage.getItem('user');
+   if (user) {
+     user = JSON.parse(user);
+     var subcription = user.user_subscription.subscription
+     this.setState({ currentsubscription: subcription });
+     this.setState({ loginuser: user });
+     console.log('user subcription found in localstorage', this.state.currentsubscription);
+   } else {
+     this.props.navigation.navigate('Auth');
+   }
+  // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
+  // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+ }
   constructor(props) {
     super(props);
   }
@@ -24,12 +43,16 @@ class HomeCount extends React.Component {
     bottomHeight:0,
     clicks: 0,
     show: true,
-    modal:false
+    modal:false,
+    currentsubscription: {},
+    loginuser:{},
+    modalVisible:false
   }
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
 }
+
 componentWillUnmount() {
   this.RBSheet.open()
     this.keyboardDidShowListener.remove();
@@ -44,10 +67,20 @@ _keyboardDidHide() {
     this.setState({ bottomHeight: 0 })
 }
 IncrementItem = () => {
+  
     this.setState({ clicks: this.state.clicks + 1 });
+    if(this.state.currentsubscription.person_limit < this.state.clicks)
+    {
+
+      this.setState({
+        modalVisible: true});
+    }
+
+   // setAnimateToNumber(animateToNumber + this.state.clicks);
   }
   DecreaseItem = () => {
     this.setState({ clicks: this.state.clicks - 1 });
+    //setAnimateToNumber(animateToNumber + this.state.clicks);
   }
   ToggleClick = () => {
     this.setState({ show: !this.state.show });
@@ -56,6 +89,11 @@ IncrementItem = () => {
     this.setState({modal:true})
   }
   render() {
+    const  currentsubscription  = this.state.currentsubscription;
+    console.log( 'currentsubscription ' + currentsubscription.person_limit)
+    if (!currentsubscription) {
+      return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
+    }
     return (
       <View style={{ flex: 1,backgroundColor: this.state.modal ? "transparent" : null,opacity: this.state.modal ? 0.03 : 1}} behavior="padding">
         
@@ -65,6 +103,7 @@ IncrementItem = () => {
             animationType="fade"
             transparent={true}
             visible={this.state.modal}
+            onRequestClose={() => this.setState({modalVisible: false})}
            // backdropOpacity={-1}
            >
           <View style={{flex: 1,justifyContent: "center", alignItems: "center"}}>
@@ -93,26 +132,64 @@ IncrementItem = () => {
             </View>
         </View>
         <View style={{ flex: 1 }}>
-          <View style={{ marginTop: height(5), marginLeft: 17,height:height(9) }}>
-            <Text style={{ fontFamily: FONTFAMILY.bold, fontSize: 25, color: 'black' }}>Let's Get Started</Text>
-            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%' }}>Select number of individuals for your recipes</Text>
-            {/* <View style={{ marginTop: height(5), marginLeft: 17,height:height(9) }}>
-            <Button onClick={this.IncrementItem} title= "Click to increment by 1"/>
-            <Button onClick={this.DecreaseItem} title=  "Click to decrease by 1" />
-            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%' }}>{ this.state.show ? <h2>{ this.state.clicks }</h2> : '' }</Text> */}
 
-        {/* { this.state.show ? <h2>{ this.state.clicks }</h2> : '' } */}
-            {/* </View> */}
+        
+          <View style={{ marginTop: height(5), height:height(9) }}>
+          <View style={{  marginLeft: 17 }}>
+          <Text style={{ fontFamily: FONTFAMILY.bold, fontSize: 25, color: 'black' }}>Let's Get Started</Text>
+            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%' }}>Select number of individuals for your recipes</Text>
+            
+          </View>
+            
+
+            <View style={styles.alternativeLayoutButtonContainer}>
+            <MinusButton
+              title="-"
+              onPress={this.DecreaseItem}
+              marginTop={height(40)}
+              disabled={this.state.clicks == 0 ? true : false}
+              bdcolor={this.state.clicks == 0 ? '#868CA9' : COLORS.primary}
+            // loading={this.state.loading}
+            />
+
+           <AnimatedNumbers
+        includeComma
+        animateToNumber={this.state.clicks}
+        fontStyle={{fontSize: 30, fontWeight: 'bold'}}
+      />
+            
+            {/* <Text style={{ alignItems:'center', backgroundColor:'#eee',  fontFamily: FONTFAMILY.extraBold,
+             fontSize: 22, color: '#868CA9', marginTop:'5%' }}>
+            { this.state.show ?  this.state.clicks  : '' }</Text> */}
+
+        
+      <PlusButton
+              title="+"
+              onPress={this.IncrementItem}
+              marginTop={height(40)}
+            // loading={this.state.loading}
+            />
+       
+        </View>
+
 
             <View style={styles.search}>
              
-              <Input style={{ alignSelf: 'center', color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
+              {/* <Input style={{ alignSelf: 'center', color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
                 placeholder="Enter number of individuals"
                 // onChangeText={val => this.onTextInput('loginPassword', val)}
                 // value={this.state.type}
                 maxLength={16}>
-              </Input>
+              </Input> */}
+              <Input
+              placeholder="First Name" maxLength={12}
+              style={ApplicationStyles.textbox}
+              //value={this.state.formData.firstName}
+              //onChangeText={val => this.onTextInput('firstName', val)}
+            />
             </View>
+
+            
           </View>
           <View style={{ marginTop: height(5) }}>
           </View>
@@ -160,9 +237,14 @@ IncrementItem = () => {
           </View>
           <View style={{flex:0.73}}>
             <View style={{flex:0.25,flexDirection:'row',margin:7}}>
+            <TouchableOpacity onPress={() =>
+             this.props.navigation.navigate('ManagePackge')
+            }>
+        
             <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Manage Subscription</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+           </TouchableOpacity>
             </View>
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
             </View>
@@ -201,22 +283,31 @@ IncrementItem = () => {
 }
 
 const styles = StyleSheet.create({
-  search: {
-    backgroundColor: 'white',
+  roundButton1: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    backgroundColor: 'orange',
+  },
+  alternativeLayoutButtonContainer: {
     flexDirection: 'row',
-    width: '85%',
-    marginLeft: 5,
-    borderWidth: 1,
-    borderColor: '#rgba(9, 56, 149, 0.1)',
-    borderRadius: 12,
-    height: 50,
-    color: '#868CA9',
+    justifyContent: 'space-between',
+    marginHorizontal:'5%',
+    marginTop:'15%',
+    marginBottom:'45%',
+
+  },
+  search: {
+    flexDirection: 'row',
+    //marginLeft: 5,
     marginTop: 15,
     fontSize: 13,
     paddingBottom: 5,
     fontFamily: FONTFAMILY.regular,
-    paddingLeft: 10,
-    marginLeft:14
+    marginHorizontal:'7%'
   },
   tags: {
     marginTop: 14,

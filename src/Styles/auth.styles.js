@@ -16,12 +16,23 @@ export default StyleSheet.create({
     // paddingTop: 60,
     // paddingBottom: 10,
   },
+  
   alreadyAccountLabel: {
     textAlign: 'center',
     marginTop: 10,
     fontFamily: FONTFAMILY.regular,
     fontSize:11
   },
+  skipAccountLabel:{
+    textAlign: 'center',
+    marginTop: 22,
+    marginBottom: 22,
+    fontStyle:'italic',
+    textDecorationLine: 'underline',
+    fontFamily: FONTFAMILY.medium,
+    color:COLORS.primary,
+    fontSize:12
+   },
   termandconLabel: {
     textAlign: 'left',
     marginTop: 18,
@@ -160,6 +171,36 @@ export default StyleSheet.create({
     color: '#333',
     fontSize: 22,
   },
-  
+   headerContent:{
+    padding:30,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+    marginBottom:10,
+  },
+  body:{
+    alignItems:'flex-start',
+    
+  },
+  item:{
+    flexDirection : 'row',
+  },
+  label:{
+    marginTop:15,
+    fontFamily:FONTFAMILY.medium,
+    color:'#868CA9',
+    fontSize:12
+  },
+  editform: {
+    paddingHorizontal: 12,
+    marginHorizontal:'2%'
+    // paddingTop: 60,
+    // paddingBottom: 10,
+  },
 
 });

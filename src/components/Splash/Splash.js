@@ -35,13 +35,18 @@ componentDidMount(){
 // });
 
 this.timeout = setTimeout(async () => {
-  this.props.navigation.navigate("Intro");
+  this.props.navigation.navigate("Login");
 },1000);
 }
 render() {
     return (
       <View style={{ flex: 1,backgroundColor:'#FFBD59' }}>
         <View style={{flex:1,justifyContent:'center'}}>
+        {/* <Image
+          source={require("../../assets/splash/logo_splash.png")}
+          style={{height: '28%', width: undefined}}
+          resizeMode="cover"
+        /> */}
         <Image
           source={require("../../assets/splash/logo_splash.png")}
           style={{
@@ -50,6 +55,7 @@ render() {
             alignSelf: "center",
             height:"28%",
             width: "83%",
+            resizeMode:"cover"
           }}
         />
         </View>
