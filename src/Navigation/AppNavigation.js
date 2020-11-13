@@ -16,25 +16,13 @@ import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
 // import HomeScreen from '../components/Home/ingredentsinput';
 import HomeScreen from '../components/Home/homecount';
+import SearchRecipes from '../components/Home/searchrecipes';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 import UpdateProfileScreen from '../components/profile/updateprofile'
 import ManagePackageScreen from '../components/profile/MangeSubcription'
 const AppStack = createStackNavigator(
   {
     
-    
-    // Type: {
-    //   screen: Type,
-    //   navigationOptions: {header: null},
-    // },
-    // Documents: {
-    //   screen: Documents,
-    //   navigationOptions: {header: null},
-    // },
-    // DocumentUploaded: {
-    //   screen: DocumentUploaded,
-    //   navigationOptions: {header: null},
-    // },
     Home: {
       screen: HomeScreen,
       navigationOptions: {header: null},
@@ -45,6 +33,10 @@ const AppStack = createStackNavigator(
     },
     ManagePackge: {
       screen: ManagePackageScreen,
+      navigationOptions: {header: null},
+    },
+    SearchRecipes: {
+      screen: SearchRecipes,
       navigationOptions: {header: null},
     },
   },
