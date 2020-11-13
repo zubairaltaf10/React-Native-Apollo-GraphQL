@@ -16,6 +16,7 @@ import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
 // import HomeScreen from '../components/Home/ingredentsinput';
 import HomeScreen from '../components/Home/homecount';
+import SearchRecipes from '../components/Home/searchrecipes';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 
 const AppStack = createStackNavigator(
@@ -38,10 +39,10 @@ const AppStack = createStackNavigator(
       screen: HomeScreen,
       navigationOptions: {header: null},
     },
-    // Library: {
-    //   screen: Library,
-    //   navigationOptions: {header: null},
-    // },
+    SearchRecipes: {
+      screen: SearchRecipes,
+      navigationOptions: {header: null},
+    },
   },
   {
     transitionConfig: () => fromRight(500),
