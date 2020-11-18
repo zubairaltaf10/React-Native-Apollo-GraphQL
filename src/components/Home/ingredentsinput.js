@@ -105,7 +105,7 @@ _keyboardDidHide() {
           <View style={{ flex: 0.7, justifyContent: 'center' }}>
             <PrimaryButton
               title="SEARCH RECIPES"
-              //onPress={() => this._onSaveUserSubscription()}
+              onPress={() => this.props.navigation.navigate('SearchRecipes')}
               marginTop={height(40)}
             // loading={this.state.loading}
             />

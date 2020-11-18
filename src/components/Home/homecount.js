@@ -100,7 +100,7 @@ console.log(this.state.currentsubscription)
   ViewPlan = () => {
     this.setState({modal:false})
     this.setState({viewplanmodel:false})
-    this.props.navigation.navigate('ManagePackge')
+    this.props.navigation.navigate('Ingredients')
   }
   ToggleClick = () => {
     this.setState({ show: !this.state.show });

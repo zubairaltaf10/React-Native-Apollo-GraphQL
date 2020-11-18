@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, ImageBackground, StyleSheet, Platform, TouchableWithoutFeedback, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
+import { View, Text, Image, ImageBackground, StyleSheet, Platform, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -14,7 +14,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 
-class HomeCount extends React.Component {
+class SearchRecipes extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -51,6 +51,7 @@ class HomeCount extends React.Component {
                             />
                         </View>
                     </View>
+                    <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
                     <View style={{ flex: 1, marginTop: height(3) }}>
                         <View style={styles.whitebox}>
                             <View style={styles.imagebox}>
@@ -82,12 +83,13 @@ class HomeCount extends React.Component {
                             </View>
                         </View>
                     </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         )
     }
 }
-export default HomeCount;
+export default SearchRecipes;
 
 const styles = StyleSheet.create({
     search: {

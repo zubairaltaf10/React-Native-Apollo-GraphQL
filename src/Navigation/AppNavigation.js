@@ -14,13 +14,14 @@ import WideBanner from '../components/Ads/WideBanner';
 import styles from '../Styles/NavigationStyles';
 import ResetPassword from '../components/Auth/ResetPassword';
 import SignupOptionsScreen from '../components/Auth/signupoptions';
-// import HomeScreen from '../components/Home/ingredentsinput';
+import InGredentsInput from '../components/Home/ingredentsinput';
 import HomeScreen from '../components/Home/homecount';
 import SearchRecipes from '../components/Home/searchrecipes';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 import UpdateProfileScreen from '../components/profile/updateprofile'
 import ManagePackageScreen from '../components/profile/MangeSubcription'
 import MyFaviourites from '../components/profile/MyFavorites'
+import RecipeDetails from '../components/Home/recipedetails'
 const AppStack = createStackNavigator(
   {
     
@@ -42,6 +43,14 @@ const AppStack = createStackNavigator(
     },
     MyFaviourites: {
       screen: MyFaviourites,
+      navigationOptions: {header: null},
+    },
+    Ingredients: {
+      screen: InGredentsInput,
+      navigationOptions: {header: null},
+    },
+    RecipeDetails: {
+      screen: RecipeDetails,
       navigationOptions: {header: null},
     },
   },
