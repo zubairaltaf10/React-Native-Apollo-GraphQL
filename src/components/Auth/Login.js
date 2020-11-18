@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  StatusBar
 } from 'react-native';
 import {Content, Form, Item, Input, Icon, Spinner, Button} from 'native-base';
 import {ApplicationStyles} from '../../Theme';
@@ -71,7 +72,7 @@ class Login extends Component {
      // if (this.state.errors.length === 0) {
         this.setState({loading:true})
         let email = "askfaisal@outlook.com";
-        let password = "P@ssw0rd1"; 
+        let password = "P@ssw0rd"; 
         this.props.mutate({
         variables: {
           email: email,
@@ -80,12 +81,12 @@ class Login extends Component {
       })
       .then((res) => {
        // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
-        console.log("userInfo ", JSON.stringify(res.data.login.user))
+        console.log("userInfo ", res.data.login.access_token)
         if(res.data.login.user.email_verified_at != null)
         {
           this.setState({loading:false})
          // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
-             AsyncStorage.setItem('user', JSON.stringify(res.data.login.user)).then(
+             AsyncStorage.setItem('user', JSON.stringify(res.data.login)).then(
         () => {
           if(res.data.login.user.user_subscription == null)
           {
@@ -126,7 +127,7 @@ class Login extends Component {
     return (
   
       <Content style={styles.container}>
-      
+      <StatusBar translucent backgroundColor="transparent" />
       <View style={styles.topheader}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>

@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'rgba(40, 41, 47, 1)',
-    fontSize: 18,
+    fontSize: 20,
+    marginTop:4,
     fontFamily: FONTFAMILY.bold
   },
   spinner: {

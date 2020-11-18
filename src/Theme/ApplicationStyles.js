@@ -27,6 +27,7 @@ const ApplicationStyles = StyleSheet.create({
     fontFamily: FONTFAMILY.regular,
     paddingLeft: 10,
   },
+  
   blackTextCenter: {
     color: 'rgba(106, 106, 106, 1)',
     textAlign: 'center',
@@ -36,6 +37,7 @@ const ApplicationStyles = StyleSheet.create({
     fontFamily: FONTFAMILY.medium,
     fontSize:12
   },
+  
 });
 
 export default ApplicationStyles;

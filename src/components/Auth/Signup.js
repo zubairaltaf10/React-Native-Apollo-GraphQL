@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  StatusBar,
   Switch
 } from 'react-native';
 import {Content, Form, Input, Icon} from 'native-base';
@@ -120,6 +121,7 @@ class Signup extends Component {
       <ApolloProvider>
         
         <Content style={styles.container}>
+        <StatusBar translucent backgroundColor="transparent" />
         <View style={styles.topheader}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>

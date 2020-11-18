@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ActivityIndicator, StatusBar} from 'react-native';
 //import { CodeInput } from 'react-native-confirmation-code-field';
 import CodeInput from 'react-native-code-input';
 import styles from '../../Styles/verification.styles.js';
@@ -150,7 +150,7 @@ class VerificationForGotPassword extends React.Component {
     return (
      
             <Content style={styles.container}>
-            
+            <StatusBar translucent backgroundColor="transparent" />
             <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>

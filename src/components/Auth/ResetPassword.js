@@ -1,6 +1,6 @@
 /* eslint-disable handle-callback-err */
 import React from 'react';
-import {Text, Alert, Image, TouchableOpacity} from 'react-native';
+import {Text, Alert, Image, TouchableOpacity, StatusBar} from 'react-native';
 import styles from '../../Styles/auth.styles';
 import PrimaryButton from '../Button/PrimaryButton.js';
 import {Content, Input, Form, Icon, View} from 'native-base';
@@ -82,6 +82,7 @@ class ResetPassword extends React.Component {
   render() {
     return (
         <Content style={styles.container}>
+        <StatusBar translucent backgroundColor="transparent" />
           <View style={styles.alternativeLayoutButtonContainer}>
             <Text style={styles.backarrow}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>

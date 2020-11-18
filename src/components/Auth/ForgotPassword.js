@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, StatusBar} from 'react-native';
 import styles from '../../Styles/auth.styles';
 import PrimaryButton from '../Button/PrimaryButton.js';
 import {Content, Form, Input, Icon} from 'native-base';
@@ -60,6 +60,7 @@ class ForgotPassword extends React.Component {
     const isBtnDisabled = !checkEmail(this.state.formData.email);
     return (
         <Content style={styles.container}>
+        <StatusBar translucent backgroundColor="transparent" />
         <View style={styles.topheader}>
             <Text style={styles.backarrowforgot}>
             <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>

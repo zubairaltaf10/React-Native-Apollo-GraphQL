@@ -38,7 +38,7 @@ class ManagePackages extends Component {
        
          let user = await AsyncStorage.getItem('user');
         if (user) {
-          user = JSON.parse(user);
+          user = JSON.parse(user).user;
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
           console.log('user subcription found in localstorage', this.state.currentsubscription);
@@ -84,7 +84,7 @@ class ManagePackages extends Component {
   _onSaveUserSubscription = async () => {
     this.setState({loading:true})
     let user = await AsyncStorage.getItem('user');
-    user = JSON.parse(user);
+    user = JSON.parse(user).user;
    
     this.props
     .mutate({
@@ -131,7 +131,9 @@ class ManagePackages extends Component {
       <View style={{ flex: 1 }}>
       <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+          <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>
+            </TouchableOpacity>
           </View>
           <View style={{ flex: 0.7 }}>
             <Text style={{ alignSelf: 'center', marginTop: height(4), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Manage Subscription</Text>
@@ -180,7 +182,7 @@ class ManagePackages extends Component {
        
         <View style={{ flex: 0.8 }}>
         
-          <Swiper style={styles.wrapper}
+          <Swiper  style={styles.wrapper}
             dot={
               <View
                 style={{
@@ -262,7 +264,7 @@ class ManagePackages extends Component {
           />
         </View>
       }
-        <View style={{ flex: 0.4 , marginTop:10}}>
+        <View style={{ flex: 0.4 , marginTop:20, marginBottom:10}}>
         
           <View style={{ flexDirection: 'row' }}>
             <ScrollView
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    margin: height(5.5),
+    margin: height(4.5),
     borderRadius: 5
   },
   slide2: {
@@ -343,7 +345,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    margin: height(3.5),
+    margin: height(2.5),
     borderRadius: 5
   },
   text: {

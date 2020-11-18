@@ -53,9 +53,9 @@ render() {
             alignItems:'center',
             justifyContent: "center",
             alignSelf: "center",
-            height:"28%",
+            height:"38%",
             width: "83%",
-            resizeMode:"cover"
+            resizeMode:"contain"
           }}
         />
         </View>

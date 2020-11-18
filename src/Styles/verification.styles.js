@@ -6,7 +6,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
    // backgroundColor: 'white',
-   
+   marginTop:'10%',
    backgroundColor: '#F6F6F6',
   },
   inputWrapper: {

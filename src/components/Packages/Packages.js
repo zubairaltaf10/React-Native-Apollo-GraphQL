@@ -69,7 +69,7 @@ class Packages extends Component {
   _onSaveUserSubscription = async () => {
     this.setState({loading:true})
     let user = await AsyncStorage.getItem('user');
-    user = JSON.parse(user);
+    user = JSON.parse(user).user;
     console.log(user.id)
     console.log(this.state.subscription_id)
     this.props

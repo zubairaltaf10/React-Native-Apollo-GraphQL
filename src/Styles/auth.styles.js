@@ -2,9 +2,16 @@ import {StyleSheet} from 'react-native';
 import COLORS from '../Theme/Colors';
 import {FONTFAMILY} from '../Theme/Fonts';
 import { height,width,totalSize } from "react-native-dimension";
-
+import {Metrics} from '../Theme';
 export default StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#F6F6F6',
+    fontSize:12,
+    marginTop:'10%'
+    
+  },
+  profilecontainer: {
     flex: 1,
     backgroundColor: '#F6F6F6',
     fontSize:12,
@@ -15,6 +22,11 @@ export default StyleSheet.create({
     marginHorizontal:'4%'
     // paddingTop: 60,
     // paddingBottom: 10,
+  },
+  form1: {
+    paddingHorizontal: 12,
+    marginHorizontal:'1%',
+   marginBottom:10
   },
   
   alreadyAccountLabel: {
@@ -121,6 +133,7 @@ export default StyleSheet.create({
   },
   passwordFieldContainer: {
     flex: 1,
+    
   },
   eyeIcon: {
     position: 'absolute',
@@ -176,12 +189,20 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
+    alignItems:'center',
+    justifyContent: 'center',
     width: 130,
     height: 130,
     borderRadius: 63,
-    borderWidth: 4,
-    borderColor: "white",
-    marginBottom:10,
+   // borderWidth: 4,
+    // borderColor: "#28292F",
+     backgroundColor: "#28292F",
+    
+  },
+  avatareditcircle:{
+    backgroundColor:COLORS.primary, justifyContent: 'center', 
+            alignItems:'center', width:45, height:45, borderRadius:30, 
+            position: 'absolute',right: '51%',bottom: '10%'
   },
   body:{
     alignItems:'flex-start',
@@ -201,6 +222,42 @@ export default StyleSheet.create({
     marginHorizontal:'2%'
     // paddingTop: 60,
     // paddingBottom: 10,
+  },
+
+  overlay: {
+    backgroundColor: '#f2f2f4',
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.9,
+  },
+  modelHeading: {
+    textAlign: 'center',
+    fontFamily: FONTFAMILY.bold,
+    fontSize: 18,
+    marginBottom:20
+  },
+  modeltext: {
+    marginTop: 20,
+    color: '#868CA9',
+    textAlign: 'center',
+    fontSize: 15,
+    fontFamily: FONTFAMILY.regular,
+    marginHorizontal:'10%'
+  },
+  modelSubheading: {
+    marginTop: 10,
+    color: 'rgba(106, 106, 106, 1)',
+    textAlign: 'center',
+    fontSize: 13,
+    paddingHorizontal: 20,
+    fontFamily: FONTFAMILY.medium,
+  },
+  modelContainer: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+  // /  marginTop: Metrics.screenHeight / 4.5,
+    padding: 20,
+    elevation: 6,
+    borderRadius: 7,
   },
 
 });

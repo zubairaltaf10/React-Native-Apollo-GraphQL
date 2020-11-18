@@ -119,7 +119,7 @@ console.log(this.state.currentsubscription)
 
         let user = await AsyncStorage.getItem('user');
    if (user) {
-     user = JSON.parse(user.user);
+     user = JSON.parse(user).user;
      console.log('user subcription found in localstorage', user);
        // this.props.navigation.navigate('Login');
     }

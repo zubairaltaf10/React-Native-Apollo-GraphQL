@@ -115,7 +115,7 @@ class SignupOptions extends Component {
         return (
        
       <ImageBackground style={styles.image} source={require('../../assets/signupoptions/background.png')} >
-        <View style={{flex: 3, alignItems: 'center', marginTop:'10%'}}>
+        <View style={{flex: 3, alignItems: 'center', marginTop:'15%'}}>
      <Image 
                 source={require('../../assets/logo_gettingstarted.png')}
                 style={styles.logo}

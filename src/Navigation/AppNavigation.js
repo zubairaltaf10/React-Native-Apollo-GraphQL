@@ -20,6 +20,7 @@ import SearchRecipes from '../components/Home/searchrecipes';
 import VerificationForgotpassScreen from '../components/Auth/VerificationForgotPassword';
 import UpdateProfileScreen from '../components/profile/updateprofile'
 import ManagePackageScreen from '../components/profile/MangeSubcription'
+import MyFaviourites from '../components/profile/MyFavorites'
 const AppStack = createStackNavigator(
   {
     
@@ -37,6 +38,10 @@ const AppStack = createStackNavigator(
     },
     SearchRecipes: {
       screen: SearchRecipes,
+      navigationOptions: {header: null},
+    },
+    MyFaviourites: {
+      screen: MyFaviourites,
       navigationOptions: {header: null},
     },
   },
@@ -96,7 +101,7 @@ const AuthStack = createStackNavigator(
   },
   {
     transitionConfig: () => fromRight(500),
-    initialRouteName: 'SignupOptions',
+    initialRouteName: 'Intro',
     headerLayoutPreset: 'center',
     cardStyle: { backgroundColor: '#FFFFFF' },
     navigationOptions: {

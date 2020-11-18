@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  ImageBackground
+  ImageBackground,
+  StatusBar
 } from "react-native";
 import {
   Icon,
@@ -289,7 +290,7 @@ class Intro extends React.Component {
       render() {
         return (
           <View style={{flex: 1}}>
-            {/* <StatusBar translucent backgroundColor="transparent" /> */}
+            <StatusBar translucent backgroundColor="transparent" />
             <ImageBackground source={require('../../assets/Intro/background.png')} style={styles.image}>
             <AppIntroSlider
               keyExtractor={this._keyExtractor}
