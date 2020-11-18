@@ -228,6 +228,8 @@ mutation login($email: String!, $password: String!){
       id,
       name,
       email,
+      first_name,
+      last_name,
       email_verified_at,
       user_subscription{
         subscription{
