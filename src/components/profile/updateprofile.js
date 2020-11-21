@@ -15,7 +15,8 @@ import {ApplicationStyles} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/auth.styles';
 //import WideBanner from '../../Components/Ads/WideBanner';
-import {GetSignupErrors} from '../../Helpers/GetErrors';
+import {GetProfileErrors} from '../../Helpers/GetProfileErrors';
+import {GetPasswordErrors} from '../../Helpers/GetProfileErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
 import {withAuth} from '../../store/hoc/withAuth';
@@ -27,7 +28,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider, Mutation } from 'react-apollo'
 import { width, height } from "react-native-dimension";
 import gql from 'graphql-tag';
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import Header from '../Header/index.js';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
@@ -37,35 +38,7 @@ import { setContext } from 'apollo-link-context';
 import { createHttpLink } from 'apollo-link-http';
 import {Metrics} from '../../Theme';
 import AsyncStorage from '@react-native-community/async-storage';
-const httpLink = createHttpLink({
-  uri: NETWORK_INTERFACE,
-});
-// const client = new ApolloClient({
-//   link: new HttpLink({ uri: NETWORK_INTERFACE }),
-//   cache: new InMemoryCache()
-// })
-
-const authLink = setContext((_, { headers }) => {
-  console.log('fff')
-  // get the authentication token from local storage if it exists
-  AsyncStorage.getItem("user").then((value) => {
-    console.log(value.access_token)
-    return {
-      headers: {
-        ...headers,
-        authorization: token ? `Bearer ${value.access_token}` : "",
-      }
-    }
-
-})
- 
-  // return the headers to the context so httpLink can read them
- 
-});
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-});
+import DateTimePicker from "react-native-modal-datetime-picker";
 
 
 const onRequestClose = false;
@@ -77,11 +50,14 @@ class UpdateProfile extends Component {
    
     this.state = {
       formData: {
+        id:0,
         first_name: '',
         last_name: '',
         email: '',
         roleId: 1,
         date:null,
+        bio:"",
+        date_of_birth : new Date(),
         loading:false,
         image:""
       },
@@ -93,17 +69,42 @@ class UpdateProfile extends Component {
       changepasswordmodel:false,
       userimage:"",
       isuserimage:false,
-      loginuser:{}
+      loginuser:{},
+      date: new Date(),
+      show:false,
+      passworddata :{
+        old_password:"",
+        password:"",
+        confirmPassword:""
+      }
     };
     
   }
+  convertDateToString = (date) =>  {
+    date = date.getFullYear() + '-' + (("0" + (date.getMonth() + 1)).slice(-2)) + '-' + ("0"+date.getDate()).slice(-2)
+    return date;
+}
+  hideDateTimePicker = () => {
+    this.setState({ show: false });
+  };
+  handleDatePicked = date => {
+        let _date = this.convertDateToString(date);
+    console.log("date want to show", _date);
+    this.setState({ date: _date });
+    this.hideDateTimePicker();
+  };
   async componentWillMount() {
-       
+     
+  
+
     let user = await AsyncStorage.getItem('user');
    if (user) {
      user = JSON.parse(user).user;
      this.setState({ formData: user });
      console.log('form data' , this.state.formData);
+     this.setState({date: this.state.formData.date_of_birth})
+
+
    } else {
      //this.props.navigation.navigate('Auth');
    }
@@ -139,49 +140,58 @@ class UpdateProfile extends Component {
       this.setState({errors: newErrors});
     }
   };
-  
+  onPasswordTextInput = (key, val) => {
+    console.log(key , val)
+    this.setState({passworddata: {...this.state.passworddata, [key]: val}});
+    // remove error
+    const newErrors = this.state.errors;
+    let errIndex = newErrors.indexOf(key);
+    if (errIndex !== -1) {
+      newErrors.splice(errIndex, 1);
+      this.setState({errors: newErrors});
+    }
+  };
+  handleChange(date) {
+    this.setState({
+      date: date
+    })
+  }
   onSubmit = () => {
     //this.props.navigation.navigate('ResetPassword');
-   
+   console.log('date' , this.state.date)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-      console.log(this.state.errors.length)
+    //this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
+      console.log(this.state.formData.id)
       
-      if (this.state.errors.length === 0) {
+     // if (this.state.errors.length === 0) {
         this.setState({loading:true})
         let firstName = this.state.formData.first_name;
         let lastName = this.state.formData.last_name; 
         this.props
       .mutate({
         variables: {
+          ID: this.state.formData.id,
           firstname: firstName,
           lastname:lastName,
-          email:email,
-          password: password,
+         // email:this.state.formData.email,
+          DateofBirth: this.state.date,
+          bio: this.state.formData.bio
         },
       })
       .then((res) => {
         this.setState({loading:false})
-        this.props.navigation.navigate('Verification', {
-          type: 'Signup',
-          email:email});
+        console.log('updated')
       })
       .catch((err) => {
 
         this.setState({loading:false})
        // var error = JSON.stringify(err);
-       // console.log(error)
-        if(err.graphQLErrors.length > 0)
-        {
-          var mess = err.graphQLErrors[0].message
-          if(mess.includes("Validation")){
-            SNACKBAR.simple("Email address already exist");
-          }
-        }
+        console.log(err)
+      
         
       });
-      }
-    });
+   // }
+   // });
   };
 
   modalOpen = () => {
@@ -197,7 +207,33 @@ class UpdateProfile extends Component {
       this.setState({errors: newErrors});
     }
   };
-  
+  updatepassword = () => {
+    console.log(this.state.passworddata)
+    //LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    this.setState({errors: GetPasswordErrors(this.state.passworddata)}, () => {
+      console.log(this.state.errors)
+      
+      if (this.state.errors.length === 0) {
+        this.setState({loading:true})
+        this.props
+      .mutate({
+        variables: {
+          old_password:this.state.passworddata.old_password,
+          password:this.state.passworddata.password,
+          password_confirmation:this.state.passworddata.confirmPassword
+        },
+      })
+      .then((res) => {
+        this.setState({loading:false})
+        SNACKBAR.simple('Password updated.');
+      })
+      .catch((err) => {
+        this.setState({loading:false})
+        SNACKBAR.simple('error' , err);
+      });
+    }
+    });
+  };
   handleSecurityVerification = () => {
     this.setState({
       isPasswordFieldSecure: !this.state.isPasswordFieldSecure,
@@ -211,6 +247,11 @@ class UpdateProfile extends Component {
   handleSecurity3 = () => {
     this.setState({
       isConfirmPasswordFieldSecure: !this.state.isConfirmPasswordFieldSecure,
+    })
+  };
+  showDatepicker = () => {
+    this.setState({
+      show: true,
     })
   };
   render() {
@@ -228,19 +269,23 @@ class UpdateProfile extends Component {
           handleSecurityVerification={this.handleSecurityVerification}
           handleSecurity2={this.handleSecurity2}
           handleSecurity3={this.handleSecurity3}
+          updatepassword={this.updatepassword}
+          errors={this.state.errors}
           onChangeText={password =>
-                  this.onTextInput('password', password)
+                  this.onPasswordTextInput('old_password', password)
                 }
                 onChangeText1={password =>
-                  this.onTextInput('newpassword', password)
+                  this.onPasswordTextInput('password', password)
                 }
                 onChangeText2={password =>
-                  this.onTextInput('confirmpassword', password)
+                  this.onPasswordTextInput('confirmPassword', password)
                 }
         />
         <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+          <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>
+         </TouchableOpacity>
           </View>
           <View style={{ flex: 0.8 }}>
             <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
@@ -297,6 +342,7 @@ class UpdateProfile extends Component {
             <Text style={styles.label}>Email Address</Text>
             <View style={{marginHorizontal:'3%'}}>
             <Input
+            disabled={true}
               placeholder="Email"
               keyboardType="email-address"
               style={ApplicationStyles.textbox}
@@ -309,15 +355,36 @@ class UpdateProfile extends Component {
             <View style={{marginHorizontal:'3%'}}>
             <Input
               placeholder="Bio"
-              
               style={ApplicationStyles.textbox}
-              value={this.state.formData.email}
-              onChangeText={val => this.onTextInput('email', val)}
+              value={this.state.formData.bio}
+              onChangeText={val => this.onTextInput('bio', val)}
             />
             </View>
             <Text style={styles.label}>Date of Birth</Text>
             <View style={{marginHorizontal:'3%'}}>
+            <Input
+              placeholder="Date of birth"
+              value={this.state.date}
+              style={ApplicationStyles.textbox}
+              //onChangeText={val => this.onTextInput('date_of_birth', val)}
+              //value={this.state.formData.date_of_birth}
+              onFocus={this.showDatepicker}
+            />
+            
+            <DateTimePicker
+            isVisible={this.state.show}
+            onConfirm={this.handleDatePicked}
+            onCancel={this.hideDateTimePicker}
+          testID="dateTimePicker"
            
+          display="default"
+          dateFormat="yyyy-MM-dd"
+          //onChange={this.handleDatePicked}
+          mode={"date"}
+            datePickerModeAndroid={"spinner"}
+            timePickerModeAndroid={"spinner"}
+        />
+          
   
         </View>
         <Text style={styles.skipAccountLabel}>
@@ -339,12 +406,24 @@ class UpdateProfile extends Component {
           </Form>
         </Content>
         <View style={{alignItems:'center' , paddingBottom:'7%' }} >
+        <Mutation
+            mutation={updatemutation}
+            variables={{ ID: this.state.formData.id,
+          firstname: this.state.formData.first_name,
+          lastname:this.state.formData.last_name,
+          DateofBirth: this.state.date,
+          bio: this.state.formData.bio }}
+            onCompleted={ () => { SNACKBAR.simple("Profile updated") ; } }
+          >
+          {mutation => (
         <PrimaryButton
               loading={this.state.loading}
               title="   Update   "
-              onPress={this.onSubmit}
+              onPress={mutation}
               marginTop={30}
             />
+            )}
+            </Mutation>
         </View>
         </ApolloProvider>
 
@@ -354,28 +433,38 @@ class UpdateProfile extends Component {
 
 
 
-const mutation = gql`
-mutation updateUser($Id: Int!, $firstname: String!, $lastname: String! ,$email: String!, $DateofBirth: Date!){
+const updatemutation = gql`
+mutation updateUser($ID:ID!, $firstname: String!, $lastname: String! , $DateofBirth: Date!, $bio: String!){
   updateUser(input: {
-    Id:$Id,
+    id:$ID,
     first_name: $firstname,
     last_name: $lastname,
-    bio: $password,
+    bio: $bio,
     date_of_birth: $DateofBirth
   }){
-    tokens{
-      access_token,
-      user{
-        id,
-        name,
-        email
-      }
-    },
-    status
+    name,
+    first_name,
+    last_name,
+    email_verified_at,
+    bio
   }
 }
 `;
-const UpdateProfileTab = graphql(mutation)(UpdateProfile);
+const mutation = gql`
+mutation updatePassword($old_password: String!, $password: String! , $password_confirmation: String!){
+  updatePassword(input: {
+    old_password:$old_password,
+    password:$password,
+    password_confirmation:$password_confirmation
+    }){
+    status,
+    message
+  }
+} 
+`;
+
+ const UpdateProfileTab = graphql(mutation)
+ (UpdateProfile);
 export default withAuth(UpdateProfileTab);
 
 

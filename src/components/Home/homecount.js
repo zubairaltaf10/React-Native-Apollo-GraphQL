@@ -19,6 +19,8 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import AsyncStorage from '@react-native-community/async-storage';
 import AnimatedNumbers from 'react-native-animated-numbers';
 import {Metrics} from '../../Theme';
+import {_} from 'lodash';
+import * as Linking from 'expo-linking';
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
@@ -29,10 +31,11 @@ class HomeCount extends React.Component {
      user = JSON.parse(user).user;
      var subcription = user.user_subscription.subscription
      this.setState({ currentsubscription: subcription });
+     console.log('user ', user);
      this.setState({ loginuser: user });
      console.log('user subcription found in localstorage', this.state.currentsubscription);
    } else {
-     //this.props.navigation.navigate('Auth');
+    console.log('no user found');
    }
   // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
@@ -46,7 +49,7 @@ class HomeCount extends React.Component {
     clicks: 1,
     show: true,
     modal:false,
-    currentsubscription: {},
+    currentsubscription: {} ,
     loginuser:{},
     modalVisible:false,
     viewplanmodel:false
@@ -73,7 +76,7 @@ IncrementItem = () => {
   
 
 console.log(this.state.currentsubscription)
-   if(this.state.currentsubscription == null)
+   if(_.isEmpty(this.state.currentsubscription))
    {
     if((this.state.clicks + 1) > 1)
     {
@@ -100,34 +103,49 @@ console.log(this.state.currentsubscription)
   ViewPlan = () => {
     this.setState({modal:false})
     this.setState({viewplanmodel:false})
-    this.props.navigation.navigate('Ingredients')
+    this.props.navigation.navigate('ManagePackge')
   }
   ToggleClick = () => {
     this.setState({ show: !this.state.show });
   }
   
   modalOpen = () => {
-    this.setState({viewplanmodel:true})
+    if(this.state.clicks > this.state.currentsubscription.person_limit)
+    {
+      this.setState({modal: true});
+    }
+    else{
+      this.props.navigation.navigate('Ingredients', {
+        person: this.state.clicks
+      });
+    }
+    
+  }
+  RateApp = () => {
+    Linking.openURL("https://play.google.com/store/apps");
   }
   async Logout () {
     await removeItemValue('user');
     this.props.navigation.navigate('Auth');
   }
   async removeItemValue() {
+    console.log('ssss')
     try {
-        await AsyncStorage.removeItem('user');
-
-        let user = await AsyncStorage.getItem('user');
-   if (user) {
-     user = JSON.parse(user.user);
-     console.log('user subcription found in localstorage', user);
-       // this.props.navigation.navigate('Login');
-    }
-  }
+        await AsyncStorage.removeItem('user'); 
+        this.props.navigation.navigate('Auth'); 
+      }
     catch(exception) {
         return false;
     }
 }
+ onrequestModelclose = () =>
+ {
+   this.setState({modal: false})
+ }
+ onrequestViewModelclose = () =>
+ {
+   this.setState({viewplanmodel: false})
+ }
   render() {
     const  currentsubscription  = this.state.currentsubscription;
     // currentsubscription.person_limit = 3
@@ -143,9 +161,9 @@ console.log(this.state.currentsubscription)
       animationType="fade"
       transparent={true}
       visible={this.state.modal}
-      onRequestClose={onRequestClose}>
-      <View style={styles.overlay} onTouchEnd={onRequestClose} />
-      <View
+      onRequestClose={this.onrequestModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestModelclose} />
+      <View onTouchEnd={this.onrequestModelclose}
         style={[
           styles.modelContainer,
           {
@@ -186,21 +204,33 @@ console.log(this.state.currentsubscription)
       transparent={true}
       
       visible={this.state.viewplanmodel}
-      onRequestClose={onRequestClose}>
-      <View style={styles.overlay} onTouchEnd={onRequestClose} />
-      <View
+      onRequestClose={this.onrequestViewModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestViewModelclose} />
+      <View onTouchEnd={this.onrequestViewModelclose}
         style={[
           styles.modelContainer,
           {
-            marginTop:  Metrics.screenHeight / 2.5,
+            marginTop:  Metrics.screenHeight / 5,
           },
         ]}>
         <Text style={styles.modeltext} >
-        To use this feature, you will need to subscribe a plan
+        Sign in or create an account to get the full experience of this app
         </Text>
         
         <PrimaryButton
-          title="View plans"
+          title="        Sign Up       "
+          marginTop={8}
+          onPress={this.ViewPlan}
+        />
+        <PrimaryButton2
+            title= "           Login            " 
+            onPress={() => this._onSaveUserSubscription()}
+            marginTop={height(10)}
+            //loading={this.state.loading}
+            onPress={this.ViewPlan }
+          />
+        <PrimaryButton
+          title="        Skip Now       "
           marginTop={40}
           onPress={this.ViewPlan}
         />
@@ -274,10 +304,11 @@ console.log(this.state.currentsubscription)
              
              
               <Input
-              placeholder="Enter Number of individuals" maxLength={12}
+              placeholder="Enter Number of individuals" maxLength={3}
               style={ApplicationStyles.textbox}
-              //value={this.state.formData.firstName}
-              //onChangeText={val => this.onTextInput('firstName', val)}
+              value={this.state.clicks}
+              keyboardType={'numeric'}
+              onChangeText={val => this.setState({'clicks': val.replace(/[^0-9]/g, '')})}
             />
             </View>
 
@@ -314,7 +345,41 @@ console.log(this.state.currentsubscription)
           }}
         >
           <View style={{flex:0.24,backgroundColor:COLORS.primary,flexDirection:'row'}}>
-            <View style={{flex:0.2}}>
+          {!_.isEmpty(this.state.loginuser) &&(
+              <View style={{flex:1, flexDirection:'row'}}>
+              <View style={{flex:0.2}}>
+            <View style={{margin:15,height:50,width:50,top:5,backgroundColor:'black',borderRadius:55,justifyContent:'center',alignItems:'center'}}>
+            {this.state.loginuser.profile_image != null && (
+                  <Image
+                    source={{ uri: this.state.loginuser.profile_image }}
+                    style={styles.avatar}
+                  />
+                )}
+                {this.state.loginuser.profile_image == null && (
+                  <Icon name="user" type="FontAwesome" style={{fontSize: 25, color: COLORS.primary}}></Icon>
+                )}
+               
+                
+            </View>
+            </View>
+            <View style={{flex:0.65,marginVertical:15,marginLeft:width(5),top:5}}>
+              <Text style={{fontFamily:FONTFAMILY.bold,fontSize:17,color:'#fff'}}>{this.state.loginuser.name}</Text>
+              <Text style={{fontFamily:FONTFAMILY.regular,fontSize:13,color:'#fff'}}>{this.state.loginuser.bio}</Text>
+            </View>
+            <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
+            <TouchableOpacity onPress={()=>{
+              this.RBSheet.close()
+              this.props.navigation.navigate('UpdateProfile')
+              }}>
+            <Icon style={{alignSelf:'flex-end', fontSize:18}} name={'edit'} type="MaterialIcons"  onPress={this.handlePicker}/>
+             
+            </TouchableOpacity>
+            </View>
+            </View>
+          )}
+            {_.isEmpty(this.state.loginuser) &&(
+              <View style={{flex:1, flexDirection:'row'}}>
+              <View style={{flex:0.2}}>
             <View style={{margin:15,height:50,width:50,top:5,backgroundColor:'black',borderRadius:55,justifyContent:'center',alignItems:'center'}}>
                 <Icon name="user" type="FontAwesome" style={{fontSize: 25, color: COLORS.primary}}></Icon>
             </View>
@@ -325,13 +390,18 @@ console.log(this.state.currentsubscription)
             </View>
             <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
             <TouchableOpacity onPress={()=>{
-              this.props.navigation.navigate('UpdateProfile')
+              this.RBSheet.close()
+              this.props.navigation.navigate('Auth')
               }}>
             <Icon name="user-plus" type="FontAwesome" style={{fontSize: 18,alignSelf:'flex-end'}}
              
             ></Icon>
             </TouchableOpacity>
             </View>
+            </View>
+            
+            )}
+            
           </View>
           <View style={{flex:0.73}}>
             <View style={{flex:0.25,flexDirection:'row',margin:7}}>
@@ -352,6 +422,7 @@ console.log(this.state.currentsubscription)
             <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
              onPress={()=>{
+              this.RBSheet.close();
               this.props.navigation.navigate('MyFaviourites')
               }}>My Favourites</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
@@ -367,7 +438,13 @@ console.log(this.state.currentsubscription)
             </View>
             <View style={{flex:0.25,flexDirection:'row',margin:7}}>
             <Icon name="star" type="EvilIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
-            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Rate Application</Text>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
+            onPress={()=>{
+              this.RBSheet.close();
+              this.RateApp()
+              //this.props.navigation.navigate('Login')
+              }}
+            >Rate Applications</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </View>
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
@@ -377,7 +454,7 @@ console.log(this.state.currentsubscription)
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}} 
             onPress={()=>{
               this.RBSheet.close()
-              this.removeItemValue
+              this.removeItemValue()
               //this.props.navigation.navigate('Login')
               }}>Logout</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>

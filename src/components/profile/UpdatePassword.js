@@ -5,18 +5,21 @@ import {Content, Form, Input, Icon} from 'native-base';
 import PrimaryButton from '../Button/PrimaryButton';
 import styles from '../../Styles/modelstyles';
 import COLORS from '../../Theme/Colors';
+import ErrorLabel from '../ErrorLabel/ErrorLabel';
 //import authstyle from '../../Styles/auth.styles'
 const SecurityQuestion = ({
   modalVisible,
-  onTextChange,
+  onChangeText,
   handleSecurityVerification,
   isPasswordFieldSecure,
   onRequestClose,
-  onTextChange1,
+  onChangeText1,
   handleSecurity2,
   isnewPasswordFieldSecure,
-  onTextChange2,
+  onChangeText2,
   handleSecurity3,
+  errors,
+  updatepassword,
   isConfirmPasswordFieldSecure,
   user = {},
 }) => {
@@ -38,6 +41,10 @@ const SecurityQuestion = ({
   const _keyboardDidHide = () => {
     setKeyboardVisible(false);
   };
+  const Clicktest = () => {
+    console.log('sss')
+  };
+
   return (
     <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={onRequestClose}>
       <View style={styles.overlay} onTouchEnd={onRequestClose} />
@@ -63,7 +70,7 @@ const SecurityQuestion = ({
                 secureTextEntry={isPasswordFieldSecure}
                 maxLength={16}
                 style={ApplicationStyles.textbox}
-                onChangeText={onTextChange
+                onChangeText={onChangeText
                 }
               />
 
@@ -82,14 +89,14 @@ const SecurityQuestion = ({
                 )}
               </TouchableOpacity>
             </View>
-            
+            {ErrorLabel('oldPassword', errors)}
             <View style={styles.passwordFieldContainer}>
               <TextInput
                 placeholder="New Password"
                 secureTextEntry={isnewPasswordFieldSecure}
                 maxLength={16}
                 style={ApplicationStyles.textbox}
-                onChangeText={onTextChange
+                onChangeText={onChangeText1
                 }
               />
 
@@ -108,14 +115,14 @@ const SecurityQuestion = ({
                 )}
               </TouchableOpacity>
             </View>
-
+            {ErrorLabel('password', errors)}
             <View style={styles.passwordFieldContainer}>
               <TextInput
                 placeholder="Confirm Password"
                 secureTextEntry={isConfirmPasswordFieldSecure}
                 maxLength={16}
                 style={ApplicationStyles.textbox}
-                onChangeText={onTextChange
+                onChangeText={onChangeText2
                 }
               />
 
@@ -134,10 +141,11 @@ const SecurityQuestion = ({
                 )}
               </TouchableOpacity>
             </View>
+            {ErrorLabel('confirmPassword', errors)}
             <PrimaryButton
               title="RESET PASSWORD"
               marginTop={8}
-             // onPress={this.onSubmit}
+              onPress={updatepassword}
               //loading={this.state.loading}
             />
       </View>

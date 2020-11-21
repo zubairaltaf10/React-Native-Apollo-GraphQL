@@ -83,6 +83,7 @@ class SignupOptions extends Component {
           offlineAccess: true,
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
+        console.log(userInfo)
         this.props.navigation.navigate('Packages')
         const email = userInfo.user.email;
         console.log(userInfo)
@@ -95,8 +96,6 @@ class SignupOptions extends Component {
         console.log("error");
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
           errorMessage = error.code;
-        
-        
           // user cancelled the login flow
         } else if (error.code === statusCodes.IN_PROGRESS) {
           // operation (e.g. sign in) is in progress already
@@ -128,7 +127,7 @@ class SignupOptions extends Component {
         activeOpacity={0.8}
         onPress={() => this.props.navigation.navigate('Signup')}
         > 
-        <Text style={styles.GooglebuttonTextStyle}>
+        <Text style={styles.GooglebuttonTextStyle1}>
          REGISTER WITH EMAIL
           </Text>
           
@@ -157,7 +156,7 @@ class SignupOptions extends Component {
           />
           
           <Text style={styles.buttonTextStyle}>
-            CONTINUE WITH FACEBOOK 
+            CONTINUE WITHa FACEBOOK 
           </Text>
           
             </TouchableOpacity>

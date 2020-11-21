@@ -61,10 +61,8 @@ justifyContent: "center"
     height: 50,
     borderRadius: 25,
     margin: 5,
-    paddingHorizontal:20,
     paddingVertical:5,
     fontFamily: FONTFAMILY.bold,
-    fontSize:10
   },
   buttonGoogleStyle: {
     flexDirection: 'row',
@@ -75,7 +73,6 @@ justifyContent: "center"
     height: 50,
     borderRadius: 25,
     margin: 5,
-    paddingHorizontal:22,
     paddingVertical:5,
     fontFamily: FONTFAMILY.bold,
     fontSize:12
@@ -89,18 +86,23 @@ justifyContent: "center"
     height: 50,
     borderRadius: 25,
     margin: 5,
-    paddingHorizontal:22,
     paddingVertical:5,
     fontFamily: FONTFAMILY.bold,
     fontSize:12
     
   },
   buttonImageIconStyle: {
-    padding: 10,
-    margin: 5,
-    height: 20,
-    width: 20,
-    resizeMode: 'stretch',
+    marginLeft:4,
+    flex:0.2,
+    justifyContent:'flex-start',
+    resizeMode: 'contain',
+  },
+  buttonTextStyle: {
+    color: '#fff',
+    fontFamily: FONTFAMILY.bold,
+    fontSize:13,
+    flex:0.7,
+    marginTop:4
   },
   termandconlink: {
     textAlign: 'left',
@@ -111,17 +113,20 @@ justifyContent: "center"
     textDecorationLine: 'underline',
     fontWeight:'bold'
   },
-  buttonTextStyle: {
-    color: '#fff',
-    fontFamily: FONTFAMILY.bold,
-    fontSize:12
-  },
+ 
   GooglebuttonTextStyle: {
     color: '#28292F',
     fontFamily: FONTFAMILY.bold,
-    fontSize:12
+    fontSize:13,
+    flex:0.7,
+    marginTop:4
   },
-  
+  GooglebuttonTextStyle1: {
+    color: '#28292F',
+    fontFamily: FONTFAMILY.bold,
+    fontSize:13,
+    marginTop:4
+  },
   logo: {
     width: 112,
     height: 72,

@@ -1,28 +1,30 @@
 import React from "react";
-import { View, Text, Image, ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
+import { View, Text, Image, ActivityIndicator ,ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
 import {
-    Icon,
+    Icon
 } from "native-base";
 import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import PrimaryButton from '../Button/PrimaryButton';
-
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+const regex = /(<([^>]+)>)/ig;
 const data = [
     {
         text: 'it is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged',
-
+    index:1
     },
     {
         text: 'it is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.',
-
+        index:2
     },
     {
         text: "it is  is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-
+        index:3
     },
 ];
 
@@ -49,15 +51,43 @@ class RecipesDetails extends React.Component {
                 name: 'Nutrition',
                 isActive: false,
             }
-        ]
+        ],
+        recDetail:{}
     }
 
     _renderItem = ({ item }) => {
+        console.log(item.index)
         return (
             <View
                 style={{ backgroundColor: 'white', flex: 1,marginTop:height(2), marginHorizontal: 10, borderRadius: 12 }}>
                 <View style={{ flex: 1, marginHorizontal: 15, marginTop: 10 }}>
-                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{item.text}</Text>
+                {item.index == 1 && ( 
+                    
+                    <ScrollView style={{flex:1,  margin: 10, maxHeight: 200 }} onTouchStart={(ev) => { 
+									  this.setState({enabled:false }); }}
+									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
+									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
+                    <Text style={{ alignSelf:'flex-end', fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{this.state.recDetail.summary.replace(regex, '')}</Text>
+                
+                </ScrollView>
+                ) }
+                {item.index == 2 && (
+                    
+                    this.state.recDetail.extendedIngredients?.map((x) =>
+                      <View style={{flex:1}}> 
+                    <View style={{flex:0.5}}>
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.originalName}</Text>
+                    </View>
+                    <View style={{flex:0.5}}>
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-end', color: '#868CA9' }}>{x.unit}</Text>
+                    </View>
+                    </View> 
+                    
+                    )
+                ) }
+                {item.index == 3 && (
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{item.index}</Text>
+                ) }
                 </View>
             </View>
         );
@@ -91,6 +121,13 @@ class RecipesDetails extends React.Component {
         this.setState({viewfull:true})
     }
     render() {
+        const  recipeDetail  = this.props.data.recipe ? this.props.data.recipe : null;
+        console.log(this.props.data)
+        this.state.recDetail = recipeDetail;
+        if (!recipeDetail) {
+          return <ActivityIndicator style={styles.spinner}  /> 
+    
+        }
         return (
             <ScrollView contentContainerStyle={{height: this.state.viewfull ? 1100 : 750}}>
             <View style={{ flex: 1, backgroundColor: '#F6F6F6'}}>
@@ -98,7 +135,7 @@ class RecipesDetails extends React.Component {
                     <View style={styles.whitebox}>
                         <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.navigation.navigate('RecipeDetails')}>
                             <View style={styles.imagebox}>
-                                <ImageBackground source={require('../../assets/searchrecipes/download.jpg')} resizeMode={'cover'} imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
+                                <ImageBackground source={{uri:recipeDetail.image}} resizeMode={'cover'} imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
                                             <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 18, color: COLORS.primary, alignSelf: 'center' }}></Icon>
@@ -117,7 +154,7 @@ class RecipesDetails extends React.Component {
                             <View style={{backgroundColor: 'white', marginHorizontal: 11, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
                                 <View style={{ flexDirection: 'row' }}>
 
-                                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 18, alignSelf: 'flex-start', marginTop: 10, flex: 0.85, marginHorizontal: 10 }}>Blue berry and banana butter pancakes</Text>
+                                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 18, alignSelf: 'flex-start', marginTop: 10, flex: 0.85, marginHorizontal: 10 }}>{recipeDetail.title}</Text>
                                     <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flex: 0.25 }}>
                                         <Icon style={{ fontSize: 20, color: COLORS.primary }}
                                             name="favorite-border"
@@ -125,7 +162,7 @@ class RecipesDetails extends React.Component {
                                         <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>1.2k</Text>
                                     </View>
                                 </View>
-                                <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', marginHorizontal: 11, color: '#868CA9',paddingBottom:10 }}>by biggerbolderbaking.com</Text>
+                                <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', marginHorizontal: 11, color: '#868CA9',paddingBottom:10 }}>by {recipeDetail.sourceName}</Text>
                             </View>
 
                         </TouchableOpacity>
@@ -162,7 +199,7 @@ class RecipesDetails extends React.Component {
                 </View>
                 <View style={{ flex:0.45, marginHorizontal: 15 }}>
                     <View style={{ flexDirection: 'row', fontSize: 15 }}>
-                        {this.state.tabheaderArray.map((x) =>
+                        {this.state.tabheaderArray?.map((x) =>
                             <View>
                             <Text style={x.isActive ? styles.tabtextSelected : styles.tabtextsimple} onPress={()=>this.tabcontrols(x.id)}>{x.name}</Text>
                             {x.isActive ? 
@@ -277,4 +314,49 @@ const styles = StyleSheet.create({
       }
 })
 
-export default withAuth(RecipesDetails)
+const query = gql`
+
+query{ recipe(id:716429 )
+    {
+        id,
+      title,
+      image,
+      imageType,
+      serving,
+      readyInMinutes,
+      sourceName,
+      sourceUrl,
+      aggregateLikes,
+      healthScore,
+      spoonacularScore,
+      analyzedInstructions,
+      cheap,
+      creditsText,
+      cuisines,
+      dairyFree,
+      diets,
+      instructions,
+      ketogenic,weightWatcherSmartPoints,dishTypes,
+      extendedIngredients{
+        id,
+        aisle,
+        originalName,
+        image,
+        unit
+      },
+      summary,
+      winePairing{
+        pairedWines,
+        pairingText,
+        productMatches{
+          id,title,description
+        }
+      }
+      
+    }
+  }
+`;
+export default (
+    graphql(query)(RecipesDetails)
+  );
+// export default withAuth(RecipesDetails)

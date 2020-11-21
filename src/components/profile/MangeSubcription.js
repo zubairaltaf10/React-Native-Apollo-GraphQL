@@ -16,10 +16,6 @@ import PrimaryButton2 from '../Button/PrimaryButton2';
 import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
 import {Content, Form, Input, Icon} from 'native-base';
-import { NETWORK_INTERFACE } from '../../config';
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider, Mutation } from 'react-apollo'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
@@ -29,16 +25,16 @@ import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-const client = new ApolloClient({
-  link: new HttpLink({ uri: NETWORK_INTERFACE }),
-  cache: new InMemoryCache()
-})
+
 class ManagePackages extends Component {
     async componentWillMount() {
        
          let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;
+          this.setState({ loginuser: user });
+          console.log('user localstorage', this.state.loginuser);
+          
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
           console.log('user subcription found in localstorage', this.state.currentsubscription);
@@ -58,7 +54,8 @@ class ManagePackages extends Component {
       pricepermonth:0,
       showContextMenu:false,
       currentsubscription : {},
-      subscriptionmodel : {}
+      subscriptionmodel : {},
+      loginuser : {}
     }
   }
   // componentDidUpdate = async () => {
@@ -83,13 +80,11 @@ class ManagePackages extends Component {
   }
   _onSaveUserSubscription = async () => {
     this.setState({loading:true})
-    let user = await AsyncStorage.getItem('user');
-    user = JSON.parse(user).user;
    
     this.props
     .mutate({
       variables: {
-        user_id: user.id,
+        user_id: this.state.loginuser.id,
         subscription_id:this.state.subscription_id
       },
     })
@@ -120,7 +115,7 @@ class ManagePackages extends Component {
    
     const  currentsubscription  = this.state.currentsubscription;
     console.log( 'sss ' + currentsubscription.name)
-    if (!subscriptions && !currentsubscription) {
+    if (!subscriptions) {
       return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
 
     }
@@ -139,29 +134,39 @@ class ManagePackages extends Component {
             <Text style={{ alignSelf: 'center', marginTop: height(4), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Manage Subscription</Text>
           </View>
           <View style={{ flex: 0.2 ,marginTop: height(4), textAlign:'right' , alignItems:'center' , alignContent:'flex-end'}}>
-        <TouchableOpacity onPress={() =>
+        {/* <TouchableOpacity style={{flex:1, width:40}} onPress={() =>
               this.setState({showContextMenu: !this.state.showContextMenu})
-            }>
+            }> */}
         
-        <Icon name="dots-three-horizontal" type="Entypo" style={{ marginLeft: 10, fontSize:18 }}></Icon>
-          
-        </TouchableOpacity>
-        {this.state.showContextMenu && (
+        <Icon onPress={() => { this.setState({showContextMenu: !this.state.showContextMenu})}} name="dots-three-horizontal" type="Entypo" style={{ marginLeft: 10, fontSize:18 }}></Icon>
+          </View>
+        {/* </TouchableOpacity> */}
+        {this.state.showContextMenu && ( 
           <View style={styles.contextMenu}>
-            <TouchableOpacity
-              style={styles.row}
-              onPress={this.handleEdit}>
+          <Mutation
+            mutation={removemutation}
+            variables={{ user_id: this.state.loginuser.id,
+              subscription_id:this.state.subscription_id }}
+             // onError={()=>{SNACKBAR.simple("Error") ; }}
+            onCompleted={ () => { SNACKBAR.simple("Subscription cancel successfully") ; } }
+          >
+          {mutation => (
+            <TouchableOpacity  onPress={mutation}
+              >
+            <View style={styles.row} >
                <Icon
               name="circle-with-cross"
               style={{fontSize:16, color:'red'}}
               type="Entypo"
             />
-              <Text style={styles.contextMenuLabel}>Cancel Subcription</Text>
+              <Text style={styles.contextMenuLabel} >Cancel Subcription</Text>
+              </View>
             </TouchableOpacity>
-          
+            )} 
+             </Mutation>
           </View>
-        )}
-      </View>
+         )}  
+      
         </View>
         <View >
           <Text style={styles.toptext}>Your current plan </Text>
@@ -182,7 +187,7 @@ class ManagePackages extends Component {
        
         <View style={{ flex: 0.8 }}>
         
-          <Swiper  style={styles.wrapper}
+          <Swiper  style={styles.wrapper} 
             dot={
               <View
                 style={{
@@ -230,12 +235,13 @@ class ManagePackages extends Component {
               />
             }
           >
-           {subscriptions?.map((subscription) => (
-            <View style={styles.slide1}>
+           {subscriptions.map((subscription) => { 
+             return(
+            <View style={styles.slide1} >
               <Image style={{width:52, height:52}} source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
               <Text style={styles.text}>  {subscription.ingredient_limit == null ? "Unlimited" : subscription.ingredient_limit} ingredients</Text>
             </View>
-           ))}
+           )})}
             
           </Swiper>
         </View>
@@ -299,9 +305,9 @@ const styles = StyleSheet.create({
         fontFamily: FONTFAMILY.medium,
       },
     contextMenu: {
-        right: 0,
+        right: 10,
         backgroundColor: 'white',
-        bottom: -40,
+        bottom: -10,
         position: 'absolute',
         zIndex: 100,
         elevation: 5,
@@ -314,13 +320,18 @@ const styles = StyleSheet.create({
         color:'#868CA9',
         fontFamily: FONTFAMILY.medium,
       },
-      row: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: 'lightgray',
-        padding: 7,
-        paddingRight: 3,
+        row: {
+        flex: 1,
+        padding:7,
+        borderRadius:5,
         alignItems: 'center',
+        width:180,
+        flexDirection: 'row'
+      },
+      row1: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width:180
       },
   wrapper: {},
   slide1: {
@@ -471,6 +482,17 @@ mutation addUserSubscription($user_id: Int!, $subscription_id: Int!){
     subscription{
       name
     }
+  }
+}
+`;
+const removemutation = gql`
+mutation removeUserSubscription($user_id: Int!, $subscription_id: Int!){
+  removeUserSubscription(input:{
+    user_id: $user_id,
+    subscription_id:$subscription_id
+  }){
+    status,
+    message
   }
 }
 `;

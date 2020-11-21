@@ -3,7 +3,12 @@ import {checkEmail, checkName, checkPassword} from './Validations';
 export const GetSignupErrors = formData => {
   const errors = [];
   for (var i in formData) {
-    if (i === 'confirmPassword') {
+    if (i === 'password') {
+      if (!checkPassword(formData.password)) {
+        errors.push('password');
+      }
+    }
+    else if (i === 'confirmPassword') {
       if (formData.password !== formData.confirmPassword) {
         errors.push('confirmPassword');
       }

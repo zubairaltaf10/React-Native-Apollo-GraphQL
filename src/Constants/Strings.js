@@ -7,5 +7,6 @@ export const signupValidation = {
     'Password should contain at least 8 characters including uppercase, lowercase and number',
   loginPassword: 'Password is required',
   confirmPassword: 'Passwords does not match',
+  oldPassword: 'Please enter old passwords',
   userNameOrEmail: 'Please enter a valid username or email',
 };

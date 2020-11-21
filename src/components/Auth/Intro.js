@@ -30,7 +30,7 @@ const data = [
     },
     {
       title: 'Learn and Cook!',
-      text: "Learn Recipes that are easy even if \n you're a beginner!",
+      text: "Learn recipes that are easy even if \n you're a beginner!",
      
     },
   ];

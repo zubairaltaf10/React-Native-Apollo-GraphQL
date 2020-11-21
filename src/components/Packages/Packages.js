@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  StatusBar
 } from "react-native";
 import { withAuth } from "../../store/hoc/withAuth";
 import Swiper from 'react-native-swiper'
@@ -29,10 +30,7 @@ import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-const client = new ApolloClient({
-  link: new HttpLink({ uri: NETWORK_INTERFACE }),
-  cache: new InMemoryCache()
-})
+
 class Packages extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +100,8 @@ class Packages extends Component {
     //console.log(subscriptions)
     return (
      
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1,marginTop:'5%' }}>
+       <StatusBar translucent backgroundColor="transparent" />
         <View style={{ flex: 0.2, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
             <Icon name="cross" size={30} onPress={()=>{

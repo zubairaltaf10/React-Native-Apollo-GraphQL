@@ -31,7 +31,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 class Login extends Component {
-
+  
   constructor(props) {
     super(props);
 
@@ -72,7 +72,7 @@ class Login extends Component {
      // if (this.state.errors.length === 0) {
         this.setState({loading:true})
         let email = "askfaisal@outlook.com";
-        let password = "P@ssw0rd"; 
+        let password = "P@ssw0rd1"; 
         this.props.mutate({
         variables: {
           email: email,
@@ -230,6 +230,9 @@ mutation login($email: String!, $password: String!){
       email,
       first_name,
       last_name,
+      profile_image,
+      bio,
+      date_of_birth,
       email_verified_at,
       user_subscription{
         subscription{
