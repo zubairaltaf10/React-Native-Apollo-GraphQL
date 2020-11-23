@@ -199,7 +199,17 @@ const styles = StyleSheet.create({
   }
 
 })
-
+const GetIngredients = gql`
+query ingredients($type: String!){
+  ingredients(type: $type)
+  {
+    results {
+      name,
+      id
+    }
+  }
+}
+`;
 export default InGredentsInput;
 
 //const InGredentsInputTab = graphql(mutation)(InGredentsInput);
