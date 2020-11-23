@@ -8,6 +8,7 @@ import {
   Image,
   Switch,
   StatusBar,
+  TextInput,
   Modal
 } from 'react-native';
 import {Content, Form, Input, Icon} from 'native-base';
@@ -39,8 +40,9 @@ import { createHttpLink } from 'apollo-link-http';
 import {Metrics} from '../../Theme';
 import AsyncStorage from '@react-native-community/async-storage';
 import DateTimePicker from "react-native-modal-datetime-picker";
-
-
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import * as mime from 'react-native-mime-types';
+import { ReactNativeFile } from 'apollo-upload-client';
 const onRequestClose = false;
 
 class UpdateProfile extends Component {
@@ -59,7 +61,8 @@ class UpdateProfile extends Component {
         bio:"",
         date_of_birth : new Date(),
         loading:false,
-        image:""
+        image:"",
+        deleteaccountpassword:"",
       },
       isPasswordFieldSecure: true,
       isnewPasswordFieldSecure:true,
@@ -68,6 +71,7 @@ class UpdateProfile extends Component {
       isOnToggleSwitch: false,
       changepasswordmodel:false,
       userimage:"",
+      image:"",
       isuserimage:false,
       loginuser:{},
       date: new Date(),
@@ -76,7 +80,9 @@ class UpdateProfile extends Component {
         old_password:"",
         password:"",
         confirmPassword:""
-      }
+      },
+      
+      deletemodal:false
     };
     
   }
@@ -113,7 +119,7 @@ class UpdateProfile extends Component {
   handlePicker = () => {
     // console.log('edit');
     ImagePicker.showImagePicker({}, (response) => {
-      console.log('Response = ', response);
+      //console.log('Response = ', response);
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -122,9 +128,12 @@ class UpdateProfile extends Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        this.setState({image:response.data})
+       
         this.setState({userimage:response.uri})
         this.setState({isuserimage:true})
+        const file =  this.generateRNFile(response.uri, response.fileName)
+
+        this.setState({image:file})
        // setAvatar({uri: response.uri});userimage
         // here we can call a API to upload image on server
       }
@@ -175,7 +184,8 @@ class UpdateProfile extends Component {
           lastname:lastName,
          // email:this.state.formData.email,
           DateofBirth: this.state.date,
-          bio: this.state.formData.bio
+          bio: this.state.formData.bio,
+          profile_image: this.state.image
         },
       })
       .then((res) => {
@@ -193,7 +203,41 @@ class UpdateProfile extends Component {
    // }
    // });
   };
+   generateRNFile(uri, name) {
+    return uri ? new ReactNativeFile({
+      uri,
+      type: mime.lookup(uri) || 'image',
+      name,
+    }) : null;
+  }
+  async updateupdatelocalstorage()
+  {
+    let user = await AsyncStorage.getItem('user');
+    console.log(user)
+   if (user) {
+     user = JSON.parse(user);
+     user.user.first_name= this.state.formData.first_name; 
+     user.user.last_name= this.state.formData.last_name;
+     user.user.bio =  this.state.formData.bio
+     user.user.date_of_birth = this.state.date;
+    user.user.profile_image = this.state.userimage
+     
+   }
 
+   AsyncStorage.setItem('user', JSON.stringify(user)).then(
+    () => {
+      
+    },
+  );
+
+  let users = await AsyncStorage.getItem('user');
+   if (user) {
+    console.log('user ss' , users)
+     
+   }
+
+  }
+   
   modalOpen = () => {
     this.setState({changepasswordmodel:true})
   }
@@ -254,6 +298,24 @@ class UpdateProfile extends Component {
       show: true,
     })
   };
+  async logout() {
+    console.log('ssss')
+    try {
+        await AsyncStorage.removeItem('user'); 
+        this.props.navigation.navigate('Auth'); 
+      }
+    catch(exception) {
+        return false;
+    }
+}
+onrequestModelclose = () =>
+ {
+   this.setState({deletemodal: false})
+ }
+ deletemodel = () =>
+ {
+   this.setState({deletemodal: true})
+ }
   render() {
     return (
       <ApolloProvider>
@@ -281,9 +343,68 @@ class UpdateProfile extends Component {
                   this.onPasswordTextInput('confirmPassword', password)
                 }
         />
+        <Modal
+      animationType="fade"
+      transparent={true}
+      visible={this.state.deletemodal}
+      onRequestClose={this.onrequestModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestModelclose} />
+      <View
+        style={[
+          styles.modelContainer,
+          {
+            marginTop: Metrics.screenHeight / 8,
+          },
+        ]}>
+         <Text style={styles.modelHeading}>
+                         Delete Account
+          </Text>
+            <Text style={styles.modeltext}>
+            Please enter Password to delete account
+            </Text>
+            <View style={styles.passwordFieldContainer}>
+              <TextInput
+                placeholder="Password"
+                secureTextEntry={this.state.isnewPasswordFieldSecure}
+                maxLength={16}
+                style={ApplicationStyles.textbox}
+                onChangeText={val => this.onTextInput('deleteaccountpassword', val)}
+              />
+              <TouchableOpacity style={styles.eyeIcon} onPress={this.handleSecurity2
+                }>
+                {!this.state.isnewPasswordFieldSecure && (
+                  <Icon name="eye" type="AntDesign" style={{fontSize: 16, color: COLORS.primary}}></Icon>
+                 
+                )}
+                {this.state.isnewPasswordFieldSecure && (
+                  <Image
+                    source={require('../../assets/icons/forms/eye-close-fill.png')}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            
+            <Mutation
+        
+            mutation={ deleteaccountmutation}
+            variables={{ password: this.state.formData.deleteaccountpassword}}
+            //onError={() =>{ this.setState({loading: false});SNACKBAR.simple("Error in delete account") ;  }}
+            onCompleted={ () => { this.logout } }
+          >
+          {mutation => (
+        <PrimaryButton
+              loading={this.state.loading}
+              title="   Delete Account   "
+              onPress={mutation}
+              marginTop={5}
+            />
+            )}
+            </Mutation>
+      </View>
+    </Modal>
         <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>
          </TouchableOpacity>
           </View>
@@ -324,7 +445,7 @@ class UpdateProfile extends Component {
               placeholder="First Name" maxLength={12}
               style={ApplicationStyles.textbox}
               value={this.state.formData.first_name}
-              onChangeText={val => this.onTextInput('firstName', val)}
+              onChangeText={val => this.onTextInput('first_name', val)}
             />
             {ErrorLabel('firstName', this.state.errors)}
           </View>
@@ -335,7 +456,7 @@ class UpdateProfile extends Component {
               placeholder="Last Name" maxLength={12}
               style={ApplicationStyles.textbox}
               value={this.state.formData.last_name}
-              onChangeText={val => this.onTextInput('lastName', val)}
+              onChangeText={val => this.onTextInput('last_name', val)}
             />
             {ErrorLabel('lastName', this.state.errors)}
             </View>
@@ -398,22 +519,26 @@ class UpdateProfile extends Component {
          
 
       <View style={{flex:0.25,flexDirection:'row',margin:17, padding:10, backgroundColor:'#fff'}}>
+        <TouchableOpacity style={{flex:1,flexDirection:'row', backgroundColor:'#fff'}} onPress={this.deletemodel}>
             <Icon name="delete" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Delete my account</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
+            </TouchableOpacity>
             </View>
             {/* <WideBanner /> */}
           </Form>
         </Content>
         <View style={{alignItems:'center' , paddingBottom:'7%' }} >
         <Mutation
-            mutation={updatemutation}
+        context={{hasUpload: true}}
+            mutation={ updatemutation}
             variables={{ ID: this.state.formData.id,
           firstname: this.state.formData.first_name,
           lastname:this.state.formData.last_name,
           DateofBirth: this.state.date,
-          bio: this.state.formData.bio }}
-            onCompleted={ () => { SNACKBAR.simple("Profile updated") ; } }
+          bio: this.state.formData.bio,
+          profile_image: this.state.image }}
+            onCompleted={ () => { SNACKBAR.simple("Profile updated") ; this.updateupdatelocalstorage()  } }
           >
           {mutation => (
         <PrimaryButton
@@ -431,22 +556,32 @@ class UpdateProfile extends Component {
   }
 }
 
-
+ 
 
 const updatemutation = gql`
-mutation updateUser($ID:ID!, $firstname: String!, $lastname: String! , $DateofBirth: Date!, $bio: String!){
+mutation updateUser($ID:ID!, $firstname: String!, $lastname: String! , $DateofBirth: Date!, $bio: String!, $profile_image:Upload!){
   updateUser(input: {
     id:$ID,
     first_name: $firstname,
     last_name: $lastname,
     bio: $bio,
-    date_of_birth: $DateofBirth
+    date_of_birth: $DateofBirth,
+    profile_image:$profile_image,
   }){
     name,
     first_name,
     last_name,
     email_verified_at,
     bio
+  }
+}
+`;
+const deleteaccountmutation = gql`
+mutation deleteAccount($password: String!){
+  deleteAccount(
+    password:$password,
+  ){
+    status
   }
 }
 `;

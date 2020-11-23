@@ -133,9 +133,6 @@ query{ recipes(ingredients: "milk")
         id,
       title,
       image,
-      imageType,
-      usedIngredientCount,
-      missedIngredientCount,
       unusedIngredients{
         image
       },

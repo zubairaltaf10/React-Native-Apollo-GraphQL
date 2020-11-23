@@ -12,10 +12,12 @@ import { NETWORK_INTERFACE } from './src/config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider, Mutation } from 'react-apollo';
+import { ApolloProvider, Mutation , } from 'react-apollo';
 import { setContext } from 'apollo-link-context';
 import { createHttpLink } from 'apollo-link-http';
 import AsyncStorage from '@react-native-community/async-storage';
+import { createUploadLink } from 'apollo-upload-client'
+import { ApolloLink } from 'apollo-link';
 const httpLink = createHttpLink({
   uri: NETWORK_INTERFACE,
 });
@@ -37,7 +39,7 @@ const getToken = async () => {
     
 }
 const token = getToken();
-const  authLink =  setContext((_, { headers })  =>  {
+const  authLink =  setContext((_, { headers } )  =>  {
   console.log('token ' , token)
 return {
   headers: {
@@ -46,13 +48,16 @@ return {
   }
 }
 })
-
-
-
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-})
+  link: ApolloLink.from([ authLink, uploadLink ]),
+  cache : new InMemoryCache(),
+});
+
+// const client = new ApolloClient({
+//   link: authLink.concat(httpLink),
+//   cache: new InMemoryCache()
+// })
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental

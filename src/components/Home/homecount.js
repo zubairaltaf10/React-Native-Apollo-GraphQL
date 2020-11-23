@@ -25,7 +25,7 @@ import * as Linking from 'expo-linking';
 const onRequestClose = false;
 class HomeCount extends React.Component {
   async componentWillMount() {
-       
+       console.log('ssssss')
     let user = await AsyncStorage.getItem('user');
    if (user) {
      user = JSON.parse(user).user;
@@ -304,7 +304,7 @@ console.log(this.state.currentsubscription)
              
              
               <Input
-              placeholder="Enter Number of individuals" maxLength={3}
+              placeholder="Enter Number of individuals" maxLength={3 }
               style={ApplicationStyles.textbox}
               value={this.state.clicks}
               keyboardType={'numeric'}
@@ -363,7 +363,7 @@ console.log(this.state.currentsubscription)
             </View>
             </View>
             <View style={{flex:0.65,marginVertical:15,marginLeft:width(5),top:5}}>
-              <Text style={{fontFamily:FONTFAMILY.bold,fontSize:17,color:'#fff'}}>{this.state.loginuser.name}</Text>
+              <Text style={{fontFamily:FONTFAMILY.bold,fontSize:17,color:'#fff'}}>{this.state.loginuser.first_name + " " + this.state.loginuser.last_name}</Text>
               <Text style={{fontFamily:FONTFAMILY.regular,fontSize:13,color:'#fff'}}>{this.state.loginuser.bio}</Text>
             </View>
             <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>

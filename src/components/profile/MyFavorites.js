@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ImageBackground, StyleSheet, Platform, TouchableWithoutFeedback, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, ImageBackground, StyleSheet, Platform, TouchableWithoutFeedback, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -12,7 +12,9 @@ import COLORS from '../../Theme/Colors';
 import { FONTSIZES, FONTFAMILY } from '../../Theme/Fonts';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
+import gql from 'graphql-tag';
+import { graphql } from "react-apollo";
+import { ScrollView } from "react-native-gesture-handler";
 
 class MyFavorites extends React.Component {
     constructor(props) {
@@ -21,12 +23,20 @@ class MyFavorites extends React.Component {
     state = {}
 
     render() {
+        const  recipes  = this.props.data.recipes ? this.props.data.recipes : null;
+        console.log(recipes)
+        
+        if (!recipes) {
+          return <ActivityIndicator style={styles.spinner }   /> 
+    
+        }
         return (
+            
             <View style={{ flex: 1 }} behavior="padding">
                 <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
                     <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
-                        <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
+                        <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 ,fontSize:18}}></Icon>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 0.8 }}>
@@ -52,22 +62,35 @@ class MyFavorites extends React.Component {
                             />
                         </View>
                     </View>
-                    <View style={{ flex: 1, marginTop: height(3) }}>
+                    <ScrollView>
+                          { recipes?.map((x) =>
+                  
+                            <View style={{ flex: 1, marginTop: height(3) }}>
                         <View style={styles.whitebox}>
+                        <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
                             <View style={styles.imagebox}>
-                                <ImageBackground source={require('../../assets/searchrecipes/download.jpg')} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
+                                <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
                                     <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                                         <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
-                                            name="bookmark-alt"
-                                            type="Fontisto" />
+                                            name="favorite-border"
+                                            type="MaterialIcons" />
+                                    </View>
+                                    <View style={{ backgroundColor: '#F4F4F8', opacity: 0.8,  flexDirection:'row', height: 26, width: 70,
+                                     borderRadius: 20, justifyContent: 'center', alignSelf: 'flex-start', top:50, margin: 10 }}>
+                                    
+                                        <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
+                                            name="favorite"
+                                            type="MaterialIcons" />
+                                            <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 , marginRight:5}}>{x.likes}</Text>
                                     </View>
                                 </ImageBackground>
                             </View>
+                            </TouchableOpacity>
                             <View style={{flex:0.4}}>
-                            <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>Blue berry and banana butter pancakes</Text>
-                                <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text>
+                            <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>{x.title}</Text>
+                                {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}
                             </View>
-                            <View style={{flex:0.22,flexDirection:'row'}}>
+                            {/* <View style={{flex:0.22,flexDirection:'row'}}>
                             <View style={{ backgroundColor: '#43E871', height: 35, width: 90, borderRadius: 15, justifyContent: 'center',marginHorizontal:11,flexDirection:'row',alignItems:'center'}}>
                                         <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
                                             name="bar-chart-2"
@@ -80,15 +103,32 @@ class MyFavorites extends React.Component {
                                             type="EvilIcons" />
                                         <Text style={{fontSize:13,fontFamily:FONTFAMILY.regular,marginLeft:5,marginTop:5,color:'white'}}>25 mins</Text>
                                     </View>
-                            </View>
+                            </View> */}
                         </View>
                     </View>
+                    ) }
+                    </ScrollView>
                 </View>
             </View>
         )
     }
 }
-export default MyFavorites;
+//aggregateLikes
+const query = gql`
+
+query{ recipes(ingredients: "milk")
+{
+    id,
+  title,
+  image,
+
+  
+}
+    
+  }
+`;
+export default (graphql(query)(MyFavorites));
+//export default MyFavorites;
 
 const styles = StyleSheet.create({
     search: {
@@ -113,7 +153,8 @@ const styles = StyleSheet.create({
    //     borderWidth: 1,
         borderColor: '#rgba(9, 56, 149, 0.1)',
         borderRadius: 12,
-        flex: 0.7
+        flex: 0.7,
+        paddingBottom:20
     },
     imagebox: {
         //   backgroundColor:'black',
@@ -126,7 +167,8 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        resizeMode: "contain",
+        resizeMode: "cover",
+        height:150
         //  justifyContent: "center",
     }
 })
