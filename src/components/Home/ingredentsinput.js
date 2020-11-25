@@ -43,7 +43,27 @@ class InGredentsInput extends React.Component {
     clickedItems: []
   }
   componentDidMount() {
-    this.setState({ ingredientlist: ingredientlist })
+    client.query({
+      query: getCacheIngredients,
+      variables: {
+        name: ""
+      }
+    })
+      .then(async (data) => {
+       // await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
+        console.log(data.data.cacheIngredients.data)
+        this.setState({ selectedIngredients: data.data.cacheIngredients.data })
+        const resultsCount = _(this.state.selectedIngredients).groupBy('aisle').map((ingredients, aisle) => ({
+          aisle:aisle ? aisle : "Others",
+          ingredients
+      })).value()
+      this.setState({ingredientlist:resultsCount})
+   //   console.log("resss",resultsCount[0].z)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  // this.setState({ ingredientlist: ingredientlist })
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
   }
@@ -83,42 +103,99 @@ class InGredentsInput extends React.Component {
   }
   handleSelectItem = (item, index) => {
     this.aisleAdd(item)
+   // this.ingredientAdd(item)
     this.checkItem(item, true)
     //  console.log(JSON.stringify(item) + "ITEMMMM");
   }
-  ingredientAdd = () => {
-
+  ingredientAdd = (itemm) => {
+    let ingredientlist = [...this.state.ingredientlist]
+    //  console.log("from search", name.name)
+      ingredientlist.filter(ingredient =>{
+        if(ingredient.aisle == itemm.aisle){
+          let obj = {name:""}
+         //   ingredient.ingredients.some(item => {
+            if (ingredient.ingredients.indexOf(itemm.name) < 0)
+            obj.name = itemm.name
+            ingredient.ingredients.push(obj)
+            console.log(itemm.name,"yahan")
+        }
+      }
+      
+      )
+      this.setState({ingredientlist})
   }
 
-  aisleAdd = (item) => {
+  aisleAdd =(item)=>{
     console.log(item.aisle)
     let ingredientlist = [...this.state.ingredientlist]
-    ingredientlist.filter(ingredient=>{
-      // if(ingredient.aisle.toLowerCase() != item.aisle){
-      //   ingredientlist.unshift({aisle:item.aisle})
+    let obj = {aisle:"Gluten Free"}
+  //  if(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0){
+  //    console.log("andar")
+  //    obj.aisle = item.aisle
+  //    console.log("obj",obj)
+  //    ingredientlist.push(obj)
+  //    this.setState(ingredientlist)
+  //  }
+  const a = _.filter(ingredientlist, ing => ing.aisle == item.aisle);
+  if(a.length == 0){
+    ingredientlist.unshift(obj)
+  }
+    ingredientlist.filter(ingredient =>{
+    //  console.log(ingredient.aisle +"Sa   "+item.aisle)
+      if(ingredient.aisle == item.aisle){
+        console.log("tryyy",ingredient)
+        let obj = {name:""}
+        if (ingredient.ingredients != undefined){
+       //   ingredient.ingredients.some(item => {
+        if (ingredient.ingredients.indexOf(item.name) < 0)
+          obj.name = item.name
+          ingredient.ingredients.push(obj)
+        }
+        else {
+          let arr = []
+          let obj = {name:""}
+          obj.name = item.name
+          arr.push(obj)
+         // Object.assign(ingredient, {ingredients});
+         ingredient['ingredients'] = arr 
+//         ingredient.ingredients = arr
+          console.log(ingredientlist,"dsadadasdddddddddddddddd")
+     //     this.setState({ingredientlist:Object.assign(obj,[0, ...this.state.statusData]})
+        }
+      // else {
+      //   obj.name = item.name
+      //   ingredient['ingredients'] = obj
       // }
-    })
-    this.setState(ingredientlist)
+    }
+   
+    } 
+    )
+    this.setState({ingredientlist})  
+    console.log(ingredientlist,"yahan")
+  
+
+  // console.log(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0 )
+   // console.log(  ingredientlist)
   }
   onDropdownClose = () => {
     console.log('closed')
   }
 
   checkItem = (name, fromSearch) => {
-
+    let ingredientlist = [...this.state.ingredientlist]
     if (fromSearch == true) {
-      console.log("from search", name.name)
-      ingredientlist.filter(ingredient =>
+      ingredientlist.filter(ingredient =>{
+        console.log("from search",ingredient)
         ingredient.ingredients.some(item => {
-          if (item.name.toLowerCase() == name.name) {
+          if (item.name == name.name) {
             item.clicked = true
             console.log("dasdasd" + item)
           }
-        }))
-    }
+        })})
+    
+  }
     else {
       console.log(JSON.stringify(name.name) + "name")
-      //  let ingredientlist = [...this.state.ingredientlist]
       ingredientlist.filter(ingredient =>
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
@@ -128,7 +205,7 @@ class InGredentsInput extends React.Component {
         }))
     }
     this.setState({ ingredientlist })
-    console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
+    //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
   }
 
 
@@ -143,7 +220,6 @@ class InGredentsInput extends React.Component {
       // </View>
       <View style={{ flex: 1 }}>
         <View style={{ flex: 0.9 }}>
-          <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 1, marginBottom: 30 }}>
 
             <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
               <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
@@ -161,7 +237,7 @@ class InGredentsInput extends React.Component {
                   //  key={shortid.generate()}
                   //   scrollToInput={ev => scrollToInput(ev)}
                   //ref={componentRef}
-                  handleSelectItem={(item, id) => this.handleSelectItem(item, id)}
+                  handleSelectItem={this.handleSelectItem}
                   //       onDropdownClose={() => this.onDropdownClose()}
                   // onDropdownShow={() => onDropdownShow()}
                   renderIcon={() => (
@@ -171,9 +247,9 @@ class InGredentsInput extends React.Component {
                     />)}
                   placeholder={'Search Ingredients'}
                   //  fetchDataUrl={apiUrl}
-                  onChangeText={(val) => this.onsearchIngredients(val)}
+                //  onChangeText={(val) => this.onsearchIngredients(val)}
                   fetchData={(val) => this.onsearchIngredients(val)}
-                  minimumCharactersCount={1}
+                  minimumCharactersCount={0}
                   highlightText
                   valueExtractor={item => item.name}
                   //  rightContent={true}
@@ -234,18 +310,19 @@ class InGredentsInput extends React.Component {
                /> */}
                 {/* </View> */}
               </View>
+              <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: '56%',marginTop:10 }}>
               {this.state.ingredientlist.map((item) =>
                 <View style={{ marginTop: height(2) }}>
                   <View style={{ marginHorizontal: width(5), borderRadius: 12, borderColor: '#rgba(9, 56, 149, 0.1)', borderWidth: 1, backgroundColor: 'white' }}>
-                    <View style={{ flexDirection: 'row', }}>
-                      <Image style={{ height: 24, marginTop: 13, width: 15, marginLeft: 23 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
-                      <Text style={{ marginTop: 15, marginLeft: 12, fontSize: 14, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
-                      <Text style={{ marginTop: 17, marginLeft: 12, fontSize: 12, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>1/20 Selected</Text>
+                    <View style={{ flexDirection: 'row',flexGrow:1,flexWrap:'wrap'}}>
+                      <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 23 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
+                      <Text style={{ marginTop: 15, marginLeft: 12,width:'60%', fontSize: 12,flexShrink:0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
+                      <Text style={{ marginTop: 17, width:'20%',fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9'}}>1/20 Selected</Text>
                     </View>
-                    <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 13 }}>
+                    <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 7 }}>
                     </View>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', minHeight: 50, paddingBottom: 10 }}>
-                      {item.ingredients.map((x) =>
+                      {item.ingredients?.map((x) =>
                         <View style={x.clicked ? styles.tagsClicked : styles.tags}>
                           <Text style={x.clicked ? styles.tagstextClicked : styles.tagstext}
                             onPress={() => {
@@ -263,13 +340,15 @@ class InGredentsInput extends React.Component {
                     </View>
                   </View>
                 </View>
+                
               )}
+              </ScrollView>
+
             </View>
 
-          </ScrollView>
         </View>
 
-        <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '13%', backgroundColor: 'white', borderRadius: 10 }}>
+        <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '11%', backgroundColor: 'white', borderRadius: 10 }}>
           <View style={{ flex: 0.3, alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ backgroundColor: '#28292F', height: 55, width: 55, borderRadius: 40 }}>
               <View style={{ height: 20, width: 20, backgroundColor: COLORS.primary, alignSelf: 'flex-end', borderRadius: 40, left: 2 }}>
@@ -339,13 +418,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   tagstext: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: FONTFAMILY.regular,
     color: '#9E9E9E',
     alignSelf: 'flex-start'
   },
   tagstextClicked: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: FONTFAMILY.regular,
     color: '#fff',
     alignSelf: 'flex-start'
@@ -402,18 +481,15 @@ query ingredientAutoCompleteSearch($type: String!){
 `;
 
 const getCacheIngredients = gql`
-query cacheIngredients($name:String! )
-{
-cacheIngredients(name: $name)
-{
- data
-     {​​
-        id,
-        name,
-        aisle
-     }
+query cacheIngredients($name: String=""){
+  cacheIngredients(name: $name)
+ {data 
+    {
+      name,
+      id,
+      aisle
     }
-  }
+} }
 `;
 export default withApollo(InGredentsInput);
 
