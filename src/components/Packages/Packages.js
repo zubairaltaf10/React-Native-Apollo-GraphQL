@@ -319,17 +319,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const GetIngredients = gql`
-query ingredients($type: String!){
-  ingredients(type: $type)
-  {
-    results {
-      name,
-      id
-    }
-  }
-}
-`;
+
 
 
 const query = gql`

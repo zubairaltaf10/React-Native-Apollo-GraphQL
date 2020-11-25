@@ -23,7 +23,7 @@ class MyFavorites extends React.Component {
     state = {}
 
     render() {
-        const  recipes  = this.props.data.recipes ? this.props.data.recipes : null;
+        const  recipes  = this.props.data ? this.props.data : null;
         console.log(recipes)
         
         if (!recipes) {
@@ -81,7 +81,7 @@ class MyFavorites extends React.Component {
                                         <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
                                             name="favorite"
                                             type="MaterialIcons" />
-                                            <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 , marginRight:5}}>{x.likes}</Text>
+                                            <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 , marginRight:5}}>{x.aggregateLikes}</Text>
                                     </View>
                                 </ImageBackground>
                             </View>
@@ -116,15 +116,13 @@ class MyFavorites extends React.Component {
 //aggregateLikes
 const query = gql`
 
-query{ recipes(ingredients: "milk")
-{
-    id,
-  title,
-  image,
-
-  
-}
-    
+query{ userFavourites
+    {
+          image,
+          id,
+          title,
+          aggregateLikes
+    }
   }
 `;
 export default (graphql(query)(MyFavorites));
