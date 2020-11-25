@@ -21,8 +21,8 @@ import { color } from "react-native-reanimated";
 // import RBSheet from "react-native-raw-bottom-sheet";
 class SearchRecipes extends React.Component {
     async componentDidMount() {
-        console.log('ssssss')
-     let user = await AsyncStorage.getItem('user');
+        this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
+        let user = await AsyncStorage.getItem('user');
     if (user) {
       user = JSON.parse(user).user;
       var subcription = user.user_subscription.subscription
@@ -40,7 +40,8 @@ class SearchRecipes extends React.Component {
     }
     state = {
         loginuser:{},
-        currentsubscription:{}
+        currentsubscription:{},
+        clickedItems: []
     }
 
     onAddfav = (recipeId ) => {
@@ -202,17 +203,13 @@ class SearchRecipes extends React.Component {
                 </TouchableOpacity>
               </View>
         </View>
+        {this.state.clickedItems.map(x=>
           <View style={[styles.tagsClicked]}>
           
-                <Text style={styles.tagstextClicked}>Greek Yogurt</Text>
-                <Icon name="circle-with-cross" type="Entypo" style={{ fontSize:14  ,alignSelf:'flex-end', flex:0.1, color:COLORS.primary, backgroundColor:'#ddd'}}></Icon>
+        <Text style={styles.tagstextClicked}>{x.name}</Text>
+                <Icon name="circle-with-cross" type="Entypo" style={{marginTop:2,fontSize:14,marginLeft:10,color:COLORS.primary}}></Icon>
               </View>
-              <View style={[styles.tagsClicked]}>
-              <Text style={styles.tagstextClicked}>Whey</Text>
-              <Icon name="circle-with-cross" type="Entypo" style={{ fontSize:14 ,  alignSelf:'flex-end',flex:0.1, color:COLORS.primary, backgroundColor:'#ddd'}}></Icon>
-             
-              </View>
-              
+        )}
 
         
             
@@ -304,19 +301,21 @@ const styles = StyleSheet.create({
     
       tagsClicked: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+    //    justifyContent: 'space-between',
         marginTop: 14,
         color: "#ffffff",
         backgroundColor: '#F4F4F8',
         //  paddingHorizontal: 6,
         paddingVertical: 3,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
+        
         borderRadius: 27,
         alignSelf: 'flex-start',
         // width: width(15),
-        alignItems: "center",
+        alignItems: "stretch",
         //  backgroundColor: 'black',
         marginLeft: 10,
+        flex:0.2
       },
       addmore: {
         marginTop: 10,
@@ -343,7 +342,9 @@ const styles = StyleSheet.create({
         fontFamily: FONTFAMILY.regular,
         color: '#9E9E9E',
         alignSelf: 'flex-start',
-        backgroundColor:'#333'
+        marginTop:2
+      //  backgroundColor:'#333',
+       // flex:0.2
       },
       addmoretext: {
         fontSize: 10,

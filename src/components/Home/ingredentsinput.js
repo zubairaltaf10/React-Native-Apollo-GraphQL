@@ -5,6 +5,7 @@ import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
+  Spinner
 } from "native-base";
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
@@ -21,6 +22,7 @@ import MultiSelect from "react-native-multiple-select";
 import ingredientlist from './ingredientslist.json'
 import { Autocomplete, withKeyboardAwareScrollView } from "react-native-dropdown-autocomplete";
 import {_} from 'lodash';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
@@ -40,9 +42,12 @@ class InGredentsInput extends React.Component {
     selectedIngredients: [],
     ingredientlist: [],
     selectText: 'Search Ingredients',
-    clickedItems: []
+    clickedItems: [],
+    loading:false,
+    limit : 0
   }
   componentDidMount() {
+    this.setState({loading:true})
     client.query({
       query: getCacheIngredients,
       variables: {
@@ -50,17 +55,24 @@ class InGredentsInput extends React.Component {
       }
     })
       .then(async (data) => {
+        this.setState({loading:false})
        // await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
         console.log(data.data.cacheIngredients.data)
-        this.setState({ selectedIngredients: data.data.cacheIngredients.data })
-        const resultsCount = _(this.state.selectedIngredients).groupBy('aisle').map((ingredients, aisle) => ({
+      //  this.setState({ selectedIngredients: data.data.cacheIngredients.data })
+        const resultsCount = _(data.data.cacheIngredients.data).groupBy('aisle').map((ingredients, aisle) => ({
           aisle:aisle ? aisle : "Others",
           ingredients
       })).value()
       this.setState({ingredientlist:resultsCount})
-   //   console.log("resss",resultsCount[0].z)
+      let user = await AsyncStorage.getItem('user');
+        if (user) {
+          user = JSON.parse(user).user;
+          this.setState({limit:user.user_subscription.subscription.ingredient_limit})
+          console.log(this.state.limit)
+        }
       })
       .catch((err) => {
+        this.setState({loading:false})
         console.log(err)
       })
   // this.setState({ ingredientlist: ingredientlist })
@@ -101,6 +113,23 @@ class InGredentsInput extends React.Component {
     //  }
     return this.state.searchResults
   }
+
+  searchRecipes = ()=>{
+    let checkedItems =[]
+    
+    this.state.ingredientlist.filter(ingredient =>{
+      console.log("from search",ingredient)
+      ingredient.ingredients.some(item => {
+        if (item.clicked == true){
+          checkedItems.push(item)
+        }
+      })
+    })
+    this.props.navigation.navigate('SearchRecipes',{
+      clickeditems:checkedItems
+    })
+  }
+
   handleSelectItem = (item, index) => {
     this.aisleAdd(item)
    // this.ingredientAdd(item)
@@ -231,7 +260,7 @@ class InGredentsInput extends React.Component {
             </View>
             <View>
               <View style={{ marginTop: height(3), marginLeft: 17, zIndex: 1 }}>
-                <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>Select at least 3 ingredients</Text>
+                <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>Select at least {this.state.limit} ingredients</Text>
                
                 <Autocomplete
                   //  key={shortid.generate()}
@@ -310,6 +339,9 @@ class InGredentsInput extends React.Component {
                /> */}
                 {/* </View> */}
               </View>
+              {this.state.loading ? 
+            <Spinner small color="#FFAA2F" />
+           : 
               <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: '56%',marginTop:10 }}>
               {this.state.ingredientlist.map((item) =>
                 <View style={{ marginTop: height(2) }}>
@@ -343,7 +375,7 @@ class InGredentsInput extends React.Component {
                 
               )}
               </ScrollView>
-
+              }
             </View>
 
         </View>
@@ -360,7 +392,7 @@ class InGredentsInput extends React.Component {
           <View style={{ flex: 0.7, justifyContent: 'center' }}>
             <PrimaryButton
               title="SEARCH RECIPES"
-              onPress={() => this.props.navigation.navigate('SearchRecipes')}
+              onPress={() => this.searchRecipes()}
               marginTop={height(40)}
             // loading={this.state.loading}
             />
