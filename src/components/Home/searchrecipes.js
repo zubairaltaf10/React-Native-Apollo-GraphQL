@@ -5,6 +5,7 @@ import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
 import {
     Icon,
+    Spinner
 } from "native-base";
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
@@ -18,9 +19,80 @@ import { ScrollView } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-community/async-storage';
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import { color } from "react-native-reanimated";
+import { withApollo } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { NETWORK_INTERFACE } from '../../config';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
+import { createHttpLink } from 'apollo-link-http';
+import { createUploadLink } from 'apollo-upload-client'
+import { ApolloLink } from 'apollo-link';
+import {_} from 'lodash';
 // import RBSheet from "react-native-raw-bottom-sheet";
+const getToken = async () => {
+    let token;
+  
+    // get the authentication token from local storage if it exists
+    let user = await AsyncStorage.getItem("user")
+    user = JSON.parse(user)
+    if(user != null)
+    {
+      token = user.access_token
+       return token
+    }else
+    {
+      return ""
+    }
+      
+  }
+  const token = getToken();
+  const  authLink =  setContext((_, { headers } )  =>  {
+    console.log('token ' , token)
+  return {
+    headers: {
+      ...headers,
+      authorization: token._W  != ""? `Bearer ${token._W}` : "",
+    }
+  }
+  })
+  const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+  const client = new ApolloClient({
+    link: ApolloLink.from([ authLink, uploadLink ]),
+    cache : new InMemoryCache(),
+  });
+  
 class SearchRecipes extends React.Component {
     async componentDidMount() {
+      let ingregents =[]
+      _.forEach(this.props.navigation.getParam('clickeditems'), function(value) {
+         ingregents.push(value.name)
+      });
+
+        console.log('selected item ' , ingregents)
+        this.setState({loading:true})
+    client.query({
+      query: query,
+      variables: {
+        ingredients: ingregents
+      }
+    })
+      .then(async (data) => {
+        this.setState({loading:false})
+        console.log(data.data.recipes)
+      
+      this.setState({recipes:data.data.recipes})
+      let user = await AsyncStorage.getItem('user');
+        if (user) {
+          user = JSON.parse(user).user;
+          this.setState({limit:user.user_subscription.subscription.ingredient_limit})
+          console.log(this.state.limit)
+        }
+      })
+      .catch((err) => {
+        this.setState({loading:false})
+        console.log(err)
+      })
         this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
         let user = await AsyncStorage.getItem('user');
     if (user) {
@@ -41,35 +113,50 @@ class SearchRecipes extends React.Component {
     state = {
         loginuser:{},
         currentsubscription:{},
-        clickedItems: []
+        clickedItems: [],
+        loading:false,
+        recipes:[]
     }
 
     onAddfav = (recipeId ) => {
        console.log(recipeId)
            // this.setState({loading:true})
+           client.mutate({
+            mutation: mutation,
+            variables: { user_id: this.state.loginuser.id,
+                recipe_id: recipeId }
+          })
+            .then(async (data) => {
+                SNACKBAR.simple("Added in favourite") ; 
+            })
+            .catch((err) => {
+             // this.setState({loading:false})
+              console.log(err)
+            })
             
-            this.props.mutate({
-                variables:{ user_id: this.state.loginuser.id,
-                    recipe_id: recipeId },
-          })
-          .then((res) => {
-            SNACKBAR.simple("Added in favourite") ; 
-          })
-          .catch((err) => {
-           // SNACKBAR.simple(JSON.stringify(err));
-            console.log(err)
-           
-          });
       };
-
-    render() {
-        const  recipes  = this.props.data.recipes ? this.props.data.recipes : null;
-        console.log(recipes)
-        
-        if (!recipes) {
-          return <ActivityIndicator style={styles.spinner  } color={Colors.primary}  /> 
+      async updateupdatelocalstorage(subscription)
+      {
+        let user = await AsyncStorage.getItem('user');
+        console.log(user)
+       if (user) {
+         user = JSON.parse(user);
+         user.user.first_name= this.state.formData.first_name; 
+         user.user.last_name= this.state.formData.last_name;
+         user.user.bio =  this.state.formData.bio
+         user.user.date_of_birth = this.state.date;
+        user.user.profile_image = this.state.userimage
+         
+       }
     
-        }
+       AsyncStorage.setItem('user', JSON.stringify(user)).then(
+        () => {
+          
+        },
+      );
+    }
+    render() {
+        
         return (
             <View style={{ flex: 1 }} behavior="padding">
                 <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -84,7 +171,7 @@ class SearchRecipes extends React.Component {
                 </View>
                 <View style={{ flex: 1 }}>
                     <View style={{ marginTop: height(4) }}>
-                        <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>You can make {recipes.length} recipes with{'\n'}   the ingredients selected</Text>
+                        <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>You can make {this.state.recipes.length} recipes with{'\n'}   the ingredients selected</Text>
                         <View style={styles.search}>
                             <Icon style={{ fontSize: 22, flex: 0.1, alignSelf: 'center', color: COLORS.primary }}
                                 name="search"
@@ -102,8 +189,11 @@ class SearchRecipes extends React.Component {
                             />
                         </View>
                     </View>
+                    {this.state.loading ? 
+            <Spinner small color="#FFAA2F" />
+           : 
                     <ScrollView>
-                    { recipes?.map((x) =>
+                    { this.state.recipes?.map((x) =>
                     
                   
                     <View style={{ flex: 1, marginTop: height(3) }}>
@@ -113,13 +203,7 @@ class SearchRecipes extends React.Component {
                             <View style={styles.imagebox}>
                                 <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
                                     <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
-                                    {/* <Mutation
-        
-            mutation={ mutation}
-            variables={{ user_id: this.state.loginuser.id,
-                recipe_id: x.recipe_id }}
-            onCompleted={ () => { SNACKBAR.simple("Added in favourite") ;  } }
-          > */}
+                         
                                         <TouchableOpacity  onPress={() => {this.onAddfav(x.id)}}>
                                         <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
                                             name="favorite-border"
@@ -145,25 +229,13 @@ class SearchRecipes extends React.Component {
                                 {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}
                             </View>
                             </TouchableOpacity>
-                            {/* <View style={{flex:0.22,flexDirection:'row'}}>
-                            <View style={{ backgroundColor: '#43E871', height: 35, width: 90, borderRadius: 15, justifyContent: 'center',marginHorizontal:11,flexDirection:'row',alignItems:'center'}}>
-                                        <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                            name="bar-chart-2"
-                                            type="Feather" />
-                                        <Text style={{fontSize:13,fontFamily:FONTFAMILY.regular,marginLeft:5,marginTop:5,color:'white'}}>Easy</Text>
-                            </View>
-                            <View style={{ backgroundColor:COLORS.primary, height: 35, width: 90, borderRadius: 15, justifyContent: 'center',marginHorizontal:11,flexDirection:'row',alignItems:'center'}}>
-                                        <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                            name="clock"
-                                            type="EvilIcons" />
-                                        <Text style={{fontSize:13,fontFamily:FONTFAMILY.regular,marginLeft:5,marginTop:5,color:'white'}}>25 mins</Text>
-                                    </View>
-                            </View> */}
+                            
                         </View>
                     </View>
                      ) }
+                    
                      </ScrollView>
-                     
+                    } 
                 </View>
                 <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0,bottom: 0, height: '13%',  borderRadius: 10 }}>
           
@@ -171,7 +243,7 @@ class SearchRecipes extends React.Component {
           <TouchableOpacity onPress={() => this.RBSheet.open()}>
             <View style={{ backgroundColor: '#28292F', height: 55, width: 55, borderRadius: 40 }}>
             <View style={{height:20,width:20,backgroundColor:COLORS.primary,alignSelf:'flex-end',borderRadius:40,left:2}}>
-             <Text style={{color:'white',alignSelf:'center',fontSize:12,fontFamily:FONTFAMILY.medium}}>2</Text>
+             <Text style={{color:'white',alignSelf:'center',fontSize:12,fontFamily:FONTFAMILY.medium}}>{this.state.clickedItems.length}</Text>
              </View>
               <Image style={{ height: 25, width: 16,alignSelf:'center',bottom:3 }} source={require('../../assets/Ingredients/list.png')}></Image>
             </View>
@@ -203,13 +275,23 @@ class SearchRecipes extends React.Component {
                 </TouchableOpacity>
               </View>
         </View>
-        {this.state.clickedItems.map(x=>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', minHeight: 50, paddingBottom: 10 }}>
+                      {this.state.clickedItems?.map((x) =>
+                        <View style={styles.tagsClicked}>
+                          <Text style={styles.tagstextClicked}
+                            >{x.name}</Text>
+                             <Icon name="circle-with-cross" type="Entypo" style={{marginTop:2,fontSize:14,marginLeft:10,color:COLORS.primary}}></Icon>
+                        </View>
+                      )}
+                      
+                    </View>
+        {/* {this.state.clickedItems.map(x=>
           <View style={[styles.tagsClicked]}>
           
         <Text style={styles.tagstextClicked}>{x.name}</Text>
                 <Icon name="circle-with-cross" type="Entypo" style={{marginTop:2,fontSize:14,marginLeft:10,color:COLORS.primary}}></Icon>
               </View>
-        )}
+        )} */}
 
         
             
@@ -233,7 +315,8 @@ mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
 `;
 const query = gql`
 
-query{ recipes(ingredients: "milk")
+query recipes($ingredients: [String!]!){
+    recipes(ingredients:$ingredients)
     {
         id,
       title,
@@ -246,9 +329,7 @@ query{ recipes(ingredients: "milk")
     }
   }
 `;
-export default (graphql(mutation)(
-    graphql(query)(SearchRecipes))
-  );
+export default withApollo(SearchRecipes);
 
 //export default SearchRecipes;
 
@@ -300,7 +381,6 @@ const styles = StyleSheet.create({
     },
     
       tagsClicked: {
-        flexDirection: 'row',
     //    justifyContent: 'space-between',
         marginTop: 14,
         color: "#ffffff",
@@ -310,12 +390,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         
         borderRadius: 27,
+        // width: width(15),
         alignSelf: 'flex-start',
         // width: width(15),
-        alignItems: "stretch",
         //  backgroundColor: 'black',
-        marginLeft: 10,
-        flex:0.2
+        marginLeft: 10
       },
       addmore: {
         marginTop: 10,

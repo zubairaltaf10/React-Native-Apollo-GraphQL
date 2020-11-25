@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform, TouchableWithoutFeedback, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, TouchableWithoutFeedback, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -252,7 +252,9 @@ class InGredentsInput extends React.Component {
 
             <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
               <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-                <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
+              <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+                        <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 ,fontSize:18}}></Icon>
+                        </TouchableOpacity>
               </View>
               <View style={{ flex: 0.8 }}>
                 <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
@@ -289,7 +291,7 @@ class InGredentsInput extends React.Component {
                   spinnerStyle={{ marginLeft: '12%' }}
                   inputStyle={{ borderRadius: 5, borderWidth: 0.5, borderColor: '#868CA9', fontFamily: FONTFAMILY.regular, fontSize: 14, paddingTop: 13, height: 44 }}
                   pickerStyle={{ width: '74%', marginTop: 4, borderColor: '#868CA9', borderWidth: 0.1 }}
-                  noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 13, marginTop: 10 }}
+                  noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 12, marginTop: 10 }}
                   //            separatorStyle={{backgroundcolor:'pink'}}
                   listFooterStyle={{ height: 0.1, marginTop: 3 }}
                   containerStyle={{ fontSize: 20 }}
@@ -363,12 +365,7 @@ class InGredentsInput extends React.Component {
                             }}>{x.name}</Text>
                         </View>
                       )}
-                      {/* <View style={[styles.tagsClicked]}>
-                <Text style={styles.tagstextClicked}>Greek Yogurt</Text>
-              </View>
-              <View style={[styles.tags]}>
-                <Text style={styles.tagstext}>Whey</Text>
-              </View> */}
+                      
                     </View>
                   </View>
                 </View>
@@ -426,8 +423,8 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     backgroundColor: "#F4F4F8",
     //  paddingHorizontal: 6,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 25,
     borderRadius: 27,
     alignSelf: 'flex-start',
     // width: width(15),
@@ -437,11 +434,12 @@ const styles = StyleSheet.create({
   },
   tagsClicked: {
     marginTop: 14,
+    textTransform: 'capitalize',
     color: "#ffffff",
     backgroundColor: COLORS.primary,
     //  paddingHorizontal: 6,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 25,
     borderRadius: 27,
     alignSelf: 'flex-start',
     // width: width(15),
@@ -450,15 +448,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   tagstext: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: FONTFAMILY.regular,
     color: '#9E9E9E',
+    textTransform: 'capitalize',
     alignSelf: 'flex-start'
   },
   tagstextClicked: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: FONTFAMILY.regular,
-    color: '#fff',
+    color: '#28292F',
+    textTransform: 'capitalize',
     alignSelf: 'flex-start'
   },
   autocompletesContainer: {

@@ -18,9 +18,7 @@ import { createHttpLink } from 'apollo-link-http';
 import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
-const httpLink = createHttpLink({
-  uri: NETWORK_INTERFACE,
-});
+
 
 const getToken = async () => {
   let token;

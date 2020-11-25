@@ -32,6 +32,7 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 
 
 class Packages extends Component {
+  swiperRef = React.createRef()
   constructor(props) {
     super(props);
     this.state = {
@@ -54,6 +55,39 @@ class Packages extends Component {
   // } 
 
   _onPressButton = async (model) => {
+    if(this.state.cardClicked == "Basic")
+   {
+     if(model.name == "Standard")
+     {
+      this._slider.scrollBy(1, true)
+     }
+     else if(model.name == "Premium")
+     {
+      this._slider.scrollBy(2, true)
+     }
+   }
+   if(this.state.cardClicked == "Standard")
+   {
+     if(model.name == "Basic")
+     {
+      this._slider.scrollBy(-1, true)
+     }
+     else if(model.name == "Premium")
+     {
+      this._slider.scrollBy(1, true)
+     }
+   }
+   if(this.state.cardClicked == "Premium")
+   {
+     if(model.name == "Basic")
+     {
+      this._slider.scrollBy(-2, true)
+     }
+     else if(model.name == "Standard")
+     {
+      this._slider.scrollBy(-1, true)
+     }
+   }
     console.log("nameee"+model.name)
    await this.setState({default:''})
    await this.setState({cardClicked:model.name})
@@ -114,7 +148,7 @@ class Packages extends Component {
 
         </View>
         <View style={{ flex: 0.6 }}>
-          <Swiper style={styles.wrapper}
+          <Swiper ref={(ref) => this._slider = ref} style={styles.wrapper}
             dot={
               <View
                 style={{

@@ -21,7 +21,6 @@ import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import AsyncStorage from '@react-native-community/async-storage';
-import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -115,7 +114,7 @@ class ManagePackages extends Component {
   }
   _onSaveUserSubscription = async () => {
     this.setState({loading:true})
-   
+    console.log(this.state.subscription_id);
     this.props
     .mutate({
       variables: {
@@ -124,21 +123,32 @@ class ManagePackages extends Component {
       },
     })
     .then((res) => {
-      this.setState({loading:false})
-      console.log(res);
-      
-        user.user_subscription = this.state.subscriptionmodel
-        AsyncStorage.setItem('user', JSON.stringify(user)).then(
-          () => {
-            this.props.navigation.navigate('App');
-          },
-        );
+      this.updateupdatelocalstorage( res.data.addUserSubscription.subscription)
     })
     .catch((err) => {
       this.setState({loading:false})
       console.log(JSON.stringify(err));
     });
   }
+  async updateupdatelocalstorage(subscription)
+      {
+        this.setState({loading:false})
+        console.log(subscription);
+        
+        let user = await AsyncStorage.getItem('user');
+        console.log(user)
+       if (user) {
+         user = JSON.parse(user);
+         user.user.user_subscription.subscription= subscription; 
+       }
+       this.state.currentsubscription =subscription;
+       SNACKBAR.simple("Subscription updated successfully") ;
+       AsyncStorage.setItem('user', JSON.stringify(user)).then(
+        () => {
+          
+        },
+      );
+    }
   onBasicSubmit = () => {
      // var res = this._onSaveUserSubscription();
   };
@@ -513,7 +523,15 @@ mutation addUserSubscription($user_id: Int!, $subscription_id: Int!){
       name
     },
     subscription{
-      name
+      name,
+      amount_per_month,
+      amount_per_year,
+      trial_days,
+      amount,
+      amount_description,
+      person_limit,
+      ingredient_limit,
+      description
     }
   }
 }

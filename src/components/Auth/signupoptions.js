@@ -156,7 +156,7 @@ class SignupOptions extends Component {
           />
           
           <Text style={styles.buttonTextStyle}>
-            CONTINUE WITHa FACEBOOK 
+            CONTINUE WITH FACEBOOK 
           </Text>
           
             </TouchableOpacity>
