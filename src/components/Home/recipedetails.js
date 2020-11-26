@@ -144,7 +144,9 @@ class RecipesDetails extends React.Component {
                                 <ImageBackground source={{uri:recipeDetail.image}} resizeMode={'cover'} imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
+                                        <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
                                             <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 18, color: COLORS.primary, alignSelf: 'center' }}></Icon>
+                                        </TouchableOpacity>
                                         </View>
                                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
                                             <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
@@ -256,9 +258,9 @@ class RecipesDetails extends React.Component {
               <View
                 style={{ backgroundColor: 'white',borderRadius: 12,marginTop:10 }}>
                 <View style={{marginTop: 10,flexDirection:'row' }}>
-                <View style={{ backgroundColor: COLORS.primary, height: 30, width: 30, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
+                {/* <View style={{ backgroundColor: COLORS.primary, height: 30, width: 30, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
                     <Text style={{ fontSize: 18, alignSelf: 'center' }}>1</Text>
-                </View>
+                </View> */}
                     <Text style={{ fontFamily: FONTFAMILY.regular,flex:1, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}></Text>
                 </View>
             </View>

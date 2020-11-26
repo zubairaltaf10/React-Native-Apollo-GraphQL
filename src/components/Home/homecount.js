@@ -227,19 +227,19 @@ console.log(this.state.currentsubscription)
         <PrimaryButton
           title="        Sign Up       "
           marginTop={8}
-          onPress={this.ViewPlan}
+          onPress={()=>{this.props.navigation.navigate('Signup')}}
         />
         <PrimaryButton2
             title= "           Login            " 
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(10)}
             //loading={this.state.loading}
-            onPress={this.ViewPlan }
+            onPress={()=>{this.props.navigation.navigate('Login') }}
           />
         <PrimaryButton
           title="        Skip Now       "
           marginTop={40}
-          onPress={this.ViewPlan}
+          onPress={()=>{this.setState({viewplanmodel:false})}}
         />
         
       </View>

@@ -21,11 +21,9 @@ import SNACKBAR from '../../Helpers/SNACKBAR';
 import { color } from "react-native-reanimated";
 import { withApollo } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
 import { NETWORK_INTERFACE } from '../../config';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
-import { createHttpLink } from 'apollo-link-http';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import {_} from 'lodash';
@@ -202,16 +200,31 @@ class SearchRecipes extends React.Component {
                         
                             <View style={styles.imagebox}>
                                 <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
-                                    <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
+                                    {/* <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                          
                                         <TouchableOpacity  onPress={() => {this.onAddfav(x.id)}}>
                                         <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
                                             name="favorite-border"
                                             type="MaterialIcons" />
                                             </TouchableOpacity>
-                                     {/* </Mutation> */}
+                                    </View> */}
+                                    <View style={{   height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
+                                    <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
+                                    <TouchableOpacity  onPress={() => {this.onAddfav(x.id) ; x.fav = true}}>
+                                       {x.fav == true  && ( 
+                                        <Icon style={{ fontSize: 18,marginTop:7,  alignSelf: 'center', color: COLORS.primary }}
+                                            name="favorite"
+                                            type="Fontisto" />)} 
+                                                {x.fav != true  && (
+                                              <Icon style={{ fontSize: 18,marginTop:7,  alignSelf: 'center', color: COLORS.primary }}
+                                            name="bookmark"
+                                            type="Feather" />
+                                                )}
+                                       
+                                            </TouchableOpacity>
+                                            </ImageBackground>
                                     </View>
-                                    <View style={{ backgroundColor: '#F4F4F8', opacity: 0.8,  flexDirection:'row', height: 26, width: 70,
+                                    <View style={{ backgroundColor: '#F4F4F8', opacity: 0.9,  flexDirection:'row', height: 24, paddingHorizontal:5,
                                      borderRadius: 20, justifyContent: 'center', alignSelf: 'flex-start', top:50, margin: 10 }}>
                                     
                                         <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
@@ -363,6 +376,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         flex: 0.7,
         paddingBottom:20
+    },
+    image1: {
+        resizeMode: "cover",
+        height:32
+        //  justifyContent: "center",
     },
     imagebox: {
         //   backgroundColor:'black',

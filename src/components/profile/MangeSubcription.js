@@ -320,7 +320,7 @@ class ManagePackages extends Component {
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(50)}
-            loading={this.state.loading}
+           // loading={this.state.loading}
           />
           <PrimaryButton2
             title={ "SUBSCRIBE £" + this.state.priceperyear + " / YEAR" }
