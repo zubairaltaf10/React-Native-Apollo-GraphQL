@@ -68,11 +68,11 @@ class Login extends Component {
   onSubmit = () => {
     //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
    // this.props.navigation.navigate('Packages');
-   // this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-     // if (this.state.errors.length === 0) {
+    this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
+      if (this.state.errors.length === 0) {
         this.setState({loading:true})
-        let email = "askfaisal@outlook.com";
-        let password = "P@ssw0rd1"; 
+        let email = "";
+        let password = ""; 
         this.props.mutate({
         variables: {
           email: email,
@@ -119,8 +119,8 @@ class Login extends Component {
           }
         }
       });
-     // }
-   // });
+      }
+    });
   };
   render() {
     //this.setState({email:"askfaisal@outlook.com"})
