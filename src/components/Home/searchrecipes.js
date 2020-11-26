@@ -275,16 +275,16 @@ class SearchRecipes extends React.Component {
                 </TouchableOpacity>
               </View>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', minHeight: 50, paddingBottom: 10 }}>
-                      {this.state.clickedItems?.map((x) =>
-                        <View style={styles.tagsClicked}>
-                          <Text style={styles.tagstextClicked}
-                            >{x.name}</Text>
-                             <Icon name="circle-with-cross" type="Entypo" style={{marginTop:2,fontSize:14,marginLeft:10,color:COLORS.primary}}></Icon>
-                        </View>
-                      )}
-                      
-                    </View>
+        <View style={{ flexDirection: 'row',flexWrap:'wrap' }}>
+              {this.state.clickedItems.map((x)=>
+              <View style={styles.bottomtags}>
+                <Text style={styles.tagstext}>{x.name}</Text>
+                  <TouchableOpacity onPress={() => this.onRemove(x)}>
+                <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
+                  </TouchableOpacity>
+              </View>
+              )}
+            </View>
         {/* {this.state.clickedItems.map(x=>
           <View style={[styles.tagsClicked]}>
           
@@ -430,5 +430,22 @@ const styles = StyleSheet.create({
         fontFamily: FONTFAMILY.bold,
         color: '#28292F',
         alignSelf: 'flex-start'
+      },
+      bottomtags: {
+        marginTop: 2,
+        flexDirection: 'row',
+        color: "#ffffff",
+        backgroundColor: "#F4F4F8",
+        paddingHorizontal: 7,
+        paddingVertical: 5,
+        flexWrap: 'wrap',
+        // paddingHorizontal: 15,
+        //  width:'17%',
+        borderRadius: 27,
+        alignSelf: 'flex-start',
+        // width: width(15),
+        alignItems: "center",
+        //  backgroundColor: 'black',
+        marginLeft: 10
       }
 })
