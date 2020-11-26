@@ -141,8 +141,25 @@ class ManagePackages extends Component {
          user = JSON.parse(user);
          user.user.user_subscription.subscription= subscription; 
        }
-       this.state.currentsubscription =subscription;
+       this.setState({currentsubscription:subscription }) ;
        SNACKBAR.simple("Subscription updated successfully") ;
+       AsyncStorage.setItem('user', JSON.stringify(user)).then(
+        () => {
+          
+        },
+      );
+    }
+    async cancelsubcriptionfromlocalstorage()
+      {
+        console.log('ssss')
+        SNACKBAR.simple("Subscription cancel successfully") 
+        let user = await AsyncStorage.getItem('user');
+        console.log(user)
+       if (user) {
+         user = JSON.parse(user);
+         user.user.user_subscription.subscription= {}; 
+       }
+       this.setState({currentsubscription:{} }) ;
        AsyncStorage.setItem('user', JSON.stringify(user)).then(
         () => {
           
@@ -191,7 +208,7 @@ class ManagePackages extends Component {
             variables={{ user_id: this.state.loginuser.id,
               subscription_id:this.state.subscription_id }}
              // onError={()=>{SNACKBAR.simple("Error") ; }}
-            onCompleted={ () => { SNACKBAR.simple("Subscription cancel successfully") ; } }
+            onCompleted={ () => { this.cancelsubcriptionfromlocalstorage()} }
           >
           {mutation => (
             <TouchableOpacity  onPress={mutation}
@@ -303,7 +320,7 @@ class ManagePackages extends Component {
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(50)}
-            loading={this.state.loading}
+           // loading={this.state.loading}
           />
           <PrimaryButton2
             title={ "SUBSCRIBE £" + this.state.priceperyear + " / YEAR" }

@@ -72,18 +72,24 @@ class RecipesDetails extends React.Component {
                 </ScrollView>
                 ) }
                 {item.index == 2 && (
-                    
-                    this.state.recDetail.extendedIngredients?.map((x) =>
-                      <View style={{flex:1}}> 
-                    <View style={{flex:0.5}}>
-                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.originalName}</Text>
+                    <ScrollView style={{flex:1, maxHeight: 200 }} onTouchStart={(ev) => { 
+									  this.setState({enabled:false }); }}
+									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
+									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
+                   { this.state.recDetail.extendedIngredients?.map((x) =>
+                   
+                      <View style={{flex:1, flexDirection: 'row',
+    justifyContent: 'space-between',}}> 
+                    <View style={{flex:0.7, margin:5}}>
+                    <Text numberOfLines={1} style={{ width: 200 , fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.originalName}</Text>
                     </View>
-                    <View style={{flex:0.5}}>
+                    <View style={{flex:0.3,  margin:5}}>
                     <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-end', color: '#868CA9' }}>{x.unit}</Text>
                     </View>
                     </View> 
-                    
-                    )
+                   
+                    )}
+                    </ScrollView>
                 ) }
                 {item.index == 3 && (
                     <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{item.index}</Text>
@@ -138,7 +144,9 @@ class RecipesDetails extends React.Component {
                                 <ImageBackground source={{uri:recipeDetail.image}} resizeMode={'cover'} imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
+                                        <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
                                             <Icon name="arrowleft" type="AntDesign" style={{ fontSize: 18, color: COLORS.primary, alignSelf: 'center' }}></Icon>
+                                        </TouchableOpacity>
                                         </View>
                                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
                                             <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
@@ -171,25 +179,25 @@ class RecipesDetails extends React.Component {
                 </View>
                 <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 5 ,flex:0.1}}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
-                        <View style={{ backgroundColor: '#43E871', height: 35, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                        <View style={{ backgroundColor: '#43E871', height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
                                 name="bar-chart-2"
                                 type="Feather" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>Easy</Text>
                         </View>
-                        <View style={{ backgroundColor: COLORS.primary, height: 35, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                        <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
+                                name="clock"
+                                type="EvilIcons" />
+                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>{this.state.recDetail.readyInMinutes}</Text>
+                        </View>
+                        <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
                                 name="clock"
                                 type="EvilIcons" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>25 mins</Text>
                         </View>
-                        <View style={{ backgroundColor: COLORS.primary, height: 35, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                name="clock"
-                                type="EvilIcons" />
-                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>25 mins</Text>
-                        </View>
-                        <View style={{ backgroundColor: COLORS.primary, height: 35, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                        <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
                                 name="clock"
                                 type="EvilIcons" />
@@ -250,10 +258,10 @@ class RecipesDetails extends React.Component {
               <View
                 style={{ backgroundColor: 'white',borderRadius: 12,marginTop:10 }}>
                 <View style={{marginTop: 10,flexDirection:'row' }}>
-                <View style={{ backgroundColor: COLORS.primary, height: 30, width: 30, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
+                {/* <View style={{ backgroundColor: COLORS.primary, height: 30, width: 30, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
                     <Text style={{ fontSize: 18, alignSelf: 'center' }}>1</Text>
-                </View>
-                    <Text style={{ fontFamily: FONTFAMILY.regular,flex:1, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</Text>
+                </View> */}
+                    <Text style={{ fontFamily: FONTFAMILY.regular,flex:1, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}></Text>
                 </View>
             </View>
             </View>
@@ -335,7 +343,19 @@ query{ recipe(id:716429 )
       cuisines,
       dairyFree,
       diets,
-      instructions,
+      instructions{
+            
+        name,
+       steps{
+          ingredients{
+          name
+          }
+          equipment{
+            name,
+             image
+         },
+        }
+     },
       ketogenic,weightWatcherSmartPoints,dishTypes,
       extendedIngredients{
         id,

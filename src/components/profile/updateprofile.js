@@ -537,7 +537,7 @@ onrequestModelclose = () =>
           lastname:this.state.formData.last_name,
           DateofBirth: this.state.date,
           bio: this.state.formData.bio,
-          profile_image: this.state.image }}
+          profile_image: this.state.image == "" ? null : this.state.image }}
             onCompleted={ () => { SNACKBAR.simple("Profile updated") ; this.updateupdatelocalstorage()  } }
           >
           {mutation => (
@@ -559,7 +559,7 @@ onrequestModelclose = () =>
  
 
 const updatemutation = gql`
-mutation updateUser($ID:ID!, $firstname: String!, $lastname: String! , $DateofBirth: Date!, $bio: String!, $profile_image:Upload!){
+mutation updateUser($ID:ID!, $firstname: String, $lastname: String , $DateofBirth: Date, $bio: String, $profile_image:Upload){
   updateUser(input: {
     id:$ID,
     first_name: $firstname,

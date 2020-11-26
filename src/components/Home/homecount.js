@@ -25,20 +25,27 @@ import * as Linking from 'expo-linking';
 const onRequestClose = false;
 class HomeCount extends React.Component {
   async componentWillMount() {
-       console.log('ssssss')
-    let user = await AsyncStorage.getItem('user');
-   if (user) {
-     user = JSON.parse(user).user;
-     var subcription = user.user_subscription.subscription
-     this.setState({ currentsubscription: subcription });
-     console.log('user ', user);
-     this.setState({ loginuser: user });
-     console.log('user subcription found in localstorage', this.state.currentsubscription);
-   } else {
-    console.log('no user found');
-   }
+    this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
+      this.loadloginuser();
+    });
+       
+    
   // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+ }
+ async loadloginuser()
+ {
+  let user = await AsyncStorage.getItem('user');
+  if (user) {
+    user = JSON.parse(user).user;
+    var subcription = user.user_subscription.subscription
+    this.setState({ currentsubscription: subcription });
+    console.log('user ', user);
+    this.setState({ loginuser: user });
+    console.log('user subcription found in localstorage', this.state.currentsubscription);
+  } else {
+   console.log('no user found');
+  }
  }
   constructor(props) {
     super(props);
@@ -220,19 +227,19 @@ console.log(this.state.currentsubscription)
         <PrimaryButton
           title="        Sign Up       "
           marginTop={8}
-          onPress={this.ViewPlan}
+          onPress={()=>{this.props.navigation.navigate('Signup')}}
         />
         <PrimaryButton2
             title= "           Login            " 
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(10)}
             //loading={this.state.loading}
-            onPress={this.ViewPlan }
+            onPress={()=>{this.props.navigation.navigate('Login') }}
           />
         <PrimaryButton
           title="        Skip Now       "
           marginTop={40}
-          onPress={this.ViewPlan}
+          onPress={()=>{this.setState({viewplanmodel:false})}}
         />
         
       </View>
@@ -340,7 +347,7 @@ console.log(this.state.currentsubscription)
             container: {
           //    justifyContent: "center",
            //   alignItems: "center",
-              borderRadius:15
+              borderTopEndRadius:15
             }
           }}
         >

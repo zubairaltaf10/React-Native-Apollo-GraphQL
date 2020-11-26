@@ -5,6 +5,7 @@ import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
 import {
     Icon,
+    Spinner
 } from "native-base";
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
@@ -15,21 +16,118 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import { ScrollView } from "react-native-gesture-handler";
-
+import { withApollo } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { NETWORK_INTERFACE } from '../../config';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
+import { createUploadLink } from 'apollo-upload-client'
+import { ApolloLink } from 'apollo-link';
+import AsyncStorage from '@react-native-community/async-storage';
+const getToken = async () => {
+    let token;
+  
+    // get the authentication token from local storage if it exists
+    let user = await AsyncStorage.getItem("user")
+    user = JSON.parse(user)
+    if(user != null)
+    {
+      token = user.access_token
+       return token
+    }else
+    {
+      return ""
+    }
+      
+  }
+  const token = getToken();
+  const  authLink =  setContext((_, { headers } )  =>  {
+    console.log('token ' , token)
+  return {
+    headers: {
+      ...headers,
+      authorization: token._W  != ""? `Bearer ${token._W}` : "",
+    }
+  }
+  })
+  const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+  const client = new ApolloClient({
+    link: ApolloLink.from([ authLink, uploadLink ]),
+    cache : new InMemoryCache(),
+  });
 class MyFavorites extends React.Component {
+    async componentDidMount() {
+       
+  
+       this.setState({loading:true})
+      client.query({
+        query: query,
+        // variables: {
+          
+        // }
+      })
+        .then(async (data) => {
+          this.setState({loading:false})
+          console.log(data.data.userFavourites)
+        
+        this.setState({recipes:data.data.userFavourites})
+        let user = await AsyncStorage.getItem('user');
+          if (user) {
+            user = JSON.parse(user).user;
+            this.setState({limit:user.user_subscription.subscription.ingredient_limit})
+            console.log(this.state.limit)
+          }
+        })
+        .catch((err) => {
+          this.setState({loading:false})
+          console.log(err)
+        })
+          this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
+          let user = await AsyncStorage.getItem('user');
+      if (user) {
+        user = JSON.parse(user).user;
+        var subcription = user.user_subscription.subscription
+        this.setState({ currentsubscription: subcription });
+        console.log('user ', user);
+        this.setState({ loginuser: user });
+        console.log('user subcription found in localstorage', this.state.currentsubscription);
+      } else {
+       console.log('no user found');
+      }
+     
+    }
     constructor(props) {
         super(props);
     }
-    state = {}
-
+    state = {
+        recipes:[],
+        loading:false
+    }
+    onUnfav = (recipeId ) => {
+        console.log(recipeId)
+            // this.setState({loading:true})
+            client.mutate({
+             mutation: mutation,
+             variables: { user_id: this.state.loginuser.id,
+                 recipe_id: recipeId }
+           })
+             .then(async (data) => {
+                 SNACKBAR.simple("Added in favourite") ; 
+             })
+             .catch((err) => {
+              // this.setState({loading:false})
+               console.log(err)
+             })
+             
+       };
     render() {
-        const  recipes  = this.props.data.userFavourites ? this.props.data.userFavourites : null;
-        console.log(recipes)
+        // const  recipes  = this.props.data.userFavourites ? this.props.data.userFavourites : null;
+        // console.log(recipes)
         
-        if (!recipes) {
-          return <ActivityIndicator style={styles.spinner }   /> 
+        // if (!recipes) {
+        //   return <ActivityIndicator style={styles.spinner }  color={Colors.primary}  /> 
     
-        }
+        // }
         return (
             
             <View style={{ flex: 1 }} behavior="padding">
@@ -62,27 +160,33 @@ class MyFavorites extends React.Component {
                             /> */}
                         </View>
                     </View>
+                    {this.state.loading ? 
+            <Spinner small color="#FFAA2F" />
+           : 
                     <ScrollView>
-                          { recipes?.map((x) =>
+                          { this.state.recipes?.map((x) =>
                   
                             <View style={{ flex: 1, marginTop: height(3) }}>
                         <View style={styles.whitebox}>
-                        <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
+                        
                             <View style={styles.imagebox}>
                                 <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
                                     <View style={{ backgroundColor: '#FFFFFF', opacity: 0.7, height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                                     <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
+                                    <TouchableOpacity  onPress={() => {this.onUnfav(x.id) }}>
                                         <Icon style={{ fontSize: 18, marginTop:7, alignSelf: 'center', color: COLORS.primary }}
                                             name="bookmark"
                                             type="Feather" />
+                                            </TouchableOpacity>
                                             </ImageBackground>
                                     </View>
                                     
                                 </ImageBackground>
                             </View>
-                            </TouchableOpacity>
                             <View style={{flex:0.4}}>
+                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
                             <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>{x.title}</Text>
+                            </TouchableOpacity>
                                 {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}
                             </View>
                             {/* <View style={{flex:0.22,flexDirection:'row'}}>
@@ -103,6 +207,7 @@ class MyFavorites extends React.Component {
                     </View>
                     ) }
                     </ScrollView>
+                    }
                 </View>
             </View>
         )
@@ -110,7 +215,6 @@ class MyFavorites extends React.Component {
 }
 //aggregateLikes
 const query = gql`
-
 query{ userFavourites
     {
           image,
@@ -120,7 +224,17 @@ query{ userFavourites
     }
   }
 `;
-export default (graphql(query)(MyFavorites));
+const mutation = gql`
+mutation removeUserFavourite($user_id: ID!, $recipe_id: Int!){
+    removeUserFavourite(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    status
+  }
+}
+`;
+export default withApollo(MyFavorites);
 //export default MyFavorites;
 
 const styles = StyleSheet.create({
