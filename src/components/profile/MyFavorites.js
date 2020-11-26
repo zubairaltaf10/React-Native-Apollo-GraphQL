@@ -23,7 +23,7 @@ class MyFavorites extends React.Component {
     state = {}
 
     render() {
-        const  recipes  = this.props.data ? this.props.data : null;
+        const  recipes  = this.props.data.userFavourites ? this.props.data.userFavourites : null;
         console.log(recipes)
         
         if (!recipes) {
@@ -56,10 +56,10 @@ class MyFavorites extends React.Component {
                                 // value={this.state.type}
                                 maxLength={16}>
                             </Input>
-                            <Icon style={{ fontSize: 25, flex: 0.1, alignSelf: 'center' }}
+                            {/* <Icon style={{ fontSize: 25, flex: 0.1, alignSelf: 'center' }}
                                 name="options-sharp"
                                 type="Ionicons"
-                            />
+                            /> */}
                         </View>
                     </View>
                     <ScrollView>
@@ -70,19 +70,14 @@ class MyFavorites extends React.Component {
                         <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
                             <View style={styles.imagebox}>
                                 <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
-                                    <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
-                                        <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
-                                            name="favorite-border"
-                                            type="MaterialIcons" />
+                                    <View style={{ backgroundColor: '#FFFFFF', opacity: 0.7, height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
+                                    <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
+                                        <Icon style={{ fontSize: 18, marginTop:7, alignSelf: 'center', color: COLORS.primary }}
+                                            name="bookmark"
+                                            type="Feather" />
+                                            </ImageBackground>
                                     </View>
-                                    <View style={{ backgroundColor: '#F4F4F8', opacity: 0.8,  flexDirection:'row', height: 26, width: 70,
-                                     borderRadius: 20, justifyContent: 'center', alignSelf: 'flex-start', top:50, margin: 10 }}>
                                     
-                                        <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
-                                            name="favorite"
-                                            type="MaterialIcons" />
-                                            <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 , marginRight:5}}>{x.aggregateLikes}</Text>
-                                    </View>
                                 </ImageBackground>
                             </View>
                             </TouchableOpacity>
@@ -167,6 +162,11 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: "cover",
         height:150
+        //  justifyContent: "center",
+    },
+    image1: {
+        resizeMode: "cover",
+        height:32
         //  justifyContent: "center",
     }
 })

@@ -64,7 +64,8 @@ class InGredentsInput extends React.Component {
         //  this.setState({ selectedIngredients: data.data.cacheIngredients.data })
         const resultsCount = _(data.data.cacheIngredients.data).groupBy('aisle').map((ingredients, aisle) => ({
           aisle: aisle ? aisle : "Others",
-          ingredients
+          ingredients,
+          total:ingredients.length
         })).value()
         this.setState({ ingredientlist: resultsCount })
         let user = await AsyncStorage.getItem('user');
@@ -232,7 +233,14 @@ class InGredentsInput extends React.Component {
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
             item.clicked = true
-            this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+            if (item.clicked == true){
+              ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
+              this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+            }
+            else {
+              ingredient.checked = ingredient.checked -1 
+              this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+            }            
           }
         })
       })
@@ -245,6 +253,13 @@ class InGredentsInput extends React.Component {
           console.log("notformsearch", ingredient)
           if (item.name == name.name) {
             item.clicked == true ? item.clicked = false : item.clicked = true
+            if (item.clicked == true){
+              ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
+            }
+            else {
+              ingredient.checked = ingredient.checked -1 
+
+            }
             this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
           }
         }))
@@ -259,25 +274,42 @@ class InGredentsInput extends React.Component {
     let checkedItems = [...this.state.checkedItems]
     ingredientlist.filter(ingredient =>
       ingredient.ingredients.some(item => {
-        console.log("notformsearch", ingredient)
         if (item.name == itemm.name) {
           item.clicked == true ? item.clicked = false : item.clicked = true
         //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
       }
     }))
 
-      checkedItems.filter(ingredient =>{
-        
-          if (ingredient.name == itemm.name) {
-              checkedItems.splice(itemm.name)
-              this.setState({checkedItems})
-            // ingredient.clicked == true ? ingredient.clicked = false : null
-          //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
-        }
+    checkedItems = checkedItems.filter(item => item.name != itemm.name);
+    if (checkedItems.length == 0){
+      this.setState({showSelected:false})
+    }
       //   this.setState({checkedItems})
+      this.setState({checkedItems})
       this.setState({ingredientlist})
 
-      })
+  }
+
+  clearAll = () => {
+    this.setState({checkedItemsLength: 0})
+    let ingredientlist = [...this.state.ingredientlist]
+    let checkedItems = [...this.state.checkedItems]
+    ingredientlist.filter(ingredient =>
+      ingredient.ingredients.some(item => {
+        if (item.clicked = true) {
+          item.clicked = false
+          ingredient.checked = 0
+        //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+      }
+    }))
+
+    checkedItems = checkedItems.filter(item => item.clicked == true);
+    if (checkedItems.length == 0){
+      this.setState({showSelected:false})
+    }
+      //   this.setState({checkedItems})
+      this.setState({checkedItems})
+      this.setState({ingredientlist})
   }
 
   render() {
@@ -294,7 +326,9 @@ class InGredentsInput extends React.Component {
 
           <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
             <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-              <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
+              <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
+              <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10,fontSize:18 }}></Icon>
+              </TouchableOpacity>
             </View>
             <View style={{ flex: 0.8 }}>
               <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
@@ -331,7 +365,7 @@ class InGredentsInput extends React.Component {
                 spinnerStyle={{ marginLeft: '12%' }}
                 inputStyle={{ borderRadius: 5, borderWidth: 0.5, borderColor: '#868CA9', fontFamily: FONTFAMILY.regular, fontSize: 14, paddingTop: 13, height: 44 }}
                 pickerStyle={{ width: '74%', marginTop: 4, borderColor: '#868CA9', borderWidth: 0.1 }}
-                noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 13, marginTop: 10 }}
+                noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 12, marginTop: 10 }}
                 //            separatorStyle={{backgroundcolor:'pink'}}
                 listFooterStyle={{ height: 0.1, marginTop: 3 }}
                 containerStyle={{ fontSize: 20 }}
@@ -384,14 +418,14 @@ class InGredentsInput extends React.Component {
             {this.state.loading ?
               <Spinner small color="#FFAA2F" />
               :
-              <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: '56%', marginTop: 10 }}>
+              <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: this.state.showSelected ? '75%' : '56%', marginTop: 10 }}>
                 {this.state.ingredientlist.map((item) =>
                   <View style={{ marginTop: height(2) }}>
                     <View style={{ marginHorizontal: width(5), borderRadius: 12, borderColor: '#rgba(9, 56, 149, 0.1)', borderWidth: 1, backgroundColor: 'white' }}>
                       <View style={{ flexDirection: 'row', flexGrow: 1, flexWrap: 'wrap' }}>
-                        <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 23 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
-                        <Text style={{ marginTop: 15, marginLeft: 12, width: '60%', fontSize: 12, flexShrink: 0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
-                        <Text style={{ marginTop: 17, width: '20%', fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>1/20 Selected</Text>
+                        <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 15 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
+                        <Text style={{ marginTop: 15, marginLeft: 12, width: '63%', fontSize: 12, flexShrink: 0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
+                <Text style={{ marginTop: 17, width: '20%', fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{!item.checked ? 0 : item.checked}/{item.total} Selected</Text>
                       </View>
                       <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 7 }}>
                       </View>
@@ -444,13 +478,13 @@ class InGredentsInput extends React.Component {
             </View>
           </View>
           :
-          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '15%', backgroundColor: 'white', borderRadius: 10 }}>
+          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '20%', backgroundColor: 'white', borderRadius: 10 }}>
             <View style={{ flexDirection: 'row', height: '30%', marginTop: 10, width: '100%', marginHorizontal: 15 }}>
               <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#474956', alignSelf: 'center', width: '60%' }}>Selected Ingredients</Text>
               <View style={styles.bottombutton}>
                 <Text style={styles.bottombuttonText}
                   onPress={() => {
-                    this.checkItem(x, false)
+                    this.clearAll()
                     //  this.setState({ clicked: true })
                   }}>CLEAR ALL</Text>
               </View>
@@ -459,10 +493,7 @@ class InGredentsInput extends React.Component {
               {this.state.checkedItems.map((x)=>
               <View style={styles.bottomtags}>
                 <Text style={styles.tagstext}
-                  onPress={() => {
-                    this.checkItem(x, false)
-                    //  this.setState({ clicked: true })
-                  }}>{x.name}</Text>
+                 >{x.name}</Text>
                   <TouchableOpacity onPress={() => this.onRemove(x)}>
                 <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
                   </TouchableOpacity>
@@ -502,8 +533,8 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     backgroundColor: "#F4F4F8",
     //  paddingHorizontal: 6,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 25,
     borderRadius: 27,
     alignSelf: 'flex-start',
     // width: width(15),
@@ -513,11 +544,12 @@ const styles = StyleSheet.create({
   },
   tagsClicked: {
     marginTop: 14,
+    textTransform: 'capitalize',
     color: "#ffffff",
     backgroundColor: COLORS.primary,
     //  paddingHorizontal: 6,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 25,
     borderRadius: 27,
     alignSelf: 'flex-start',
     // width: width(15),
@@ -526,15 +558,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   tagstext: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: FONTFAMILY.regular,
     color: '#9E9E9E',
+    textTransform: 'capitalize',
     alignSelf: 'flex-start'
   },
   tagstextClicked: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: FONTFAMILY.regular,
-    color: '#fff',
+    color: '#28292F',
+    textTransform: 'capitalize',
     alignSelf: 'flex-start'
   },
   autocompletesContainer: {
@@ -579,7 +613,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     backgroundColor: COLORS.primary,
     //  paddingHorizontal: 6,
-    paddingVertical: 3,
+    paddingVertical: 2,
     paddingHorizontal: 5,
     borderRadius: 27,
     alignSelf: 'center',
@@ -587,7 +621,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     //  backgroundColor: 'black',
     marginLeft: 15,
-    width: '25%'
+    width: '26%'
   },
 
   bottombuttonText: {

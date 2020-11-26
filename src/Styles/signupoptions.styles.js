@@ -101,7 +101,7 @@ justifyContent: "center"
     color: '#fff',
     fontFamily: FONTFAMILY.bold,
     fontSize:13,
-    flex:0.7,
+    flex:0.8,
     marginTop:4
   },
   termandconlink: {
