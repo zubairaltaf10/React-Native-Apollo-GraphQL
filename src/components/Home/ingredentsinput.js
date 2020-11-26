@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform, TouchableWithoutFeedback, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
+import { View, Text, Image, StyleSheet, Platform, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -21,7 +21,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import MultiSelect from "react-native-multiple-select";
 import ingredientlist from './ingredientslist.json'
 import { Autocomplete, withKeyboardAwareScrollView } from "react-native-dropdown-autocomplete";
-import {_} from 'lodash';
+import { _ } from 'lodash';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const client = new ApolloClient({
@@ -43,11 +43,14 @@ class InGredentsInput extends React.Component {
     ingredientlist: [],
     selectText: 'Search Ingredients',
     clickedItems: [],
-    loading:false,
-    limit : 0
+    loading: false,
+    limit: 0,
+    checkedItems: [],
+    checkedItemsLength: 0,
+    showSelected: false
   }
   componentDidMount() {
-    this.setState({loading:true})
+    this.setState({ loading: true })
     client.query({
       query: getCacheIngredients,
       variables: {
@@ -55,27 +58,27 @@ class InGredentsInput extends React.Component {
       }
     })
       .then(async (data) => {
-        this.setState({loading:false})
-       // await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
+        this.setState({ loading: false })
+        // await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
         console.log(data.data.cacheIngredients.data)
-      //  this.setState({ selectedIngredients: data.data.cacheIngredients.data })
+        //  this.setState({ selectedIngredients: data.data.cacheIngredients.data })
         const resultsCount = _(data.data.cacheIngredients.data).groupBy('aisle').map((ingredients, aisle) => ({
-          aisle:aisle ? aisle : "Others",
+          aisle: aisle ? aisle : "Others",
           ingredients
-      })).value()
-      this.setState({ingredientlist:resultsCount})
-      let user = await AsyncStorage.getItem('user');
+        })).value()
+        this.setState({ ingredientlist: resultsCount })
+        let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;
-          this.setState({limit:user.user_subscription.subscription.ingredient_limit})
+          this.setState({ limit: user.user_subscription.subscription.ingredient_limit })
           console.log(this.state.limit)
         }
       })
       .catch((err) => {
-        this.setState({loading:false})
+        this.setState({ loading: false })
         console.log(err)
       })
-  // this.setState({ ingredientlist: ingredientlist })
+    // this.setState({ ingredientlist: ingredientlist })
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
   }
@@ -114,97 +117,108 @@ class InGredentsInput extends React.Component {
     return this.state.searchResults
   }
 
-  searchRecipes = ()=>{
-    let checkedItems =[]
-    
-    this.state.ingredientlist.filter(ingredient =>{
-      console.log("from search",ingredient)
+  searchRecipes = (from) => {
+    let checkedItems = []
+
+    this.state.ingredientlist.filter(ingredient => {
+      console.log("from search", ingredient)
       ingredient.ingredients.some(item => {
-        if (item.clicked == true){
+        if (item.clicked == true) {
           checkedItems.push(item)
+          this.setState({ checkedItems:checkedItems })
         }
       })
     })
-    this.props.navigation.navigate('SearchRecipes',{
-      clickeditems:checkedItems
-    })
+    if (from == 'button') {
+      this.props.navigation.navigate('SearchRecipes', {
+        clickeditems: checkedItems
+      })
+    }
+    else {
+      if (checkedItems.length > 0){
+      this.setState({ showSelected: true })
+     }
+    }
   }
 
   handleSelectItem = (item, index) => {
     this.aisleAdd(item)
-   // this.ingredientAdd(item)
+    // this.ingredientAdd(item)
     this.checkItem(item, true)
     //  console.log(JSON.stringify(item) + "ITEMMMM");
   }
   ingredientAdd = (itemm) => {
     let ingredientlist = [...this.state.ingredientlist]
     //  console.log("from search", name.name)
-      ingredientlist.filter(ingredient =>{
-        if(ingredient.aisle == itemm.aisle){
-          let obj = {name:""}
-         //   ingredient.ingredients.some(item => {
-            if (ingredient.ingredients.indexOf(itemm.name) < 0)
-            obj.name = itemm.name
-            ingredient.ingredients.push(obj)
-            console.log(itemm.name,"yahan")
-        }
+    ingredientlist.filter(ingredient => {
+      if (ingredient.aisle == itemm.aisle) {
+        let obj = { name: "" }
+        //   ingredient.ingredients.some(item => {
+        if (ingredient.ingredients.indexOf(itemm.name) < 0)
+          obj.name = itemm.name
+        ingredient.ingredients.push(obj)
+        console.log(itemm.name, "yahan")
       }
-      
-      )
-      this.setState({ingredientlist})
+    }
+
+    )
+    this.setState({ ingredientlist })
   }
 
-  aisleAdd =(item)=>{
+  aisleAdd = (item) => {
     console.log(item.aisle)
     let ingredientlist = [...this.state.ingredientlist]
-    let obj = {aisle:"Gluten Free"}
-  //  if(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0){
-  //    console.log("andar")
-  //    obj.aisle = item.aisle
-  //    console.log("obj",obj)
-  //    ingredientlist.push(obj)
-  //    this.setState(ingredientlist)
-  //  }
-  const a = _.filter(ingredientlist, ing => ing.aisle == item.aisle);
-  if(a.length == 0){
-    ingredientlist.unshift(obj)
-  }
-    ingredientlist.filter(ingredient =>{
-    //  console.log(ingredient.aisle +"Sa   "+item.aisle)
-      if(ingredient.aisle == item.aisle){
-        console.log("tryyy",ingredient)
-        let obj = {name:""}
-        if (ingredient.ingredients != undefined){
-       //   ingredient.ingredients.some(item => {
-        if (ingredient.ingredients.indexOf(item.name) < 0)
-          obj.name = item.name
-          ingredient.ingredients.push(obj)
+    let obj = { aisle: "" }
+    //  if(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0){
+    //    console.log("andar")
+    //    obj.aisle = item.aisle
+    //    console.log("obj",obj)
+    //    ingredientlist.push(obj)
+    //    this.setState(ingredientlist)
+    //  }
+    const a = _.filter(ingredientlist, ing => ing.aisle == item.aisle);
+    if (a.length == 0) {
+      obj.aisle = item.aisle
+      ingredientlist.unshift(obj)
+    }
+    ingredientlist.filter(ingredient => {
+      //  console.log(ingredient.aisle +"Sa   "+item.aisle)
+      if (ingredient.aisle == item.aisle) {
+        console.log("tryyy", ingredient)
+        let obj = { name: "" }
+        if (ingredient.ingredients != undefined) {
+          //   ingredient.ingredients.some(item => {
+          if (ingredient.ingredients.filter(x => x.name == item.name).length < 0) {
+            console.log("not undefined")
+            obj.name = item.name
+            ingredient.ingredients.push(obj)
+          }
         }
         else {
+          console.log("===> undefined")
           let arr = []
-          let obj = {name:""}
+          let obj = { name: "" }
           obj.name = item.name
           arr.push(obj)
-         // Object.assign(ingredient, {ingredients});
-         ingredient['ingredients'] = arr 
-//         ingredient.ingredients = arr
-          console.log(ingredientlist,"dsadadasdddddddddddddddd")
-     //     this.setState({ingredientlist:Object.assign(obj,[0, ...this.state.statusData]})
+          // Object.assign(ingredient, {ingredients});
+          ingredient['ingredients'] = arr
+          //         ingredient.ingredients = arr
+          //     this.setState({ingredientlist:Object.assign(obj,[0, ...this.state.statusData]})
         }
-      // else {
-      //   obj.name = item.name
-      //   ingredient['ingredients'] = obj
-      // }
-    }
-   
-    } 
-    )
-    this.setState({ingredientlist})  
-    console.log(ingredientlist,"yahan")
-  
+        // else {
+        //   obj.name = item.name
+        //   ingredient['ingredients'] = obj
+        // }
+      }
 
-  // console.log(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0 )
-   // console.log(  ingredientlist)
+    }
+    )
+    this.setState({ ingredientlist })
+    console.log(ingredientlist, "yahan")
+
+
+    // console.log(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0 )
+    // console.log(  ingredientlist)
   }
   onDropdownClose = () => {
     console.log('closed')
@@ -213,23 +227,25 @@ class InGredentsInput extends React.Component {
   checkItem = (name, fromSearch) => {
     let ingredientlist = [...this.state.ingredientlist]
     if (fromSearch == true) {
-      ingredientlist.filter(ingredient =>{
-        console.log("from search",ingredient)
+      ingredientlist.filter(ingredient => {
+        console.log("from search", ingredient)
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
             item.clicked = true
-            console.log("dasdasd" + item)
+            this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
           }
-        })})
-    
-  }
+        })
+      })
+
+    }
     else {
       console.log(JSON.stringify(name.name) + "name")
       ingredientlist.filter(ingredient =>
         ingredient.ingredients.some(item => {
+          console.log("notformsearch", ingredient)
           if (item.name == name.name) {
             item.clicked == true ? item.clicked = false : item.clicked = true
-            //  console.log(item)
+            this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
           }
         }))
     }
@@ -237,6 +253,32 @@ class InGredentsInput extends React.Component {
     //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
   }
 
+
+  onRemove = (itemm) => {
+    let ingredientlist = [...this.state.ingredientlist]
+    let checkedItems = [...this.state.checkedItems]
+    ingredientlist.filter(ingredient =>
+      ingredient.ingredients.some(item => {
+        console.log("notformsearch", ingredient)
+        if (item.name == itemm.name) {
+          item.clicked == true ? item.clicked = false : item.clicked = true
+        //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+      }
+    }))
+
+      checkedItems.filter(ingredient =>{
+        
+          if (ingredient.name == itemm.name) {
+              checkedItems.splice(itemm.name)
+              this.setState({checkedItems})
+            // ingredient.clicked == true ? ingredient.clicked = false : null
+          //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+        }
+      //   this.setState({checkedItems})
+      this.setState({ingredientlist})
+
+      })
+  }
 
   render() {
     // console.log(this.props.data.results ? this.props.data.results : null)
@@ -250,65 +292,65 @@ class InGredentsInput extends React.Component {
       <View style={{ flex: 1 }}>
         <View style={{ flex: 0.9 }}>
 
-            <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
-              <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
-                <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
-              </View>
-              <View style={{ flex: 0.8 }}>
-                <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
-              </View>
+          <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+            <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+              <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 }}></Icon>
             </View>
-            <View>
-              <View style={{ marginTop: height(3), marginLeft: 17, zIndex: 1 }}>
-                <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>Select at least {this.state.limit} ingredients</Text>
-               
-                <Autocomplete
-                  //  key={shortid.generate()}
-                  //   scrollToInput={ev => scrollToInput(ev)}
-                  //ref={componentRef}
-                  handleSelectItem={this.handleSelectItem}
-                  //       onDropdownClose={() => this.onDropdownClose()}
-                  // onDropdownShow={() => onDropdownShow()}
-                  renderIcon={() => (
-                    <Icon style={styles.plus}
-                      name="search"
-                      type="EvilIcons"
-                    />)}
-                  placeholder={'Search Ingredients'}
-                  //  fetchDataUrl={apiUrl}
-                //  onChangeText={(val) => this.onsearchIngredients(val)}
-                  fetchData={(val) => this.onsearchIngredients(val)}
-                  minimumCharactersCount={0}
-                  highlightText
-                  valueExtractor={item => item.name}
-                  //  rightContent={true}
-                  // rightTextExtractor={item => item.properties}
-                  noDataText={'No ingredient found'}
-                  inputContainerStyle={styles.inputContainer}
-                  //  placeholderColor={'#868CA9'}
-                  spinnerStyle={{ marginLeft: '12%' }}
-                  inputStyle={{ borderRadius: 5, borderWidth: 0.5, borderColor: '#868CA9', fontFamily: FONTFAMILY.regular, fontSize: 14, paddingTop: 13, height: 44 }}
-                  pickerStyle={{ width: '74%', marginTop: 4, borderColor: '#868CA9', borderWidth: 0.1 }}
-                  noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 13, marginTop: 10 }}
-                  //            separatorStyle={{backgroundcolor:'pink'}}
-                  listFooterStyle={{ height: 0.1, marginTop: 3 }}
-                  containerStyle={{ fontSize: 20 }}
-                //  overlayStyle={{fontSize:20}}
-                // containerStyle={{borderColor:'pink',borderRadius:10}}
-                />
+            <View style={{ flex: 0.8 }}>
+              <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
+            </View>
+          </View>
+          <View>
+            <View style={{ marginTop: height(3), marginLeft: 17, zIndex: 1 }}>
+              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>Select at least {this.state.limit} ingredients</Text>
 
-                {/* <View style={{backgroundColor:'pink'}}> */}
-                {/* <Icon style={{ fontSize: 22, flex: 0.1, alignSelf: 'center', color: COLORS.primary }}
+              <Autocomplete
+                //  key={shortid.generate()}
+                //   scrollToInput={ev => scrollToInput(ev)}
+                //ref={componentRef}
+                handleSelectItem={this.handleSelectItem}
+                //       onDropdownClose={() => this.onDropdownClose()}
+                // onDropdownShow={() => onDropdownShow()}
+                renderIcon={() => (
+                  <Icon style={styles.plus}
+                    name="search"
+                    type="EvilIcons"
+                  />)}
+                placeholder={'Search Ingredients'}
+                //  fetchDataUrl={apiUrl}
+                //  onChangeText={(val) => this.onsearchIngredients(val)}
+                fetchData={(val) => this.onsearchIngredients(val)}
+                minimumCharactersCount={0}
+                highlightText
+                valueExtractor={item => item.name}
+                //  rightContent={true}
+                // rightTextExtractor={item => item.properties}
+                noDataText={'No ingredient found'}
+                inputContainerStyle={styles.inputContainer}
+                //  placeholderColor={'#868CA9'}
+                spinnerStyle={{ marginLeft: '12%' }}
+                inputStyle={{ borderRadius: 5, borderWidth: 0.5, borderColor: '#868CA9', fontFamily: FONTFAMILY.regular, fontSize: 14, paddingTop: 13, height: 44 }}
+                pickerStyle={{ width: '74%', marginTop: 4, borderColor: '#868CA9', borderWidth: 0.1 }}
+                noDataTextStyle={{ fontFamily: FONTFAMILY.regular, fontSize: 13, marginTop: 10 }}
+                //            separatorStyle={{backgroundcolor:'pink'}}
+                listFooterStyle={{ height: 0.1, marginTop: 3 }}
+                containerStyle={{ fontSize: 20 }}
+              //  overlayStyle={{fontSize:20}}
+              // containerStyle={{borderColor:'pink',borderRadius:10}}
+              />
+
+              {/* <View style={{backgroundColor:'pink'}}> */}
+              {/* <Icon style={{ fontSize: 22, flex: 0.1, alignSelf: 'center', color: COLORS.primary }}
               name="search"
               type="EvilIcons"
             /> */}
-                {/* <Input style={{ alignSelf: 'center', color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
+              {/* <Input style={{ alignSelf: 'center', color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
               placeholder="Search Ingredients"
               onChangeText={val => this.onsearchIngredients(val)}
               // value={this.state.type}
               maxLength={16}>
             </Input> */}
-                {/* <MultiSelect
+              {/* <MultiSelect
              hideTags={false}
               items={this.state.searchResults}
               uniqueKey="name"
@@ -337,68 +379,102 @@ class InGredentsInput extends React.Component {
                hideSubmitButton
                hideDropdown
                /> */}
-                {/* </View> */}
-              </View>
-              {this.state.loading ? 
-            <Spinner small color="#FFAA2F" />
-           : 
-              <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: '56%',marginTop:10 }}>
-              {this.state.ingredientlist.map((item) =>
-                <View style={{ marginTop: height(2) }}>
-                  <View style={{ marginHorizontal: width(5), borderRadius: 12, borderColor: '#rgba(9, 56, 149, 0.1)', borderWidth: 1, backgroundColor: 'white' }}>
-                    <View style={{ flexDirection: 'row',flexGrow:1,flexWrap:'wrap'}}>
-                      <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 23 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
-                      <Text style={{ marginTop: 15, marginLeft: 12,width:'60%', fontSize: 12,flexShrink:0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
-                      <Text style={{ marginTop: 17, width:'20%',fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9'}}>1/20 Selected</Text>
-                    </View>
-                    <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 7 }}>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', minHeight: 50, paddingBottom: 10 }}>
-                      {item.ingredients?.map((x) =>
-                        <View style={x.clicked ? styles.tagsClicked : styles.tags}>
-                          <Text style={x.clicked ? styles.tagstextClicked : styles.tagstext}
-                            onPress={() => {
-                              this.checkItem(x, false)
-                              //  this.setState({ clicked: true })
-                            }}>{x.name}</Text>
-                        </View>
-                      )}
-                      {/* <View style={[styles.tagsClicked]}>
+              {/* </View> */}
+            </View>
+            {this.state.loading ?
+              <Spinner small color="#FFAA2F" />
+              :
+              <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 2, marginBottom: '56%', marginTop: 10 }}>
+                {this.state.ingredientlist.map((item) =>
+                  <View style={{ marginTop: height(2) }}>
+                    <View style={{ marginHorizontal: width(5), borderRadius: 12, borderColor: '#rgba(9, 56, 149, 0.1)', borderWidth: 1, backgroundColor: 'white' }}>
+                      <View style={{ flexDirection: 'row', flexGrow: 1, flexWrap: 'wrap' }}>
+                        <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 23 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
+                        <Text style={{ marginTop: 15, marginLeft: 12, width: '60%', fontSize: 12, flexShrink: 0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
+                        <Text style={{ marginTop: 17, width: '20%', fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>1/20 Selected</Text>
+                      </View>
+                      <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 7 }}>
+                      </View>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', minHeight: 50, paddingBottom: 10 }}>
+                        {item.ingredients?.map((x) =>
+                          <View style={x.clicked ? styles.tagsClicked : styles.tags}>
+                            <Text style={x.clicked ? styles.tagstextClicked : styles.tagstext}
+                              onPress={() => {
+                                this.checkItem(x, false)
+                                //  this.setState({ clicked: true })
+                              }}>{x.name}</Text>
+                          </View>
+                        )}
+                        {/* <View style={[styles.tagsClicked]}>
                 <Text style={styles.tagstextClicked}>Greek Yogurt</Text>
               </View>
               <View style={[styles.tags]}>
                 <Text style={styles.tagstext}>Whey</Text>
               </View> */}
+                      </View>
                     </View>
                   </View>
-                </View>
-                
-              )}
+
+                )}
               </ScrollView>
-              }
-            </View>
+            }
+          </View>
 
         </View>
+        {!this.state.showSelected ?
+          <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '11%', backgroundColor: 'white', borderRadius: 10 }}>
 
-        <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '11%', backgroundColor: 'white', borderRadius: 10 }}>
-          <View style={{ flex: 0.3, alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ backgroundColor: '#28292F', height: 55, width: 55, borderRadius: 40 }}>
-              <View style={{ height: 20, width: 20, backgroundColor: COLORS.primary, alignSelf: 'flex-end', borderRadius: 40, left: 2 }}>
-                <Text style={{ color: 'white', alignSelf: 'center', fontSize: 12, fontFamily: FONTFAMILY.medium }}>2</Text>
+            <View style={{ flex: 0.3, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ backgroundColor: '#28292F', height: 50, width: 50, borderRadius: 40 }}>
+                <View style={{ height: 20, width: 20, backgroundColor: COLORS.primary, alignSelf: 'flex-end', borderRadius: 40, left: 2 }}>
+                  <Text style={{ color: 'white', alignSelf: 'center', fontSize: 12, fontFamily: FONTFAMILY.medium }}>{this.state.checkedItemsLength}</Text>
+                </View>
+                <TouchableOpacity onPress={() => this.searchRecipes('image')}>
+                  <Image style={{ height: 25, width: 16, alignSelf: 'center', bottom: 5 }} source={require('../../assets/Ingredients/list.png')} onPress={() => this.moveTo} ></Image>
+                </TouchableOpacity>
               </View>
-              <Image style={{ height: 25, width: 16, alignSelf: 'center', bottom: 3 }} source={require('../../assets/Ingredients/list.png')}></Image>
+            </View>
+            <View style={{ flex: 0.8, justifyContent: 'center' }}>
+              <PrimaryButton
+                title="SEARCH RECIPES"
+                onPress={() => this.searchRecipes('button')}
+                marginTop={height(40)}
+              // loading={this.state.loading}
+              />
             </View>
           </View>
-          <View style={{ flex: 0.7, justifyContent: 'center' }}>
-            <PrimaryButton
-              title="SEARCH RECIPES"
-              onPress={() => this.searchRecipes()}
-              marginTop={height(40)}
-            // loading={this.state.loading}
-            />
+          :
+          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '15%', backgroundColor: 'white', borderRadius: 10 }}>
+            <View style={{ flexDirection: 'row', height: '30%', marginTop: 10, width: '100%', marginHorizontal: 15 }}>
+              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#474956', alignSelf: 'center', width: '60%' }}>Selected Ingredients</Text>
+              <View style={styles.bottombutton}>
+                <Text style={styles.bottombuttonText}
+                  onPress={() => {
+                    this.checkItem(x, false)
+                    //  this.setState({ clicked: true })
+                  }}>CLEAR ALL</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row',flexWrap:'wrap' }}>
+              {this.state.checkedItems.map((x)=>
+              <View style={styles.bottomtags}>
+                <Text style={styles.tagstext}
+                  onPress={() => {
+                    this.checkItem(x, false)
+                    //  this.setState({ clicked: true })
+                  }}>{x.name}</Text>
+                  <TouchableOpacity onPress={() => this.onRemove(x)}>
+                <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
+                  </TouchableOpacity>
+              </View>
+              )}
+            </View>
+
           </View>
-        </View>
+        }
       </View>
+
+
     );
   }
 }
@@ -498,7 +574,46 @@ const styles = StyleSheet.create({
     // flex: 0.1, 
     alignSelf: 'center',
     color: COLORS.primary
+  },
+  bottombutton: {
+    color: "#ffffff",
+    backgroundColor: COLORS.primary,
+    //  paddingHorizontal: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    borderRadius: 27,
+    alignSelf: 'center',
+    // width: width(15),
+    alignItems: "center",
+    //  backgroundColor: 'black',
+    marginLeft: 15,
+    width: '25%'
+  },
+
+  bottombuttonText: {
+    fontSize: 12,
+    fontFamily: FONTFAMILY.bold,
+    color: '#28292F',
+    alignSelf: 'center'
+  },
+  bottomtags: {
+    marginTop: 2,
+    flexDirection: 'row',
+    color: "#ffffff",
+    backgroundColor: "#F4F4F8",
+    paddingHorizontal: 7,
+    paddingVertical: 5,
+    flexWrap: 'wrap',
+    // paddingHorizontal: 15,
+    //  width:'17%',
+    borderRadius: 27,
+    alignSelf: 'flex-start',
+    // width: width(15),
+    alignItems: "center",
+    //  backgroundColor: 'black',
+    marginLeft: 10
   }
+
 
 })
 const GetIngredients = gql`
