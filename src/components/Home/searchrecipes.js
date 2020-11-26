@@ -82,6 +82,7 @@ class SearchRecipes extends React.Component {
         console.log(data.data.recipes)
       
       this.setState({recipes:data.data.recipes})
+      this.setState({backup:data.data.recipes})
       let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;
@@ -115,7 +116,8 @@ class SearchRecipes extends React.Component {
         currentsubscription:{},
         clickedItems: [],
         loading:false,
-        recipes:[]
+        recipes:[],
+        backup:[]
     }
 
     onAddfav = (recipeId ) => {
@@ -155,10 +157,24 @@ class SearchRecipes extends React.Component {
         },
       );
     }
+
+    onTextInput = (value) => {
+      
+      if (value){
+      let recipes = [...this.state.recipes]
+      recipes = recipes.filter(x=>x.title.startsWith(value))
+      this.setState({recipes})
+      }
+      else {
+        this.setState({recipes:this.state.backup})
+      }
+     // this.setState({recipes:this.state.recipes.filter(x=>{return x.title.startsWith(value)})})
+    }
+
     render() {
         
         return (
-            <View style={{ flex: 1 }} behavior="padding">
+            <View style={{ flex: 1 }}>
                 <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
                 <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
@@ -179,7 +195,7 @@ class SearchRecipes extends React.Component {
                             />
                             <Input style={{ alignSelf: 'center', flex: 0.8, color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
                                 placeholder="Find Recipes"
-                                // onChangeText={val => this.onTextInput('loginPassword', val)}
+                                 onChangeText={val => this.onTextInput(val)}
                                 // value={this.state.type}
                                 maxLength={16}>
                             </Input>
