@@ -71,6 +71,7 @@ class MyFavorites extends React.Component {
           console.log(data.data.userFavourites)
         
         this.setState({recipes:data.data.userFavourites})
+        this.setState({backup:data.data.userFavourites})
         let user = await AsyncStorage.getItem('user');
           if (user) {
             user = JSON.parse(user).user;
@@ -101,7 +102,8 @@ class MyFavorites extends React.Component {
     }
     state = {
         recipes:[],
-        loading:false
+        loading:false,
+        backup:[]
     }
     onUnfav = (recipeId ) => {
         console.log(recipeId)
@@ -120,6 +122,19 @@ class MyFavorites extends React.Component {
              })
              
        };
+
+       onTextInput = (value) => {
+      
+        if (value){
+        let recipes = [...this.state.recipes]
+        recipes = recipes.filter(x=>x.title.startsWith(value))
+        this.setState({recipes})
+        }
+        else {
+          this.setState({recipes:this.state.backup})
+        }
+       // this.setState({recipes:this.state.recipes.filter(x=>{return x.title.startsWith(value)})})
+      }
     render() {
         // const  recipes  = this.props.data.userFavourites ? this.props.data.userFavourites : null;
         // console.log(recipes)
@@ -150,7 +165,7 @@ class MyFavorites extends React.Component {
                             />
                             <Input style={{ alignSelf: 'center', flex: 0.8, color: '#868CA9', marginTop: height(1), fontFamily: FONTFAMILY.regular, fontSize: 14, alignSelf: 'center' }}
                                 placeholder="Find Recipes"
-                                // onChangeText={val => this.onTextInput('loginPassword', val)}
+                                onChangeText={val => this.onTextInput(val)}
                                 // value={this.state.type}
                                 maxLength={16}>
                             </Input>

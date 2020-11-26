@@ -169,6 +169,19 @@ class SearchRecipes extends React.Component {
      // this.setState({recipes:this.state.recipes.filter(x=>{return x.title.startsWith(value)})})
     }
 
+
+    onRemove = (itemm) => {
+    //  let ingredientlist = [...this.state.ingredientlist]
+      let clickedItems = [...this.state.clickedItems]
+      clickedItems = clickedItems.filter(item => item.name != itemm.name);
+      if (clickedItems.length == 0){
+      //  this.setState({showSelected:false})
+      }
+        //   this.setState({checkedItems})
+        this.setState({clickedItems})
+       // this.setState({ingredientlist})
+  
+    }
     render() {
         
         return (
