@@ -71,8 +71,8 @@ class Login extends Component {
     this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
       if (this.state.errors.length === 0) {
         this.setState({loading:true})
-        let email = "";
-        let password = ""; 
+        let email =  this.state.formData.email;
+        let password = this.state.formData.password; 
         this.props.mutate({
         variables: {
           email: email,

@@ -27,8 +27,29 @@ import {
   statusCodes,
 } from "@react-native-community/google-signin";
 //WebBrowser.maybeCompleteAuthSession();
-
+import { withApollo } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { NETWORK_INTERFACE } from '../../config';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
+import { createUploadLink } from 'apollo-upload-client'
+import { ApolloLink } from 'apollo-link';
+import gql from 'graphql-tag';
 const FB_APP_ID = "688909198411382";
+const  authLink =  setContext((_, { headers } )  =>  {
+return {
+  headers: {
+    ...headers,
+    authorization: "",
+  }
+}
+})
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+const client = new ApolloClient({
+  link: ApolloLink.from([ authLink, uploadLink ]),
+  cache : new InMemoryCache(),
+});
+
 class SignupOptions extends Component {
   
     constructor(props) {
@@ -64,7 +85,8 @@ class SignupOptions extends Component {
             AccessToken.getCurrentAccessToken().then(data => {
               const { accessToken } = data;
               if (accessToken){
-                this.props.navigation.navigate('Packages')
+               // this.props.navigation.navigate('Packages')
+               this.socailLogin(accessToken, "Facebook")
               }
               console.log(accessToken);
             });
@@ -75,7 +97,24 @@ class SignupOptions extends Component {
         },
       );
     };  
-  
+    socailLogin(token, provider){
+
+      console.log()
+           // this.setState({loading:true})
+           client.mutate({
+            mutation: mutation,
+            variables: { provider: provider,
+                token: token }
+          })
+            .then(async (data) => {
+                SNACKBAR.simple("Added") ; 
+            })
+            .catch((err) => {
+             // this.setState({loading:false})
+              console.log(err)
+            })
+            
+    }
     _signIn = async () => {
       try {
         await GoogleSignin.hasPlayServices();
@@ -214,4 +253,41 @@ class SignupOptions extends Component {
         );
 }
 }
-export default withAuth(SignupOptions);
+const mutation = gql`
+mutation socialLogin($provider: String!, $token: String!){
+  socialLogin(input:{
+    provider: $provider,
+    token:$token
+  })
+  {
+  access_token,
+    
+  user {
+    email_verified_at
+    id
+    name,
+    first_name,
+    last_name,
+    profile_image,
+    email,
+    bio,
+    date_of_birth,
+  user_subscription{
+    subscription{
+      name,
+       person_limit,
+  ingredient_limit,
+  amount,
+  amount_per_year,
+  amount_per_month,
+  name,
+  trial_days,
+  description
+    
+    }
+  }
+  }
+}
+}
+`;
+export default withApollo(SignupOptions);

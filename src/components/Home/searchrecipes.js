@@ -115,7 +115,8 @@ class SearchRecipes extends React.Component {
         clickedItems: [],
         loading:false,
         recipes:[],
-        backup:[]
+        backup:[],
+        isfav:false
     }
 
     onAddfav = (recipeId ) => {
@@ -160,7 +161,7 @@ class SearchRecipes extends React.Component {
       
       if (value){
       let recipes = [...this.state.recipes]
-      recipes = recipes.filter(x=>x.title.startsWith(value))
+      recipes = recipes.filter(x=> value.includes( x.title))
       this.setState({recipes})
       }
       else {
@@ -198,7 +199,7 @@ class SearchRecipes extends React.Component {
                 </View>
                 <View style={{ flex: 1 }}>
                     <View style={{ marginTop: height(4) }}>
-                        <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>You can make {this.state.recipes.length} recipes with{'\n'}   the ingredients selected</Text>
+                        <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>You can make {this.state.recipes.length} recipes with{'\n'}   the ingredients selected</Text>
                         <View style={styles.search}>
                             <Icon style={{ fontSize: 22, flex: 0.1, alignSelf: 'center', color: COLORS.primary }}
                                 name="search"
@@ -210,10 +211,7 @@ class SearchRecipes extends React.Component {
                                 // value={this.state.type}
                                 maxLength={16}>
                             </Input>
-                            <Icon style={{ fontSize: 25, flex: 0.1, alignSelf: 'center' }}
-                                name="options-sharp"
-                                type="Ionicons"
-                            />
+                            
                         </View>
                     </View>
                     {this.state.loading ? 
@@ -239,7 +237,7 @@ class SearchRecipes extends React.Component {
                                     </View> */}
                                     <View style={{   height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                                     <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
-                                    <TouchableOpacity  onPress={() => {this.onAddfav(x.id) ; x.fav = true}}>
+                                    <TouchableOpacity  onPress={() => {this.onAddfav(x.id) ; x.fav =true }}>
                                        {x.fav == true  && ( 
                                         <Icon style={{ fontSize: 18,marginTop:7,  alignSelf: 'center', color: COLORS.primary }}
                                             name="favorite"

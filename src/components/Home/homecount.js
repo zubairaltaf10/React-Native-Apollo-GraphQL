@@ -21,11 +21,13 @@ import AnimatedNumbers from 'react-native-animated-numbers';
 import {Metrics} from '../../Theme';
 import {_} from 'lodash';
 import * as Linking from 'expo-linking';
+import { parse } from "graphql";
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
   async componentWillMount() {
     this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
+     console.log('check')
       this.loadloginuser();
     });
        
@@ -33,8 +35,9 @@ class HomeCount extends React.Component {
   // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
  }
- async loadloginuser()
+ loadloginuser = async  () =>
  {
+  console.log('user check')
   let user = await AsyncStorage.getItem('user');
   if (user) {
     user = JSON.parse(user).user;
@@ -117,7 +120,9 @@ console.log(this.state.currentsubscription)
   }
   
   modalOpen = () => {
-    if(this.state.clicks > this.state.currentsubscription.person_limit)
+console.log(this.state.clicks , this.state.currentsubscription.person_limit)
+
+    if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
     {
       this.setState({modal: true});
     }
@@ -301,7 +306,7 @@ console.log(this.state.currentsubscription)
               onPress={this.IncrementItem}
               marginTop={height(40)}
               disabled={this.state.clicks == this.state.currentsubscription.person_limit ? true : false}
-              bgcolor={this.state.clicks == this.state.currentsubscription.person_limit ? '#868CA9' : COLORS.primary}
+              bgcolor={this.state.clicks == this.state.currentsubscription.person_limit ? '#dedede' : COLORS.primary}
             />
        
         </View>
