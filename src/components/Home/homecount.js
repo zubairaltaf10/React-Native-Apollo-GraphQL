@@ -275,7 +275,7 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
           <View style={{ marginTop: height(5), height:height(9) }}>
           <View style={{  marginLeft: 17 }}>
           <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 26, color: '#28292F' }}>Let's Get Started</Text>
-            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%' }}>Select number of individuals for your recipes</Text>
+            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%',alignSelf:'center' }}>Select number of individuals for your recipes</Text>
             
           </View>
             
@@ -311,10 +311,11 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
        
         </View>
 
+            <View style={{alignSelf:'center'}}>
+              <Text style={{fontFamily:FONTFAMILY.bold,marginTop:10}}>OR</Text>
+            </View>
 
             <View style={styles.search}>
-             
-             
               <Input
               placeholder="Enter Number of individuals" maxLength={3 }
               style={ApplicationStyles.textbox}
@@ -494,13 +495,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal:'5%',
     marginTop:'15%',
-    marginBottom:'35%',
+    marginBottom:'20%',
 
   },
   search: {
     flexDirection: 'row',
     //marginLeft: 5,
-    marginTop: 15,
+    marginTop: 25,
     fontSize: 13,
     paddingBottom: '5%',
     fontFamily: FONTFAMILY.regular,

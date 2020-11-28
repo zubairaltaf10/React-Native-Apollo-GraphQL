@@ -63,23 +63,23 @@ class RecipesDetails extends React.Component {
                 <View style={{ flex: 1, marginHorizontal: 15, marginTop: 10 }}>
                 {item.index == 1 && ( 
                     
-                    <ScrollView style={{flex:1,  margin: 10, maxHeight: 200 }} onTouchStart={(ev) => { 
+                    <ScrollView style={{flex:1,  margin: 10, maxHeight: 200 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
 									  this.setState({enabled:false }); }}
 									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
-									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
+									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}
+                                    >
                     <Text style={{ alignSelf:'flex-end', fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{this.state.recDetail.summary.replace(regex, '')}</Text>
                 
                 </ScrollView>
                 ) }
                 {item.index == 2 && (
-                    <ScrollView style={{flex:1, maxHeight: 200 }} onTouchStart={(ev) => { 
+                    <ScrollView style={{flex:1, maxHeight: 200 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
 									  this.setState({enabled:false }); }}
 									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
 									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
                    { this.state.recDetail.extendedIngredients?.map((x) =>
                    
-                      <View style={{flex:1, flexDirection: 'row',
-    justifyContent: 'space-between',}}> 
+                      <View style={{flex:1, flexDirection: 'row',justifyContent: 'space-between',}}> 
                     <View style={{flex:0.7, margin:5}}>
                     <Text numberOfLines={1} style={{ width: 200 , fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.originalName}</Text>
                     </View>

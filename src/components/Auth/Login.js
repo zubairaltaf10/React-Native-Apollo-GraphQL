@@ -71,9 +71,11 @@ class Login extends Component {
     this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
       if (this.state.errors.length === 0) {
         this.setState({loading:true})
-        let email =  this.state.formData.email;
-        let password = this.state.formData.password; 
-        this.props.mutate({
+      //  let email =  this.state.formData.email;
+      //  let password = this.state.formData.password; 
+      let email = "askfaisal@outlook.com";
+      let password = "P@ssw0rd1";  
+      this.props.mutate({
         variables: {
           email: email,
           password: password,
