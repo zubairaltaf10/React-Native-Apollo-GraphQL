@@ -312,7 +312,7 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
         </View>
 
             <View style={{alignSelf:'center'}}>
-              <Text style={{fontFamily:FONTFAMILY.bold,marginTop:10}}>OR</Text>
+              <Text style={{fontFamily:FONTFAMILY.extraBold,marginTop:10}}>OR</Text>
             </View>
 
             <View style={styles.search}>
@@ -494,14 +494,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal:'5%',
-    marginTop:'15%',
-    marginBottom:'20%',
+    marginTop:'20%',
+    marginBottom:'25%',
 
   },
   search: {
     flexDirection: 'row',
     //marginLeft: 5,
-    marginTop: 25,
+    marginTop: '12%',
     fontSize: 13,
     paddingBottom: '5%',
     fontFamily: FONTFAMILY.regular,
