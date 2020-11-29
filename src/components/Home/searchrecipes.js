@@ -161,8 +161,10 @@ class SearchRecipes extends React.Component {
       
       if (value){
       let recipes = [...this.state.recipes]
-      recipes = recipes.filter(x=> value.includes( x.title))
+      recipes = recipes.filter(x=> x.title.indexOf(value) > -1 )
+      if (recipes.length > 0){
       this.setState({recipes})
+      }
       }
       else {
         this.setState({recipes:this.state.backup})

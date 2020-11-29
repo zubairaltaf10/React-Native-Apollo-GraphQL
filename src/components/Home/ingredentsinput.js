@@ -71,7 +71,7 @@ class InGredentsInput extends React.Component {
         let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;
-          this.setState({ limit: user.user_subscription.subscription.ingredient_limit })
+          this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
           console.log(this.state.limit)
         }
       })
@@ -149,6 +149,7 @@ class InGredentsInput extends React.Component {
     //  console.log(JSON.stringify(item) + "ITEMMMM");
   }
   ingredientAdd = (itemm) => {
+  
     let ingredientlist = [...this.state.ingredientlist]
     //  console.log("from search", name.name)
     ingredientlist.filter(ingredient => {
@@ -158,7 +159,6 @@ class InGredentsInput extends React.Component {
         if (ingredient.ingredients.indexOf(itemm.name) < 0)
           obj.name = itemm.name
         ingredient.ingredients.push(obj)
-        console.log(itemm.name, "yahan")
       }
     }
 
@@ -189,7 +189,7 @@ class InGredentsInput extends React.Component {
         let obj = { name: "" }
         if (ingredient.ingredients != undefined) {
           //   ingredient.ingredients.some(item => {
-          if (ingredient.ingredients.filter(x => x.name == item.name).length < 0) {
+          if (ingredient.ingredients.filter(x => x.name == item.name).length <= 0) {
             console.log("not undefined")
             obj.name = item.name
             ingredient.ingredients.push(obj)
@@ -201,38 +201,30 @@ class InGredentsInput extends React.Component {
           let obj = { name: "" }
           obj.name = item.name
           arr.push(obj)
-          // Object.assign(ingredient, {ingredients});
           ingredient['ingredients'] = arr
-          //         ingredient.ingredients = arr
-          //     this.setState({ingredientlist:Object.assign(obj,[0, ...this.state.statusData]})
         }
-        // else {
-        //   obj.name = item.name
-        //   ingredient['ingredients'] = obj
-        // }
       }
 
     }
     )
     this.setState({ ingredientlist })
-    console.log(ingredientlist, "yahan")
-
-
-    // console.log(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0 )
-    // console.log(  ingredientlist)
   }
   onDropdownClose = () => {
     console.log('closed')
   }
 
+
   checkItem = (name, fromSearch) => {
     let ingredientlist = [...this.state.ingredientlist]
+
     if (fromSearch == true) {
       ingredientlist.filter(ingredient => {
         console.log("from search", ingredient)
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
+            if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1){
             item.clicked = true
+            }
             if (item.clicked == true){
               ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
               this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
@@ -250,23 +242,37 @@ class InGredentsInput extends React.Component {
       console.log(JSON.stringify(name.name) + "name")
       ingredientlist.filter(ingredient =>
         ingredient.ingredients.some(item => {
-          console.log("notformsearch", ingredient)
           if (item.name == name.name) {
-            item.clicked == true ? item.clicked = false : item.clicked = true
+           
+            // if (this.state.checkedItemsLength + 1 > parseInt(this.state.limit)){
+            //   item.clicked = false
+            //   this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+            // }
+            // if (item.clicked == true){
+            //   ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
+            // }
+            // else {
+            //   ingredient.checked = ingredient.checked -1 
+            // }
+            // this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
             if (item.clicked == true){
-              ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
+              item.clicked = false
+              this.setState({checkedItemsLength : this.state.checkedItemsLength == 0 ? 0 :this.state.checkedItemsLength -1})
+              ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
             }
             else {
-              ingredient.checked = ingredient.checked -1 
-
+              if ( parseInt(this.state.limit) >= this.state.checkedItemsLength + 1 ){
+                ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
+                  item.clicked = true
+                  this.setState({checkedItemsLength:this.state.checkedItemsLength + 1})
             }
-            this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+            }
           }
         }))
     }
     this.setState({ ingredientlist })
-    //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
   }
+    //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
 
 
   onRemove = (itemm) => {
@@ -277,7 +283,15 @@ class InGredentsInput extends React.Component {
         if (item.name == itemm.name) {
           item.clicked == true ? item.clicked = false : item.clicked = true
         //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+        if (item.clicked == false){
+          ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
+          this.setState({checkedItemsLength : this.state.checkedItemsLength == 0 ? 0 :this.state.checkedItemsLength -1})
+        }
+        else {
+          this.setState({checkedItemsLength:this.state.checkedItemsLength + 1})
+        }  
       }
+     
     }))
 
     checkedItems = checkedItems.filter(item => item.name != itemm.name);
@@ -311,7 +325,6 @@ class InGredentsInput extends React.Component {
       this.setState({checkedItems})
       this.setState({ingredientlist})
   }
-
   render() {
     // console.log(this.props.data.results ? this.props.data.results : null)
     const { selectedIngredients } = this.state;
@@ -464,7 +477,7 @@ class InGredentsInput extends React.Component {
                   <Text style={{ color: 'white', alignSelf: 'center', fontSize: 12, fontFamily: FONTFAMILY.medium }}>{this.state.checkedItemsLength}</Text>
                 </View>
                 <TouchableOpacity onPress={() => this.searchRecipes('image')}>
-                  <Image style={{ height: 25, width: 16, alignSelf: 'center', bottom: 5 }} source={require('../../assets/Ingredients/list.png')} onPress={() => this.moveTo} ></Image>
+                  <Image style={{ height: 25, width: 16, alignSelf: 'center', bottom: 5 }} source={require('../../assets/Ingredients/list.png')}></Image>
                 </TouchableOpacity>
               </View>
             </View>
@@ -478,7 +491,7 @@ class InGredentsInput extends React.Component {
             </View>
           </View>
           :
-          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '20%', backgroundColor: 'white', borderRadius: 10 }}>
+          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, backgroundColor: 'white', borderRadius: 10 }}>
             <View style={{ flexDirection: 'row', height: '30%', marginTop: 10, width: '100%', marginHorizontal: 15 }}>
               <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#474956', alignSelf: 'center', width: '60%' }}>Selected Ingredients</Text>
               <View style={styles.bottombutton}>
@@ -489,12 +502,12 @@ class InGredentsInput extends React.Component {
                   }}>CLEAR ALL</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row',flexWrap:'wrap' }}>
+            <View style={{ flexDirection: 'row',flexWrap:'wrap',marginBottom:'10%' }}>
               {this.state.checkedItems.map((x)=>
               <View style={styles.bottomtags}>
                 <Text style={styles.tagstext}
                  >{x.name}</Text>
-                  <TouchableOpacity onPress={() => this.onRemove(x)}>
+                  <TouchableOpacity style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }} onPress={() => this.onRemove(x)}>
                 <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
                   </TouchableOpacity>
               </View>
@@ -637,6 +650,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4F4F8",
     paddingHorizontal: 7,
     paddingVertical: 5,
+    marginBottom:10,
     flexWrap: 'wrap',
     // paddingHorizontal: 15,
     //  width:'17%',
