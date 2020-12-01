@@ -6390,6 +6390,11 @@ react-native-autocomplete-input@^4.2.0:
   resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-4.2.0.tgz#fcfc3d2f19134d4c3394a4e6a5aae13d8c4c9129"
   integrity sha512-bLZ9FO3NwcqYY3r6hefEEC4VW45L97kXuCyAqKXW1SJkkG/pGcen6zLq3SMFgoQuG3ryrO/ohz7gme7hFwzjoQ==
 
+react-native-braintree-dropin-ui@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-braintree-dropin-ui/-/react-native-braintree-dropin-ui-1.1.1.tgz#5255d1abc0f87058004bb4e6ea513bd4e33cc601"
+  integrity sha512-C57whfw/8q9Ixwivpo9cyJ9hW03/cjZCAlUxz1IMmVJ5dmc94SdLdD2aKdknUdX9WAsz3GZk8xkmApuBmDa9Mg==
+
 react-native-code-input@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-native-code-input/-/react-native-code-input-1.0.6.tgz#da4b0c0e04f140698320bc81cff1107e211fe923"
