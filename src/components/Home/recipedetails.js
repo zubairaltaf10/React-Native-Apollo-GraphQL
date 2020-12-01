@@ -130,8 +130,21 @@ class RecipesDetails extends React.Component {
         const  recipeDetail  = this.props.data.recipe ? this.props.data.recipe : null;
         console.log(this.props.data)
         this.state.recDetail = recipeDetail;
+        const instructions = recipeDetail.instructions.setps;
+        const allequipments = [];
+        if(instructions.length > 0)
+        {
+        _.forEach(instructions, function(value) {
+            console.log(value);
+            _.forEach(value.equipment, function(equipment) {
+                allequipments.push(equipment)
+              });
+
+          });
+        }
+        console.log(allequipments)
         if (!recipeDetail) {
-          return <ActivityIndicator style={styles.spinner}  /> 
+          return <ActivityIndicator style={styles.spinner}   /> 
     
         }
         return (
@@ -167,7 +180,7 @@ class RecipesDetails extends React.Component {
                                         <Icon style={{ fontSize: 20, color: COLORS.primary }}
                                             name="favorite-border"
                                             type="MaterialIcons" />
-                                        <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>1.2k</Text>
+                                        <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{recipeDetail.aggregateLikes}</Text>
                                     </View>
                                 </View>
                                 <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', marginHorizontal: 11, color: '#868CA9',paddingBottom:10 }}>by {recipeDetail.sourceName}</Text>
@@ -191,7 +204,7 @@ class RecipesDetails extends React.Component {
                                 type="EvilIcons" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>{this.state.recDetail.readyInMinutes}</Text>
                         </View>
-                        <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                        {/* <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
                                 name="clock"
                                 type="EvilIcons" />
@@ -202,7 +215,7 @@ class RecipesDetails extends React.Component {
                                 name="clock"
                                 type="EvilIcons" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>25 mins</Text>
-                        </View>
+                        </View> */}
                     </ScrollView>
                 </View>
                 <View style={{ flex:0.45, marginHorizontal: 15 }}>
