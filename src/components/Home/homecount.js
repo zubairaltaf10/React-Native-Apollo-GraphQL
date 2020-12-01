@@ -21,6 +21,7 @@ import AnimatedNumbers from 'react-native-animated-numbers';
 import {Metrics} from '../../Theme';
 import {_} from 'lodash';
 import * as Linking from 'expo-linking';
+import PaypalUI from '../Payment/PaypalUI'
 import { parse } from "graphql";
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
@@ -62,17 +63,22 @@ class HomeCount extends React.Component {
     currentsubscription: {} ,
     loginuser:{},
     modalVisible:false,
-    viewplanmodel:false
+    viewplanmodel:false,
+    showpayment:true,
+    paid:false
   }
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-}
+    //console.log(JSON.stringify(this.state.paid) + "resulttt")
+
+  }
 
 componentWillUnmount() {
   this.RBSheet.open()
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
+  //  console.log(JSON.stringify(this.state.paid) + "resulttt")
 }
 
 _keyboardDidShow(e) {
@@ -119,19 +125,31 @@ console.log(this.state.currentsubscription)
     this.setState({ show: !this.state.show });
   }
   
-  modalOpen = () => {
-console.log(this.state.clicks , this.state.currentsubscription.person_limit)
+  modalOpen =async () => {
+  let a = await PaypalUI(true,"50")
+    console.log(a,"a")
+  await this.check()
+//console.log(this.state.clicks , this.state.currentsubscription.person_limit)
 
-    if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
-    {
-      this.setState({modal: true});
-    }
-    else{
-      this.props.navigation.navigate('Ingredients', {
-        person: this.state.clicks
-      });
-    }
+    // if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
+    // {
+    //   this.setState({modal: true});
+    // }
+    // else{
+    //   this.props.navigation.navigate('Ingredients', {
+    //     person: this.state.clicks
+    //   });
+    // }
     
+  }
+  check = async ()=>{
+    
+if (this.state.paid == true){
+  console.log("trueeeee")
+}
+else {
+  console.log("Falseese")
+}
   }
   RateApp = () => {
     Linking.openURL("https://play.google.com/store/apps");

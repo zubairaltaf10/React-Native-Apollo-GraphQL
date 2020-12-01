@@ -558,7 +558,7 @@ class InGredentsInput extends React.Component {
                 <View style={{ height: 20, width: 20, backgroundColor: COLORS.primary, alignSelf: 'flex-end', borderRadius: 40, left: 2 }}>
                   <Text style={{ color: 'white', alignSelf: 'center', fontSize: 12, fontFamily: FONTFAMILY.medium }}>{this.state.checkedItemsLength}</Text>
                 </View>
-                <TouchableOpacity onPress={() => this.payment(50)}>
+                <TouchableOpacity onPress={() => this.searchRecipes('image')}>
                   <Image style={{ height: 25, width: 16, alignSelf: 'center', bottom: 5 }} source={require('../../assets/Ingredients/list.png')}></Image>
                 </TouchableOpacity>
               </View>
