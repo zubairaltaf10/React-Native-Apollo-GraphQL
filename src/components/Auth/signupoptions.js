@@ -13,7 +13,7 @@ import { withAuth } from "../../store/hoc/withAuth";
 import LinearGradient from "react-native-linear-gradient";
 import {FONTFAMILY} from '../../Theme/Fonts';
 import PrimaryButton from '../Button/PrimaryButton';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import styles from '../../Styles/signupoptions.styles';
 import {
   LoginButton,
@@ -101,6 +101,7 @@ class SignupOptions extends Component {
 
       console.log()
            // this.setState({loading:true})
+           console.log(token)
            client.mutate({
             mutation: mutation,
             variables: { provider: provider,
@@ -108,6 +109,18 @@ class SignupOptions extends Component {
           })
             .then(async (data) => {
                 SNACKBAR.simple("Added") ; 
+                  // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
+             AsyncStorage.setItem('user', JSON.stringify(res.data.login)).then(
+              () => {
+                if(res.data.login.user.user_subscription == null)
+                {
+                  this.props.navigation.navigate('Packages');
+                }else
+                {
+                this.props.navigation.navigate('App');
+                }
+              },
+            );
             })
             .catch((err) => {
              // this.setState({loading:false})
@@ -123,10 +136,11 @@ class SignupOptions extends Component {
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
         console.log(userInfo)
+        var id_token = userInfo.id_token;
         this.props.navigation.navigate('Packages')
-        const email = userInfo.user.email;
-        console.log(userInfo)
-        const name = userInfo.user.name;
+        //const email = userInfo.user.email;
+        console.log(id_token)
+        //const name = userInfo.user.name;
   
        // const password = userInfo.user.id + name;
   

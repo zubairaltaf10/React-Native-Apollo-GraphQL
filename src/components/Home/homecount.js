@@ -22,18 +22,18 @@ import {Metrics} from '../../Theme';
 import {_} from 'lodash';
 import * as Linking from 'expo-linking';
 import { parse } from "graphql";
+import SNACKBAR from "../../Helpers/SNACKBAR";
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
-  async componentWillMount() {
+  async componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
      console.log('check')
       this.loadloginuser();
     });
-       
     
-  // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
-  // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+  this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
+  this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
  }
  loadloginuser = async  () =>
  {
@@ -62,12 +62,10 @@ class HomeCount extends React.Component {
     currentsubscription: {} ,
     loginuser:{},
     modalVisible:false,
-    viewplanmodel:false
+    viewplanmodel:false,
+    viewloginmodel:false
   }
-  componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-}
+
 
 componentWillUnmount() {
   this.RBSheet.open()
@@ -120,8 +118,11 @@ console.log(this.state.currentsubscription)
   }
   
   modalOpen = () => {
-console.log(this.state.clicks , this.state.currentsubscription.person_limit)
-
+    if(this.state.clicks ==0)
+    {
+      SNACKBAR.simple('Please add one indiviuals ');
+      return;
+    }
     if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
     {
       this.setState({modal: true});
@@ -143,7 +144,13 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
   async removeItemValue() {
     console.log('ssss')
     try {
-        await AsyncStorage.removeItem('user'); 
+       var abc = await AsyncStorage.removeItem('user'); 
+       let user = await AsyncStorage.getItem('user');
+  if (user) {
+    console.log('not log out');
+  } else {
+   console.log('log out');
+  }
         this.props.navigation.navigate('Auth'); 
       }
     catch(exception) {
@@ -157,6 +164,26 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
  onrequestViewModelclose = () =>
  {
    this.setState({viewplanmodel: false})
+ }
+ onrequestViewloginModelclose = () =>
+ {
+   this.setState({viewloginmodel: false})
+ }
+ openMyFav = () =>
+ {
+  if(_.isEmpty(this.state.loginuser)){
+    this.setState({viewloginmodel:true})
+     }else{
+      this.props.navigation.navigate('MyFaviourites'); 
+     }
+ }
+ OpenMangneSub = () =>
+ {
+   if(_.isEmpty(this.state.loginuser)){
+  this.setState({viewloginmodel:true})
+   }else{
+    this.props.navigation.navigate('ManagePackge'); 
+   }
  }
   render() {
     const  currentsubscription  = this.state.currentsubscription;
@@ -246,6 +273,36 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
           marginTop={40}
           onPress={()=>{this.setState({viewplanmodel:false})}}
         />
+        
+      </View>
+    </Modal>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      
+      visible={this.state.viewloginmodel}
+      onRequestClose={this.onrequestViewloginModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestViewloginModelclose} />
+      <View onTouchEnd={this.onrequestViewloginModelclose}
+        style={[
+          styles.modelContainer,
+          {
+            marginTop:  Metrics.screenHeight / 2.5,
+          },
+        ]}>
+        <Text style={styles.modeltext} >
+        Sign in or create an account to get the full experience of this app
+        </Text>
+        
+      
+        <PrimaryButton
+            title= "           Login            " 
+            onPress={() => this._onSaveUserSubscription()}
+            marginTop={height(5)}
+            //loading={this.state.loading}
+            onPress={()=>{this.props.navigation.navigate('Login') }}
+          />
+      
         
       </View>
     </Modal>
@@ -424,7 +481,7 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
             onPress={()=>{
               this.RBSheet.close()
-              this.props.navigation.navigate('ManagePackge')
+              this.OpenMangneSub()
               }}>Manage Subscription</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
            
@@ -436,7 +493,7 @@ console.log(this.state.clicks , this.state.currentsubscription.person_limit)
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
              onPress={()=>{
               this.RBSheet.close();
-              this.props.navigation.navigate('MyFaviourites')
+              this.openMyFav()
               }}>My Favourites</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </View>

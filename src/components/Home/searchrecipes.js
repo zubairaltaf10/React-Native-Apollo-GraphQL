@@ -264,7 +264,7 @@ class SearchRecipes extends React.Component {
                                 </ImageBackground>
                             </View>
                             
-                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
+                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails', {id:x.id   })}>
                             <View style={{flex:0.4}}>
                            
                             <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>{x.title}</Text>

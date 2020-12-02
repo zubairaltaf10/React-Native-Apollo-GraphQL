@@ -12,8 +12,13 @@ state = {
 
 }
 
-componentDidMount(){
-  
+async componentDidMount(){
+  let user = await AsyncStorage.getItem('user');
+    if (user) {
+      this.props.navigation.navigate("Home");
+    } else {
+     console.log('no user found');
+    }
 // AsyncStorage.getItem('user').then((user) => {
 //     user = JSON.parse(user) ;
 //     if(user)
