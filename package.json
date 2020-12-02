@@ -37,6 +37,7 @@
     "react-native-animated-numbers": "^0.2.0",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-autocomplete-input": "^4.2.0",
+    "react-native-braintree-dropin-ui": "^1.1.1",
     "react-native-code-input": "^1.0.6",
     "react-native-confirmation-code-field": "^6.5.0",
     "react-native-confirmation-code-input": "^1.0.4",
