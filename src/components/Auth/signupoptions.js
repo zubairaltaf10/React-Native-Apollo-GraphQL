@@ -35,6 +35,7 @@ import { setContext } from 'apollo-link-context';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import gql from 'graphql-tag';
+import SNACKBAR from '../../Helpers/SNACKBAR';
 const FB_APP_ID = "688909198411382";
 const  authLink =  setContext((_, { headers } )  =>  {
 return {
@@ -67,7 +68,9 @@ class SignupOptions extends Component {
     }
 
     handleFacebookLogin = async () => {
+      LoginManager.logOut()
       // try {
+
       //   LoginManager.setLoginBehavior(Platform.OS ==='ios' ? 'native': 'NATIVE_ONLY');
       // } catch (error) {
       //   LoginManager.setLoginBehavior('WEB_ONLY');
@@ -86,7 +89,7 @@ class SignupOptions extends Component {
               const { accessToken } = data;
               if (accessToken){
                // this.props.navigation.navigate('Packages')
-               this.socailLogin(accessToken, "Facebook")
+               this.socailLogin(accessToken, "facebook")
               }
               console.log(accessToken);
             });
@@ -108,11 +111,12 @@ class SignupOptions extends Component {
                 token: token }
           })
             .then(async (data) => {
+              console.log(data)
                 SNACKBAR.simple("Added") ; 
                   // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
-             AsyncStorage.setItem('user', JSON.stringify(res.data.login)).then(
+             AsyncStorage.setItem('user', JSON.stringify(data.data.socialLogin)).then(
               () => {
-                if(res.data.login.user.user_subscription == null)
+                if(data.data.socialLogin.user.user_subscription == null)
                 {
                   this.props.navigation.navigate('Packages');
                 }else
@@ -136,12 +140,12 @@ class SignupOptions extends Component {
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
         console.log(userInfo)
-        var id_token = userInfo.id_token;
-        this.props.navigation.navigate('Packages')
+        var id_token = await GoogleSignin.getTokens();
+        //this.props.navigation.navigate('Packages')
         //const email = userInfo.user.email;
-        console.log(id_token)
+        console.log(id_token.accessToken)
         //const name = userInfo.user.name;
-  
+        this.socailLogin(id_token.accessToken, "google")
        // const password = userInfo.user.id + name;
   
       } catch (error) {

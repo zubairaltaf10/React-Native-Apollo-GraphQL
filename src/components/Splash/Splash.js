@@ -15,9 +15,20 @@ state = {
 async componentDidMount(){
   let user = await AsyncStorage.getItem('user');
     if (user) {
-      this.props.navigation.navigate("Home");
+      user = JSON.parse(user).user;
+      if(user.user_subscription == null)
+          {
+            this.props.navigation.navigate('Packages');
+          }else
+          {
+          this.props.navigation.navigate('App');
+          }
+      //this.props.navigation.navigate("Home");
     } else {
      console.log('no user found');
+     this.timeout = setTimeout(async () => {
+      this.props.navigation.navigate("Login");
+    },1000);
     }
 // AsyncStorage.getItem('user').then((user) => {
 //     user = JSON.parse(user) ;
@@ -39,9 +50,7 @@ async componentDidMount(){
 // },1000);
 // });
 
-this.timeout = setTimeout(async () => {
-  this.props.navigation.navigate("Login");
-},1000);
+
 }
 render() {
     return (

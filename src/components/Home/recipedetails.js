@@ -359,8 +359,8 @@ class RecipesDetails extends React.Component {
              
               <View style={{marginHorizontal:15,marginTop:10,flex:1}}>
                   <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15}}>Equipment Required</Text>
-                  <View style={{flex:1 ,backgroundColor:'#333', height:100}}>
-                  <ScrollView contentContainerStyle={{height:  150}} horizontal={true} showsHorizontalScrollIndicator={true} nestedScrollEnabled={true}  >
+                  
+                  
               <View style={{flexDirection:'row',width:'100%',flex:0.3}}>
               { this.state.allequipments?.map((x ) =>
                   <View style={{backgroundColor:'white',width:120,height:130,borderRadius:12,marginTop:10, marginRight:10}}>
@@ -369,8 +369,6 @@ class RecipesDetails extends React.Component {
                         </Image>
                   </View>
               )}
-              </View>
-              </ScrollView>
               </View>
               <View style={{flex:1}}>
               <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15,marginTop:height(5)}}>Instructions</Text>

@@ -26,6 +26,7 @@ const getToken = async () => {
   // get the authentication token from local storage if it exists
   let user = await AsyncStorage.getItem("user")
   user = JSON.parse(user)
+  console.log('user ' , user)
   if(user != null)
   {
     token = user.access_token
@@ -36,7 +37,7 @@ const getToken = async () => {
   }
     
 }
-const token = getToken();
+const token =  getToken();
 const  authLink =  setContext((_, { headers } )  =>  {
   console.log('token ' , token)
 return {

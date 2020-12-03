@@ -29,7 +29,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Snackbar from "react-native-snackbar";
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
+import PaypalUI from '../Payment/PaypalUI'
 
 class Packages extends Component {
   swiperRef = React.createRef()
@@ -42,7 +42,8 @@ class Packages extends Component {
       subscription_id :1,
       loading:false,
       priceperyear:0,
-      pricepermonth:0
+      pricepermonth:0,
+      yellowloading:false
      // subscriptions :[]
     }
   }
@@ -98,8 +99,30 @@ class Packages extends Component {
 
     console.log("dsadasdasd" +this.state.cardClicked)
   }
-  _onSaveUserSubscription = async () => {
-    this.setState({loading:true})
+  onSubmit = async (amount , subcription, type) =>{
+     if(subcription == "Basic"){
+      this._onSaveUserSubscription(type);
+  }else if(subcription == "Standard")
+  {
+    let a = await PaypalUI(true,amount.toString())
+    if(a == true){
+      this._onSaveUserSubscription(type);
+    }else{
+      SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
+    }
+    
+  }else if(subcription == "Premium"){
+    let a = await PaypalUI(true,amount.toString())
+    if(a == true){
+      this._onSaveUserSubscription(type);
+    }else{
+      SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
+    }
+  }
+
+}
+  _onSaveUserSubscription = async (type) => {
+    type == "month" ?this.setState({loading:true}) :this.setState({yellowloading:true})
     let user = await AsyncStorage.getItem('user');
     user = JSON.parse(user).user;
     console.log(user.id)
@@ -113,13 +136,36 @@ class Packages extends Component {
     })
     .then((res) => {
       this.setState({loading:false})
-      this.props.navigation.navigate('App');
+      this.setState({yellowloading:false})
+      this.updateupdatelocalstorage(res.data.addUserSubscription.subscription)
+     
     })
     .catch((err) => {
       this.setState({loading:false})
+      this.setState({yellowloading:false})
       console.log(JSON.stringify(err));
     });
   }
+  async updateupdatelocalstorage(subscription)
+      {
+        this.setState({loading:false})
+        console.log(subscription);
+        
+        let user = await AsyncStorage.getItem('user');
+        console.log(user)
+       if (user) {
+         user = JSON.parse(user);
+         user.user.user_subscription == null ? user.user.user_subscription = {subscription : {} } : user.user.user_subscription 
+         user.user.user_subscription.subscription = subscription; 
+        }
+       
+       SNACKBAR.simple("Subscription added successfully") ;
+       AsyncStorage.setItem('user', JSON.stringify(user)).then(
+        () => {
+          this.props.navigation.navigate('App');
+        },
+      );
+    }
   onBasicSubmit = () => {
      // var res = this._onSaveUserSubscription();
   };
@@ -209,7 +255,7 @@ class Packages extends Component {
           <View style={{ flex: 0.12,marginTop:height(5) }}>
           <PrimaryButton
             title="CONTINUE"
-             onPress={() => this._onSaveUserSubscription()}
+             onPress={() => this.onSubmit(0,this.state.cardName , "month")}
             marginTop={height(40)}
           // loading={this.state.loading}
           />
@@ -218,15 +264,15 @@ class Packages extends Component {
         <View style={{ flex: 0.2 }}>
           <PrimaryButton
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
-            onPress={() => this._onSaveUserSubscription()}
+            onPress={() => this.onSubmit(this.state.pricepermonth, this.state.cardName, "month")}
             marginTop={height(50)}
-          // loading={this.props.auth.loadingLogin}
+           loading={this.state.loading}
           />
           <PrimaryButton2
             title={ "SUBSCRIBE £" + this.state.priceperyear + " / YEAR" }
-            onPress={() => this._onSaveUserSubscription()}
+            onPress={() => this.onSubmit(this.state.priceperyear ,this.state.cardName, "year")}
             marginTop={height(10)}
-           //loading={this.props.auth.loadingLogin}
+           loading={this.state.yellowloading}
           />
         </View>
       }
@@ -385,7 +431,15 @@ mutation addUserSubscription($user_id: Int!, $subscription_id: Int!){
       name
     },
     subscription{
-      name
+      name,
+         person_limit,
+    ingredient_limit,
+    amount,
+    amount_per_year,
+    amount_per_month,
+    name,
+    trial_days,
+    description
     }
   }
 }

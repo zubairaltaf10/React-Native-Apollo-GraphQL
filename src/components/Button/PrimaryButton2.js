@@ -15,7 +15,7 @@ const PrimaryButton2 = ({title, onPress, marginTop = 4, disabled, loading}) => {
         onPress={onPress}>
         <View style={styles.row}>
           {loading && (
-            <ActivityIndicator style={styles.spinner} color={'white'} />
+            <ActivityIndicator style={styles.spinner} color={COLORS.primary} />
           )}
           <Text style={styles.title}>{title}</Text>
         </View>

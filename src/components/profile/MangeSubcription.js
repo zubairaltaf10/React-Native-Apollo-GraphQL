@@ -23,7 +23,7 @@ import SNACKBAR from '../../Helpers/SNACKBAR';
 import AsyncStorage from '@react-native-community/async-storage';
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
+import PaypalUI from '../Payment/PaypalUI';
 //(null)
 class ManagePackages extends Component {
   swiperRef = React.createRef()
@@ -55,7 +55,8 @@ class ManagePackages extends Component {
       showContextMenu:false,
       currentsubscription : {},
       subscriptionmodel : {},
-      loginuser : {}
+      loginuser : {},
+      yellowloading:false
     }
   }
   // componentDidUpdate = async () => {
@@ -112,8 +113,31 @@ class ManagePackages extends Component {
 
     console.log("dsadasdasd" +this.state.cardClicked)
   }
-  _onSaveUserSubscription = async () => {
-    this.setState({loading:true})
+
+  onSubmit = async (amount , subcription, type) =>{
+    if(subcription == "Basic"){
+     this._onSaveUserSubscription(type);
+ }else if(subcription == "Standard")
+ {
+   let a = await PaypalUI(true,amount.toString())
+   if(a == true){
+    this._onSaveUserSubscription(type);
+   }else{
+     SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
+   }
+   
+ }else if(subcription == "Premium"){
+   let a = await PaypalUI(true,amount.toString())
+   if(a == true){
+    this._onSaveUserSubscription(type);
+   }else{
+     SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
+   }
+ }
+
+}
+  _onSaveUserSubscription = async (type) => {
+    type == "month" ?this.setState({loading:true}) :this.setState({yellowloading:true})
     console.log(this.state.subscription_id);
     this.props
     .mutate({
@@ -123,10 +147,13 @@ class ManagePackages extends Component {
       },
     })
     .then((res) => {
+      this.setState({loading:false})
+      this.setState({yellowloading:false})
       this.updateupdatelocalstorage( res.data.addUserSubscription.subscription)
     })
     .catch((err) => {
       this.setState({loading:false})
+      this.setState({yellowloading:false})
       console.log(JSON.stringify(err));
     });
   }
@@ -139,9 +166,13 @@ class ManagePackages extends Component {
         console.log(user)
        if (user) {
          user = JSON.parse(user);
-         user.user.user_subscription.subscription= subscription; 
+         user.user.user_subscription == null ? user.user.user_subscription = {subscription : {} } : user.user.user_subscription 
+         user.user.user_subscription.subscription = subscription; 
+        // this.setState({loginuser:user.user.user_subscription.subscription }) ;
+         this.setState({currentsubscription:subscription }) ;
+         
        }
-       this.setState({currentsubscription:subscription }) ;
+       
        SNACKBAR.simple("Subscription updated successfully") ;
        AsyncStorage.setItem('user', JSON.stringify(user)).then(
         () => {
@@ -157,6 +188,7 @@ class ManagePackages extends Component {
         console.log(user)
        if (user) {
          user = JSON.parse(user);
+
          user.user.user_subscription.subscription= {}; 
        }
        this.setState({currentsubscription:{} }) ;
@@ -207,7 +239,7 @@ class ManagePackages extends Component {
             mutation={removemutation}
             variables={{ user_id: this.state.loginuser.id,
               subscription_id:this.state.subscription_id }}
-             // onError={()=>{SNACKBAR.simple("Error") ; }}
+             onError={()=>{SNACKBAR.simple("Error") ; }}
             onCompleted={ () => { this.cancelsubcriptionfromlocalstorage()} }
           >
           {mutation => (
@@ -309,7 +341,7 @@ class ManagePackages extends Component {
           <View style={{ flex: 0.11,marginTop:height(5) }}>
           <PrimaryButton
             title="CONTINUE"
-             onPress={() => this._onSaveUserSubscription()}
+            onPress={() => this.onSubmit(0,this.state.cardName, "month" )}
             marginTop={height(40)}
            loading={this.state.loading}
           />
@@ -318,15 +350,15 @@ class ManagePackages extends Component {
         <View style={{ flex: 0.3 }}>
           <PrimaryButton
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
-            onPress={() => this._onSaveUserSubscription()}
+            onPress={() => this.onSubmit(this.state.pricepermonth, this.state.cardName, "month")}
             marginTop={height(50)}
-           // loading={this.state.loading}
+           loading={this.state.loading}
           />
           <PrimaryButton2
             title={ "SUBSCRIBE £" + this.state.priceperyear + " / YEAR" }
-            onPress={() => this._onSaveUserSubscription()}
+            onPress={() => this.onSubmit(this.state.priceperyear ,this.state.cardName, "year")}
             marginTop={height(10)}
-            //loading={this.state.loading}
+            loading={this.state.yellowloading}
           />
         </View>
       }

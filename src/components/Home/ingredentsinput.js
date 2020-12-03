@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
+import { View, Text, Image, StyleSheet, Platform,Modal, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -7,6 +7,7 @@ import {
   Icon,
   Spinner
 } from "native-base";
+import {Metrics} from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
 import COLORS from '../../Theme/Colors';
@@ -33,34 +34,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-const uploadLink_braintree = createUploadLink({ uri: SANDBOX_BRAINTREE });
-//const HttpLink = HttpLink({ uri: "https://payments.sandbox.braintree-api.com/graphql" });
-const  authLink_braintree =  setContext((_, { headers } )  =>  {
-  
-return {
-  headers: {
-    ...headers,
-    "Authorization": "Basic ZzkzNGtnZjQ2N3hrMzlrNjo4MzlkZTIxM2NmZDA0OTBkNDYyM2IxMmYwMzczOTVhYw==",
-    "Braintree-Version": "2019-01-01",
-    "Content-Type":"application/json"
-  }
-}
-})
-const client_braintree = new ApolloClient({ 
-  link: ApolloLink.from([ authLink_braintree , uploadLink_braintree]),
-  cache : new InMemoryCache(),
-});
 
-const mutations = gql`
-mutation chargePaymentMethod($input: ChargePaymentMethodInput!) {
-      chargePaymentMethod(input: $input) {
-        transaction {
-          id
-          status
-        }
-      }
-    }`
-;
+
 
 class InGredentsInput extends React.Component {
 
@@ -81,7 +56,8 @@ class InGredentsInput extends React.Component {
     limit: 0,
     checkedItems: [],
     checkedItemsLength: 0,
-    showSelected: false
+    showSelected: false,
+    viewloginmodel:false
   }
   componentDidMount() {
     this.setState({ loading: true })
@@ -107,6 +83,8 @@ class InGredentsInput extends React.Component {
           user = JSON.parse(user).user;
           this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
           console.log(this.state.limit)
+        }else{
+          this.setState({ limit: 3 })
         }
       })
       .catch((err) => {
@@ -129,7 +107,11 @@ class InGredentsInput extends React.Component {
   _keyboardDidHide() {
     this.setState({ bottomHeight: 0 })
   }
-
+  onrequestViewloginModelclose = () =>
+  {
+    this.setState({viewloginmodel: false})
+  }
+  
   onsearchIngredients = async (ingredient) => {
     console.log(ingredient + "here")
     client.query({
@@ -250,7 +232,10 @@ class InGredentsInput extends React.Component {
 
   checkItem = (name, fromSearch) => {
     let ingredientlist = [...this.state.ingredientlist]
-
+    if(this.state.checkedItemsLength == this.state.limit){
+      this.setState({viewloginmodel:true})
+      return;
+    }
     if (fromSearch == true) {
       ingredientlist.filter(ingredient => {
         console.log("from search", ingredient)
@@ -417,6 +402,36 @@ class InGredentsInput extends React.Component {
       //    <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
       // </View>
       <View style={{ flex: 1 }}>
+       <Modal
+      animationType="fade"
+      transparent={true}
+      
+      visible={this.state.viewloginmodel}
+      onRequestClose={this.onrequestViewloginModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestViewloginModelclose} />
+      <View onTouchEnd={this.onrequestViewloginModelclose}
+        style={[
+          styles.modelContainer,
+          {
+            marginTop:  Metrics.screenHeight / 2.5,
+          },
+        ]}>
+        <Text style={styles.modeltext} >
+        To add an other Ingredent, you will need to subcribe a plan
+        </Text>
+        
+      
+        <PrimaryButton
+            title= "           View Plan            " 
+            onPress={() => this._onSaveUserSubscription()}
+            marginTop={height(5)}
+            //loading={this.state.loading}
+            onPress={()=>{this.props.navigation.navigate('Login') }}
+          />
+      
+        
+      </View>
+    </Modal>
         <View style={{ flex: 0.9 }}>
 
           <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -742,7 +757,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     //  backgroundColor: 'black',
     marginLeft: 10
-  }
+  },
+  
+  overlay: {
+    backgroundColor: '#f2f2f4',
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.9,
+  },
+  modelHeading: {
+    textAlign: 'center',
+    fontFamily: FONTFAMILY.bold,
+    fontSize: 18,
+  },
+  modeltext: {
+    marginTop: 20,
+    color: '#868CA9',
+    textAlign: 'center',
+    fontSize: 15,
+    fontFamily: FONTFAMILY.regular,
+    marginHorizontal:'10%'
+  },
+  modelSubheading: {
+    marginTop: 10,
+    color: 'rgba(106, 106, 106, 1)',
+    textAlign: 'center',
+    fontSize: 13,
+    paddingHorizontal: 20,
+    fontFamily: FONTFAMILY.medium,
+  },
+  modelContainer: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+    marginTop: Metrics.screenHeight / 2.8,
+    padding: 20,
+    elevation: 6,
+    borderRadius: 7,
+  },
 
 
 })

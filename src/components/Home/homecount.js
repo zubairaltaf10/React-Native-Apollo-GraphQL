@@ -27,12 +27,12 @@ import SNACKBAR from "../../Helpers/SNACKBAR";
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
-  async componentDidMount() {
+  async componentWillMount() {
     this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
      console.log('check')
       this.loadloginuser();
     });
-    
+    //loadloginuser();
   this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
  }
@@ -42,6 +42,11 @@ class HomeCount extends React.Component {
   let user = await AsyncStorage.getItem('user');
   if (user) {
     user = JSON.parse(user).user;
+    if(user.user_subscription == null)
+    {
+      this.props.navigation.navigate('ManagePackge')
+      return;
+    }
     var subcription = user.user_subscription.subscription
     this.setState({ currentsubscription: subcription });
     console.log('user ', user);
@@ -65,7 +70,8 @@ class HomeCount extends React.Component {
     modalVisible:false,
     viewplanmodel:false,
     showpayment:true,
-    paid:false
+    paid:false,
+    viewloginmodel:false
   }
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
@@ -126,20 +132,23 @@ console.log(this.state.currentsubscription)
   }
   
   modalOpen =async () => {
-  let a = await PaypalUI(true,"50")
-    console.log(a,"a")
-  await this.check()
-//console.log(this.state.clicks , this.state.currentsubscription.person_limit)
+  if(this.state.clicks == 0){
+    SNACKBAR.simple('Please add one indiviual')
+    return;
+  }
 
-    // if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
-    // {
-    //   this.setState({modal: true});
-    // }
-    // else{
-    //   this.props.navigation.navigate('Ingredients', {
-    //     person: this.state.clicks
-    //   });
-    // }
+
+  console.log(this.state.clicks , this.state.currentsubscription.person_limit)
+
+    if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
+    {
+      this.setState({modal: true});
+    }
+    else{
+      this.props.navigation.navigate('Ingredients', {
+        person: this.state.clicks
+      });
+    }
     
   }
   check = async ()=>{
@@ -196,12 +205,21 @@ else {
  }
  OpenMangneSub = () =>
  {
+   console.log(this.state.loginuser)
    if(_.isEmpty(this.state.loginuser)){
   this.setState({viewloginmodel:true})
    }else{
     this.props.navigation.navigate('ManagePackge'); 
    }
  }
+ onSubmit = async (amount) =>{
+  let a = await PaypalUI(true,amount.toString())
+ if(a == true){
+    this.setState({currentsubscription:parseInt(this.state.currentsubscription.person_limit) + 1})
+ }else{
+   SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
+ }
+}
   render() {
     const  currentsubscription  = this.state.currentsubscription;
     // currentsubscription.person_limit = 3
@@ -242,13 +260,13 @@ else {
         <PrimaryButton
           //disabled={saveBtnDisabled}
           //loading={loading}
-          //onPress={addToLibrary}
+          onPress={() => this.onSubmit("0.79")}
           title="Add a person FOR £0.79"
           marginTop={40}
         />
         <PrimaryButton2
             title= "           View plans            " 
-            onPress={() => this._onSaveUserSubscription()}
+            onPress={()=>{this.props.navigation.navigate('ManagePackge') }}
             marginTop={height(10)}
             //loading={this.state.loading}
             onPress={this.ViewPlan }
@@ -379,8 +397,8 @@ else {
               title="+"
               onPress={this.IncrementItem}
               marginTop={height(40)}
-              disabled={this.state.clicks == this.state.currentsubscription.person_limit ? true : false}
-              bgcolor={this.state.clicks == this.state.currentsubscription.person_limit ? '#dedede' : COLORS.primary}
+              disabled={this.state.clicks == this.state.currentsubscription?.person_limit ? true : false}
+              bgcolor={this.state.clicks == this.state.currentsubscription?.person_limit ? '#dedede' : COLORS.primary}
             />
        
         </View>
