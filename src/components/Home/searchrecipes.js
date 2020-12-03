@@ -120,7 +120,7 @@ class SearchRecipes extends React.Component {
     }
 
     onAddfav = (recipeId ) => {
-       console.log(recipeId)
+       console.log(this.state.loginuser.id)
            // this.setState({loading:true})
            client.mutate({
             mutation: mutation,

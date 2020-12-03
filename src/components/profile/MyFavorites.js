@@ -19,11 +19,19 @@ import { ScrollView } from "react-native-gesture-handler";
 import { withApollo } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { NETWORK_INTERFACE } from '../../config';
+import SNACKBAR from '../../Helpers/SNACKBAR';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import AsyncStorage from '@react-native-community/async-storage';
+import { StackActions, NavigationActions } from 'react-navigation';
+
+const resetAction = StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName: 'MyFaviourites' })],
+});
+
 const getToken = async () => {
     let token;
   
@@ -99,6 +107,7 @@ class MyFavorites extends React.Component {
     }
     constructor(props) {
         super(props);
+
     }
     state = {
         recipes:[],
