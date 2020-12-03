@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  StatusBar
 } from "react-native";
 import { withAuth } from "../../store/hoc/withAuth";
 import Swiper from 'react-native-swiper'
@@ -30,6 +31,7 @@ class ManagePackages extends Component {
     async componentWillMount() {
        
          let user = await AsyncStorage.getItem('user');
+         console.log('localstorage', user);
         if (user) {
           user = JSON.parse(user).user;
           this.setState({ loginuser: user });
@@ -216,7 +218,8 @@ class ManagePackages extends Component {
     return (
      
       <View style={{ flex: 1 }}>
-      <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+      <StatusBar translucent backgroundColor="transparent" />
+      <View style={{ paddingTop:20 ,paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
           <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>

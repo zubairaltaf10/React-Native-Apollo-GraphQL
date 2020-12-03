@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, ActivityIndicator ,ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
+import { View, Text, Image, ActivityIndicator ,StatusBar, ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -191,7 +191,7 @@ class RecipesDetails extends React.Component {
                     </ScrollView>
                 ) }
                 {item.index == 3 && (
-                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{item.index}</Text>
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}></Text>
                 ) }
                 </View>
             </View>
@@ -253,13 +253,14 @@ class RecipesDetails extends React.Component {
             { this.state.loading ? 
                 <Spinner small color="#FFAA2F" />
                : 
-            <ScrollView contentContainerStyle={{height: this.state.viewfull ? 1300 : 750}}>
-            <View style={{ flex: 1, backgroundColor: '#F6F6F6'}}>
+            <ScrollView contentContainerStyle={{height: this.state.viewfull ? 1100 : 750}}>
+            <StatusBar translucent backgroundColor="transparent" />
+            <View style={{ marginTop:30, flex: 1, backgroundColor: '#F6F6F6'}}>
                 <View style={{ flex:0.5, marginTop: height(1),justifyContent: 'flex-end' }}>
                     <View style={styles.whitebox}>
-                        <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.navigation.navigate('RecipeDetails')}>
+                        
                             <View style={styles.imagebox}>
-                                <ImageBackground source={{uri:this.state.recDetail.image}} resizeMode={'cover'} imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
+                                <ImageBackground source={{uri:this.state.recDetail.image}} resizeMode={'cover'} imageStyle={{  borderTopLeftRadius: 12, borderTopRightRadius: 12 }} style={styles.image}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
                                         <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
@@ -291,7 +292,6 @@ class RecipesDetails extends React.Component {
                                 <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', marginHorizontal: 11, color: '#868CA9',paddingBottom:10 }}>by {this.state.recDetail.sourceName}</Text>
                             </View>
 
-                        </TouchableOpacity>
 
                     </View>
                 </View>
@@ -362,6 +362,7 @@ class RecipesDetails extends React.Component {
                   
                   
               <View style={{flexDirection:'row',width:'100%',flex:0.3}}>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
               { this.state.allequipments?.map((x ) =>
                   <View style={{backgroundColor:'white',width:120,height:130,borderRadius:12,marginTop:10, marginRight:10}}>
                       <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginTop:5}}>{x.name}</Text>
@@ -369,6 +370,7 @@ class RecipesDetails extends React.Component {
                         </Image>
                   </View>
               )}
+              </ScrollView>
               </View>
               <View style={{flex:1}}>
               <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15,marginTop:height(5)}}>Instructions</Text>
@@ -407,6 +409,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 11,
         flex: 1,
         borderWidth: 1,
+        height:200,
         borderColor: 'transparent',
         //    borderTopLeftRadius:14,
         //    borderTopRightRadius:14,

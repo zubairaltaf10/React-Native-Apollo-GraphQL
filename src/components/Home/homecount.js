@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet,Platform, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal} from "react-native";
+import { View, Text, Image, StyleSheet,Platform,StatusBar, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal} from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -230,7 +230,7 @@ else {
     return (
       <View style={{ flex: 1,backgroundColor: this.state.modal ? "transparent" : null,opacity: this.state.modal ? 0.03 : 1}} behavior="padding">
         
-     
+        <StatusBar translucent backgroundColor="transparent" />
        <Modal
       animationType="fade"
       transparent={true}
@@ -342,8 +342,8 @@ else {
       </View>
     </Modal>
 
-        <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
-          <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+        <View style={{ paddingBottom:20, paddingTop:20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+          <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
           <TouchableOpacity onPress={() => this.RBSheet.open()}>
           <Image 
                 source={require('../../assets/home/menu.png')}
@@ -354,7 +354,7 @@ else {
             {/* <Icon name="bars" type="AntDesign" style={{ marginLeft: 10 }} onPress={() => this.RBSheet.open()}></Icon> */}
           </View>
          
-          <View style={{flex:3, alignItems: 'center', marginTop:'8%',position: 'absolute', left: 0, right: 0}}>
+          <View style={{flex:3,paddingTop:10, alignItems: 'center', marginTop: height(5),position: 'absolute', left: 0, right: 0}}>
               <Image 
                 source={require('../../assets/packages/logo_small.png')}
                 style={styles.logo}
@@ -422,9 +422,9 @@ else {
           <View style={{ marginTop: height(5) }}>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0,bottom: this.state.bottomHeight, height: '20%', borderRadius: 10 }}>
+        <View style={{ flexDirection: 'row', marginTop:20, position: 'absolute', left: 0, right: 0,bottom: this.state.bottomHeight, height: '15%', borderRadius: 10 }}>
          
-          <View style={{ flex: 0.9 ,alignItems: 'center',position: 'absolute', left: 0, right: 0, justifyContent: 'center' }}>
+          <View style={{ flex: 0.8 ,alignItems: 'center',position: 'absolute', left: 0, right: 0, justifyContent: 'center' }}>
             <PrimaryButton
               title="CONTINUE"
               onPress={() => this.modalOpen()}

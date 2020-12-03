@@ -50,10 +50,12 @@ class Packages extends Component {
   // componentDidUpdate = async () => {
   //   console.log(this.props.data);
   // }
-  //  componentDidMount = async () =>{
-  //    console.log(this.props.data)
-  //   await this.setState({subscriptions:this.props.data ? this.props.data : null})
-  // } 
+  componentDidMount = async () =>{
+     console.log(this.props.data)
+    let user = await AsyncStorage.getItem('user');
+    console.log("signup ", user)
+    DevSettings.reload()
+  } 
 
   _onPressButton = async (model) => {
     if(this.state.cardClicked == "Basic")
@@ -180,9 +182,9 @@ class Packages extends Component {
     //console.log(subscriptions)
     return (
      
-      <View style={{ flex: 1,marginTop:'5%' }}>
+      <View style={{ flex: 1 }}>
        <StatusBar translucent backgroundColor="transparent" />
-        <View style={{ flex: 0.2, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+        <View style={{ flex: 0.2, paddingTop:20 ,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
             <Icon name="cross" size={30} onPress={()=>{
               this.props.navigation.navigate("Home");

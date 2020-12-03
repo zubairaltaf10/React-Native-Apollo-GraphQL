@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform,Modal, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
+import { View, Text, Image, StyleSheet, Platform,Modal, StatusBar ,TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -402,6 +402,7 @@ class InGredentsInput extends React.Component {
       //    <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
       // </View>
       <View style={{ flex: 1 }}>
+      <StatusBar translucent backgroundColor="transparent" />
        <Modal
       animationType="fade"
       transparent={true}

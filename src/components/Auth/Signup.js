@@ -27,6 +27,7 @@ import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import Header from '../Header/index.js';
+import AsyncStorage from '@react-native-community/async-storage';
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
   cache: new InMemoryCache()
@@ -93,13 +94,27 @@ class Signup extends Component {
         },
       })
       .then((res) => {
+        console.log(res.data);
+         let user = {
+          access_token:"",
+          user:{}
+         }
+         user.access_token = res.data.register.tokens.access_token;
+         user.user = res.data.register.tokens.user;
+         console.log('sssign ' ,user);
+        AsyncStorage.setItem('user', JSON.stringify(user)).then(
+          () => {
+           
+          },
+        );
+        
         this.setState({loading:false})
         this.props.navigation.navigate('Verification', {
           type: 'Signup',
           email:email});
       })
       .catch((err) => {
-
+        console.log(err)
         this.setState({loading:false})
        // var error = JSON.stringify(err);
        // console.log(error)
@@ -258,7 +273,28 @@ mutation register($firstname: String!, $lastname: String! ,$email: String!, $pas
       user{
         id,
         name,
-        email
+        email,
+        first_name,
+        last_name,
+        profile_image,
+        bio,
+        date_of_birth,
+        email_verified_at,
+        user_subscription{
+          subscription{
+            name,
+            id,
+            person_limit,
+            ingredient_limit,
+            amount,
+            amount_per_year,
+            amount_per_month,
+            name,
+            amount_description,
+            trial_days,
+            description
+          }
+        }
       }
     },
     status
