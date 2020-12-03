@@ -305,7 +305,9 @@ class UpdateProfile extends Component {
         this.props.navigation.navigate('Auth'); 
       }
     catch(exception) {
+      this.props.navigation.navigate('Auth'); 
         return false;
+        
     }
 }
 onrequestModelclose = () =>
@@ -319,7 +321,7 @@ onrequestModelclose = () =>
   render() {
     return (
       <ApolloProvider>
-        <Content style={styles.container}>
+        <Content style={styles.profilecontainer}>
         <StatusBar translucent backgroundColor="transparent" />
         <UpdatePassword
           modalVisible={this.state.changepasswordmodel}
@@ -388,8 +390,8 @@ onrequestModelclose = () =>
         
             mutation={ deleteaccountmutation}
             variables={{ password: this.state.formData.deleteaccountpassword}}
-            //onError={() =>{ this.setState({loading: false});SNACKBAR.simple("Error in delete account") ;  }}
-            onCompleted={ () => { this.logout } }
+            onError={() =>{ SNACKBAR.simple("Error in delete account") ;  }}
+            onCompleted={ () => { this.logout() } }
           >
           {mutation => (
         <PrimaryButton
@@ -402,14 +404,14 @@ onrequestModelclose = () =>
             </Mutation>
       </View>
     </Modal>
-        <View style={{ paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
-          <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+        <View style={{ paddingTop:20, paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+          <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>
          </TouchableOpacity>
           </View>
           <View style={{ flex: 0.8 }}>
-            <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
+            <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Account Setting</Text>
           </View>
         </View>
       

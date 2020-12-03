@@ -259,7 +259,7 @@ class Packages extends Component {
             title="CONTINUE"
              onPress={() => this.onSubmit(0,this.state.cardName , "month")}
             marginTop={height(40)}
-          // loading={this.state.loading}
+           loading={this.state.loading}
           />
         </View>
         :

@@ -103,10 +103,15 @@ class Login extends Component {
         }else
         {
           this.setState({loading:false})
-          this.props.navigation.navigate('Verification', {
-            type: 'UnverifiedLogin',
-            email:res.data.login.user.email
-          });
+          AsyncStorage.setItem('user', JSON.stringify(res.data.login)).then(
+            () => {
+              this.props.navigation.navigate('Verification', {
+                type: 'UnverifiedLogin',
+                email:res.data.login.user.email
+              });
+            },
+          );
+          
         }        
       })
       .catch((err) => {

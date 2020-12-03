@@ -374,9 +374,13 @@ class RecipesDetails extends React.Component {
               </View>
               <View style={{flex:1}}>
               <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15,marginTop:height(5)}}>Instructions</Text>
-
+              <ScrollView style={{flex:1, maxHeight: 350 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
+									  this.setState({enabled:false }); }}
+									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
+									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
               <View
-                style={{ backgroundColor: 'white',borderRadius: 12,marginTop:15, marginBottom:30 }}>
+                style={{ backgroundColor: 'white',borderRadius: 12,marginTop:15, marginBottom:10 }}>
+              
                  { this.state.allsteps?.map((x , index) =>
                   
                 <View style={{marginTop: 10,flexDirection:'row' }}>
@@ -386,7 +390,9 @@ class RecipesDetails extends React.Component {
                     <Text style={{ fontFamily: FONTFAMILY.regular,flex:1, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.step}</Text>
                 </View>
                  )}
+                 
             </View>
+            </ScrollView>
             </View>
               </View>
               

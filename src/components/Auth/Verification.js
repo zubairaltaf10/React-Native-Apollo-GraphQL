@@ -79,6 +79,8 @@ class Verification extends React.Component {
         console.log(res)
         this.setState({loading:false})
         if (res.data.verifyEmail.status) {
+
+          this.updateusersession();
           console.log(JSON.stringify(res.data.verifyEmail.status))
           const type = this.props.navigation.getParam('type');
           console.log(type + "type")
@@ -113,7 +115,19 @@ class Verification extends React.Component {
       
     
   };
-
+   updateusersession  = async () => {
+    let user = await AsyncStorage.getItem('user');
+    console.log(user)
+   if (user) {
+     user = JSON.parse(user);
+     user.user.email_verified_at = new Date().toString()
+    }
+    AsyncStorage.setItem('user', JSON.stringify(user)).then(
+      () => {
+        this.props.navigation.navigate('App');
+      },
+    );
+   }
   cellProps = ({/*index, isFocused,*/ hasValue}) => {
     if (hasValue) {
       return {

@@ -16,15 +16,20 @@ async componentDidMount(){
   let user = await AsyncStorage.getItem('user');
     if (user) {
       user = JSON.parse(user).user;
-      if(user.user_subscription == null)
-          {
-            this.props.navigation.navigate('Packages');
-          }else
-          {
-          this.props.navigation.navigate('App');
-          }
-      //this.props.navigation.navigate("Home");
-    } else {
+      if(user.email_verified_at != null){
+        if(user.user_subscription == null){
+          this.props.navigation.navigate('Packages');
+        }else{
+        this.props.navigation.navigate('App');
+        }
+      }else{
+        this.props.navigation.navigate('Verification', {
+          type: 'UnverifiedLogin',
+          email:user.email
+        });
+      }
+    } 
+    else {
      console.log('no user found');
      this.timeout = setTimeout(async () => {
       this.props.navigation.navigate("Login");

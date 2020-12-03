@@ -189,13 +189,13 @@ class SearchRecipes extends React.Component {
         
         return (
             <View style={{ flex: 1 }}>
-                <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
-                <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+                <View style={{ paddingTop: 20, paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+                <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
                         <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10 ,fontSize:18}}></Icon>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 0.8 }}>
+                    <View style={{ flex: 0.7 }}>
                         <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Recipes</Text>
                     </View>
                 </View>

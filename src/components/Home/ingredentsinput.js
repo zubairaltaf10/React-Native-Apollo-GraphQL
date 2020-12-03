@@ -435,8 +435,8 @@ class InGredentsInput extends React.Component {
     </Modal>
         <View style={{ flex: 0.9 }}>
 
-          <View style={{ paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
-            <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
+          <View style={{paddingTop: 20, paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+            <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
               <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
               <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10,fontSize:18 }}></Icon>
               </TouchableOpacity>

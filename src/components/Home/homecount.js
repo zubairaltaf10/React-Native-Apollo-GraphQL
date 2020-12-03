@@ -140,7 +140,7 @@ console.log(this.state.currentsubscription)
 
   console.log(this.state.clicks , this.state.currentsubscription.person_limit)
 
-    if(this.state.clicks >  parseInt(this.state.currentsubscription.person_limit))
+    if( parseInt(this.state.clicks) >  parseInt(this.state.currentsubscription.person_limit))
     {
       this.setState({modal: true});
     }
@@ -215,7 +215,9 @@ else {
  onSubmit = async (amount) =>{
   let a = await PaypalUI(true,amount.toString())
  if(a == true){
-    this.setState({currentsubscription:parseInt(this.state.currentsubscription.person_limit) + 1})
+   var currsub = this.state.currentsubscription
+   currsub.person_limit = parseInt(this.state.currentsubscription.person_limit) + 1;
+    this.setState({currentsubscription:currsub})
  }else{
    SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
  }
