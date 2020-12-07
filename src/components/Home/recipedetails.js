@@ -364,9 +364,9 @@ class RecipesDetails extends React.Component {
               <View style={{flexDirection:'row',width:'100%',flex:0.3}}>
               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
               { this.state.allequipments?.map((x ) =>
-                  <View style={{backgroundColor:'white',width:120,height:130,borderRadius:12,marginTop:10, marginRight:10}}>
-                      <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginTop:5}}>{x.name}</Text>
-                      <Image source={{uri:x.image}}    style={[styles.image1,{alignSelf:'center'}]}>
+                  <View style={{backgroundColor:'white',width:'15%',height:'10%',borderRadius:12,marginTop:10, marginRight:10}}>
+                      <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginTop:5,marginLeft:5}}>{x.name}</Text>
+                      <Image source={{uri:x.image}} style={[styles.image1,{alignSelf:'center',resizeMode:"contain"}]}>
                         </Image>
                   </View>
               )}
