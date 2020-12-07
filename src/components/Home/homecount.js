@@ -263,11 +263,11 @@ else {
           //disabled={saveBtnDisabled}
           //loading={loading}
           onPress={() => this.onSubmit("0.79")}
-          title="Add a person FOR £0.79"
+          title="ADD A PERSON FOR £0.79"
           marginTop={40}
         />
         <PrimaryButton2
-            title= "           View plans            " 
+            title= "           VIEW PLAN            " 
             onPress={()=>{this.props.navigation.navigate('ManagePackge') }}
             marginTop={height(10)}
             //loading={this.state.loading}
@@ -294,19 +294,19 @@ else {
         </Text>
         
         <PrimaryButton
-          title="        Sign Up       "
+          title="        SIGN UP      "
           marginTop={8}
           onPress={()=>{this.props.navigation.navigate('Signup')}}
         />
         <PrimaryButton2
-            title= "           Login            " 
+            title= "           LOGIN            " 
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(10)}
             //loading={this.state.loading}
             onPress={()=>{this.props.navigation.navigate('Login') }}
           />
         <PrimaryButton
-          title="        Skip Now       "
+          title="        SKIP NOW       "
           marginTop={40}
           onPress={()=>{this.setState({viewplanmodel:false})}}
         />
