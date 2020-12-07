@@ -21,7 +21,8 @@ import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider, Mutation } from 'react-apollo'
+import { ApolloProvider, Mutation } from 'react-apollo';
+import packageSlider from './packageSlider.json'
 import gql from 'graphql-tag';
 import { graphql } from "react-apollo";
 import SNACKBAR from '../../Helpers/SNACKBAR';
@@ -43,8 +44,8 @@ class Packages extends Component {
       loading:false,
       priceperyear:0,
       pricepermonth:0,
-      yellowloading:false
-     // subscriptions :[]
+      yellowloading:false,
+      packageSlider : [],
     }
   }
   // componentDidUpdate = async () => {
@@ -54,42 +55,58 @@ class Packages extends Component {
      console.log(this.props.data)
     let user = await AsyncStorage.getItem('user');
     console.log("signup ", user)
-    DevSettings.reload()
+   // DevSettings.reload()
+     
+     let data = packageSlider.filter(p=>p.name == "Basic");
+     console.log(data[0].Slider)
+      this.setState({packageSlider:  data[0].Slider})
+
   } 
+  getImage = (image) => {
+
+    switch (image) {
+        case "ingredients":
+            return require('../../assets/packages/unlimited_ingredients.png')
+            break;
+        case "Meals":
+            return require('../../assets/packages/meals.png')
+            break;
+        case "Nutritional":
+            return require('../../assets/packages/nutitional_value.png')
+            break;
+        case "Calories":
+              return require('../../assets/packages/calories.png')
+              break;
+        case "Advertisement":
+                return require('../../assets/packages/adverts.png')
+                break;
+        case "NoAdvertisement":
+                  return require('../../assets/packages/no_adverts.png')
+                  break;     
+        default:
+            return require('../../assets/packages/unlimited_ingredients.png');
+            break;
+    }
+}
 
   _onPressButton = async (model) => {
-    if(this.state.cardClicked == "Basic")
+    if(model.name == "Basic")
    {
-     if(model.name == "Standard")
-     {
-      this._slider.scrollBy(1, true)
-     }
-     else if(model.name == "Premium")
-     {
-      this._slider.scrollBy(2, true)
-     }
+    let data = packageSlider.filter(p=>p.name == "Basic");
+    console.log(data[0].Slider)
+     this.setState({packageSlider:  data[0].Slider})
    }
-   if(this.state.cardClicked == "Standard")
+   if(model.name == "Standard")
    {
-     if(model.name == "Basic")
-     {
-      this._slider.scrollBy(-1, true)
-     }
-     else if(model.name == "Premium")
-     {
-      this._slider.scrollBy(1, true)
-     }
+    let data = packageSlider.filter(p=>p.name == "Standard");
+    console.log(data[0].Slider)
+     this.setState({packageSlider:  data[0].Slider})
    }
-   if(this.state.cardClicked == "Premium")
+   if(model.name == "Premium")
    {
-     if(model.name == "Basic")
-     {
-      this._slider.scrollBy(-2, true)
-     }
-     else if(model.name == "Standard")
-     {
-      this._slider.scrollBy(-1, true)
-     }
+    let data = packageSlider.filter(p=>p.name == "Premium");
+    console.log(data[0].Slider)
+     this.setState({packageSlider:  data[0].Slider})
    }
     console.log("nameee"+model.name)
    await this.setState({default:''})
@@ -244,10 +261,10 @@ class Packages extends Component {
               />
             }
           >
-           {subscriptions?.map((subscription) => (
+           {this.state.packageSlider?.map((subscription) => (
             <View style={styles.slide1}>
-              <Image source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  {subscription.ingredient_limit == null ? "Unlimited" : subscription.ingredient_limit} ingredients</Text>
+              <Image source={this.getImage(subscription.image)}></Image>
+              <Text style={styles.text}>  {subscription.name}</Text>
             </View>
            ))}
             
@@ -316,7 +333,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    margin: height(5.5),
+    marginVertical: height(5.5),
+    marginHorizontal:20,
     borderRadius: 5
   },
   slide2: {

@@ -1,0 +1,80 @@
+[
+    {
+        "name":"Basic",
+        "id":1,
+        "Slider":[
+            {
+                "name": "03 ingredients",   
+                "image" :"ingredients"
+            },
+            {
+                "name": "Meals for 01" ,
+                "image" :"Meals"   
+            },
+            {
+                "name": "Nutritional value",
+                "image" :"Nutritional"
+            },
+            {
+                "name": "Calories per meal/portion",
+                "image" :"Calories"
+            },
+            {
+                "name": "Advertisement",
+                "image" :"Advertisement"
+            }
+        ]
+    },
+    {
+        "name":"Standard",
+        "id":2,
+        "Slider":[
+            {
+                "name": "03 ingredients",   
+                "image" :"ingredients"
+            },
+            {
+                "name": "Meals for 03",
+                "image" :"Meals"    
+            },
+            {
+                "name": "Nutritional value",
+                "image" :"Nutritional"   
+            },
+            {
+                "name": "Calories per meal/portion",
+                "image" :"Calories"   
+            },
+            {
+                "name": "No advertisement",
+                "image" :"NoAdvertisement"  
+            }
+        ]
+    },
+    {
+        "name":"Premium",
+        "id":3,
+        "Slider":[
+            {
+                "name": "Unlimited ingredients",   
+                "image" :"ingredients"
+            },
+            {
+                "name": "Meals for unlimited number of individuals" ,
+                "image" :"Meals"   
+            },
+            {
+                "name": "Nutritional value",
+                "image" :"Nutritional"
+            },
+            {
+                "name": "Calories per meal/portion",
+                "image" :"Calories"
+            },
+            {
+                "name": "NoAdvertisement",
+                "image" :"Advertisement"
+            }
+        ]
+    }
+]

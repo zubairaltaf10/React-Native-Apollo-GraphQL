@@ -113,7 +113,10 @@ class InGredentsInput extends React.Component {
   }
   
   onsearchIngredients = async (ingredient) => {
-    console.log(ingredient + "here")
+    if(ingredient.length <3)
+    {
+      return;
+    }
     client.query({
       query: GetIngredients,
       variables: {
@@ -423,11 +426,11 @@ class InGredentsInput extends React.Component {
         
       
         <PrimaryButton
-            title= "           View Plan            " 
+            title= "           VIEW PLAN            " 
             onPress={() => this._onSaveUserSubscription()}
             marginTop={height(5)}
             //loading={this.state.loading}
-            onPress={()=>{this.props.navigation.navigate('Login') }}
+            onPress={()=>{this.props.navigation.navigate('ManagePackge') }}
           />
       
         
@@ -465,7 +468,7 @@ class InGredentsInput extends React.Component {
                 //  fetchDataUrl={apiUrl}
                 //  onChangeText={(val) => this.onsearchIngredients(val)}
                 fetchData={(val) => this.onsearchIngredients(val)}
-                minimumCharactersCount={0}
+                minimumCharactersCount={2}
                 highlightText
                 valueExtractor={item => item.name}
                 //  rightContent={true}

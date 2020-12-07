@@ -80,7 +80,7 @@ class Verification extends React.Component {
         this.setState({loading:false})
         if (res.data.verifyEmail.status) {
 
-          this.updateusersession();
+         this.updateusersession();
           console.log(JSON.stringify(res.data.verifyEmail.status))
           const type = this.props.navigation.getParam('type');
           console.log(type + "type")
@@ -124,7 +124,7 @@ class Verification extends React.Component {
     }
     AsyncStorage.setItem('user', JSON.stringify(user)).then(
       () => {
-        this.props.navigation.navigate('App');
+       // this.props.navigation.navigate('App');
       },
     );
    }

@@ -122,7 +122,7 @@ class Signup extends Component {
         {
           var mess = err.graphQLErrors[0].message
           if(mess.includes("Validation")){
-            SNACKBAR.simple("Email address already exist");
+            SNACKBAR.simple("Error in signup");
           }
         }
         

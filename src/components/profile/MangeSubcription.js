@@ -25,6 +25,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import PaypalUI from '../Payment/PaypalUI';
+import packageSlider from '../Packages/packageSlider.json'
 //(null)
 class ManagePackages extends Component {
   swiperRef = React.createRef()
@@ -40,6 +41,24 @@ class ManagePackages extends Component {
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
           console.log('user subcription found in localstorage', this.state.currentsubscription);
+          
+          if(this.state.currentsubscription.name == "Basic"){
+            let data = packageSlider.filter(p=>p.name == "Standard");
+            console.log(data[0].Slider)
+             this.setState({packageSlider:  data[0].Slider})
+          }else if(this.state.currentsubscription.name == "Standard"){
+              let data = packageSlider.filter(p=>p.name == "Basic");
+              console.log(data[0].Slider)
+               this.setState({packageSlider:  data[0].Slider})
+            }else
+            {
+              let data = packageSlider.filter(p=>p.name == "Basic");
+              console.log(data[0].Slider)
+               this.setState({packageSlider:  data[0].Slider})
+            }
+          
+
+
         } else {
           this.props.navigation.navigate('Auth');
         }
@@ -58,7 +77,8 @@ class ManagePackages extends Component {
       currentsubscription : {},
       subscriptionmodel : {},
       loginuser : {},
-      yellowloading:false
+      yellowloading:false,
+      packageSlider : [],
     }
   }
   // componentDidUpdate = async () => {
@@ -68,41 +88,51 @@ class ManagePackages extends Component {
   //    console.log(this.props.data)
   //   await this.setState({subscriptions:this.props.data ? this.props.data : null})
   // } 
+  getImage = (image) => {
 
+    switch (image) {
+        case "ingredients":
+            return require('../../assets/packages/unlimited_ingredients.png')
+            break;
+        case "Meals":
+            return require('../../assets/packages/meals.png')
+            break;
+        case "Nutritional":
+            return require('../../assets/packages/nutitional_value.png')
+            break;
+        case "Calories":
+              return require('../../assets/packages/calories.png')
+              break;
+        case "Advertisement":
+                return require('../../assets/packages/adverts.png')
+                break;
+        case "NoAdvertisement":
+                  return require('../../assets/packages/no_adverts.png')
+                  break;     
+        default:
+            return require('../../assets/packages/unlimited_ingredients.png');
+            break;
+    }
+}
   _onPressButton = async (model) => {
-   if(this.state.cardClicked == "Basic")
-   {
-     if(model.name == "Standard")
-     {
-      this._slider.scrollBy(1, true)
-     }
-     else if(model.name == "Premium")
-     {
-      this._slider.scrollBy(2, true)
-     }
-   }
-   if(this.state.cardClicked == "Standard")
-   {
-     if(model.name == "Basic")
-     {
-      this._slider.scrollBy(-1, true)
-     }
-     else if(model.name == "Premium")
-     {
-      this._slider.scrollBy(1, true)
-     }
-   }
-   if(this.state.cardClicked == "Premium")
-   {
-     if(model.name == "Basic")
-     {
-      this._slider.scrollBy(-2, true)
-     }
-     else if(model.name == "Standard")
-     {
-      this._slider.scrollBy(-1, true)
-     }
-   }
+    if(model.name == "Basic")
+    {
+     let data = packageSlider.filter(p=>p.name == "Basic");
+     console.log(data[0].Slider)
+      this.setState({packageSlider:  data[0].Slider})
+    }
+    if(model.name == "Standard")
+    {
+     let data = packageSlider.filter(p=>p.name == "Standard");
+     console.log(data[0].Slider)
+      this.setState({packageSlider:  data[0].Slider})
+    }
+    if(model.name == "Premium")
+    {
+     let data = packageSlider.filter(p=>p.name == "Premium");
+     console.log(data[0].Slider)
+      this.setState({packageSlider:  data[0].Slider})
+    }
 
     console.log("nameee"+model.name)
     await this.setState({subscriptionmodel:model})
@@ -330,13 +360,13 @@ class ManagePackages extends Component {
               />
             }
           >
-           {subscriptions.map((subscription) => { 
-             return(
-            <View style={styles.slide1} >
-              <Image style={{width:52, height:52}} source={require('../../assets/packages/unlimited_ingredients.png')}></Image>
-              <Text style={styles.text}>  {subscription.ingredient_limit == null ? "Unlimited" : subscription.ingredient_limit} ingredients</Text>
+             {this.state.packageSlider?.map((subscription) => (
+            <View style={styles.slide1}>
+              <Image resizeMode="contain" style={{height:'30%' , width:'20%'}} source={this.getImage(subscription.image)}></Image>
+              <Text style={styles.text}>  {subscription.name}</Text>
             </View>
-           )})}
+           ))}
+            
             
           </Swiper>
         </View>
@@ -435,7 +465,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    margin: height(4.5),
+    marginVertical: height(5.5),
+    marginHorizontal:20,
     borderRadius: 5
   },
   slide2: {
@@ -456,7 +487,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'black',
-    fontSize: 22,
+    fontSize: 14,
     fontFamily: FONTFAMILY.bold,
     fontWeight: 'bold',
     marginTop: 10
