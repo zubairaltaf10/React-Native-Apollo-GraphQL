@@ -135,9 +135,14 @@ class MyFavorites extends React.Component {
        onTextInput = (value) => {
       
         if (value){
-        let recipes = [...this.state.recipes]
-        recipes = recipes.filter(x=>x.title.startsWith(value))
-        this.setState({recipes})
+        let recipes = [...this.state.backup]
+        recipes = recipes.filter(x=> x.title.indexOf(value) > -1 )
+         if (recipes.length > 0){
+          this.setState({recipes})
+          }
+        else {
+          this.setState({recipes:[]})
+        }
         }
         else {
           this.setState({recipes:this.state.backup})
