@@ -32,7 +32,7 @@ async componentDidMount(){
     else {
      console.log('no user found');
      this.timeout = setTimeout(async () => {
-      this.props.navigation.navigate("Login");
+      this.props.navigation.navigate("Auth");
     },1000);
     }
 // AsyncStorage.getItem('user').then((user) => {

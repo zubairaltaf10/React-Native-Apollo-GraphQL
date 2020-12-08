@@ -107,19 +107,19 @@ console.log(this.state.currentsubscription)
    }
    else if(this.state.currentsubscription.name == "Bisic")
     {
-      if((this.state.clicks + 1) > this.state.currentsubscription.person_limit)
+      if((this.state.clicks + 1) > parseInt(this.state.currentsubscription.person_limit))
       {
         this.setState({modal: true});
       }
       else{
-        this.setState({ clicks: this.state.clicks + 1 });
+        this.setState({ clicks: parseInt(this.state.clicks) + 1 });
       }
   }else{
-    this.setState({ clicks: this.state.clicks + 1 });
+    this.setState({ clicks: parseInt(this.state.clicks) + 1 });
   }
   }
   DecreaseItem = () => {
-    this.setState({ clicks: this.state.clicks - 1 });
+    this.setState({ clicks: parseInt(this.state.clicks) - 1 });
     //setAnimateToNumber(animateToNumber + this.state.clicks);
   }
   ViewPlan = () => {
@@ -399,8 +399,8 @@ else {
               title="+"
               onPress={this.IncrementItem}
               marginTop={height(40)}
-              disabled={this.state.clicks == this.state.currentsubscription?.person_limit ? true : false}
-              bgcolor={this.state.clicks == this.state.currentsubscription?.person_limit ? '#dedede' : COLORS.primary}
+              disabled={this.state.clicks == parseInt(this.state.currentsubscription?.person_limit) ? true : false}
+              bgcolor={this.state.clicks == parseInt(this.state.currentsubscription?.person_limit) ? '#dedede' : COLORS.primary}
             />
        
         </View>
