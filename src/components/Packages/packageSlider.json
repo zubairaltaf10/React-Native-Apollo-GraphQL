@@ -30,7 +30,7 @@
         "id":2,
         "Slider":[
             {
-                "name": "03 ingredients",   
+                "name": "06 ingredients",   
                 "image" :"ingredients"
             },
             {
@@ -72,8 +72,8 @@
                 "image" :"Calories"
             },
             {
-                "name": "NoAdvertisement",
-                "image" :"Advertisement"
+                "name": "No Advertisement",
+                "image" :"NoAdvertisement"
             }
         ]
     }

@@ -25,7 +25,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { parse } from "graphql";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import PaypalUI from '../Payment/PaypalUI';
-import packageSlider from '../Packages/packageSlider.json'
+import packageSlider from '../Packages/packageSlider.json';
+import {_} from 'lodash';
 //(null)
 class ManagePackages extends Component {
   swiperRef = React.createRef()
@@ -56,13 +57,12 @@ class ManagePackages extends Component {
               console.log(data[0].Slider)
                this.setState({packageSlider:  data[0].Slider})
             }
-          
-
-
         } else {
           this.props.navigation.navigate('Auth');
         }
       }
+     
+      
   constructor(props) {
     super(props);
     this.state = {
@@ -79,8 +79,18 @@ class ManagePackages extends Component {
       loginuser : {},
       yellowloading:false,
       packageSlider : [],
+      allsubscriptions : [],
     }
   }
+
+  componentWillReceiveProps(nextProps) 
+      {
+        if (this.props.subscriptions != nextProps.subscriptions){
+          this.setState({
+            allsubscriptions: this.props.subscriptions
+          })
+        }
+      }
   // componentDidUpdate = async () => {
   //   console.log(this.props.data);
   // }
@@ -217,28 +227,42 @@ class ManagePackages extends Component {
         console.log('ssss')
         SNACKBAR.simple("Subscription cancel successfully") 
         let user = await AsyncStorage.getItem('user');
-        console.log(user)
+      
        if (user) {
          user = JSON.parse(user);
-
-         user.user.user_subscription.subscription= {}; 
+         let basicsub = {
+          "name": "Basic",
+          "person_limit": "1",
+          "ingredient_limit": "3",
+          "amount": null,
+          "amount_per_year": null,
+          "amount_per_month": null,
+          "amount_description": "Free Plan",
+          "trial_days": null,
+          "description": "Upgrade anytime"
+        } 
+         user.user.user_subscription.subscription= basicsub; 
+        let bb = await this.setState({currentsubscription:basicsub }) ;
+       console.log('update' , this.state.currentsubscription)
+      let nn =  await AsyncStorage.setItem('user', JSON.stringify(user))
+       SNACKBAR.simple("Subscription shifted to  basic") 
        }
-       this.setState({currentsubscription:{} }) ;
-       AsyncStorage.setItem('user', JSON.stringify(user)).then(
-        () => {
-          
-        },
-      );
+       
     }
   onBasicSubmit = () => {
      // var res = this._onSaveUserSubscription();
   };
 
   render() {
-    const { subscriptions } = this.props.data ? this.props.data : null;
-   
     const  currentsubscription  = this.state.currentsubscription;
-    console.log( 'sss ' + currentsubscription.name)
+    const { subscriptions } = this.props.data ? this.props.data : null;
+    console.log( 'sss ' + this.state.allsubscriptions == null)
+    
+      
+    
+    
+    //const { optsubscriptions } = subscriptions;
+    //console.log( 'dddd ' + optsubscriptions)
     if (!subscriptions) {
       return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
 
@@ -246,7 +270,7 @@ class ManagePackages extends Component {
   //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
     //console.log(subscriptions)
     return (
-     
+      
       <View style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor="transparent" />
       <View style={{ paddingTop:20 ,paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -402,7 +426,7 @@ class ManagePackages extends Component {
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}
               horizontal={true}>
-               {subscriptions?.map((subscription) => (
+               {subscriptions.filter(p=>p.name != this.state.currentsubscription.name)?.map((subscription) => (
                 <TouchableOpacity onPress={() => this._onPressButton(subscription)}>
             <View style={{ marginLeft: 10}} >
             <View style={this.state.cardClicked == subscription.name || this.state.default == subscription.name ? styles.cardStyleClicked : styles.cardStyleSimple}>

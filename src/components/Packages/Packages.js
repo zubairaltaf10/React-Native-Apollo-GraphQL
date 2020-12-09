@@ -457,6 +457,7 @@ mutation addUserSubscription($user_id: Int!, $subscription_id: Int!){
     amount,
     amount_per_year,
     amount_per_month,
+    amount_description,
     name,
     trial_days,
     description
