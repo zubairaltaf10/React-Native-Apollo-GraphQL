@@ -86,7 +86,7 @@ const PaypalUI = async (show,amount) => {
           })
         .catch((error) => {
           if (error.code === 'USER_CANCELLATION') {
-              return reject(false)
+           //   return reject(false)
             // update your UI to handle cancellation
           } else {
             console.log(error.toString())
