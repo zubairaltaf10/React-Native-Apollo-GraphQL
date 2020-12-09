@@ -60,12 +60,21 @@ class InGredentsInput extends React.Component {
     viewloginmodel: false,
     refresh: true
   }
-  async componentDidMount() {
 
+  async componentDidMount() {
     await this.getRecipes()
-    this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
-      if (this.state.refresh)
+    this._unsubscribe = this.props.navigation.addListener("didFocus", async () => {
+      if (this.state.refresh){
+        let user = await AsyncStorage.getItem('user');
+        if (user) {
+          user = JSON.parse(user).user;
+          this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
+          console.log(this.state.limit)
+        } else {
+          this.setState({ limit: 3 })
+        }
         this.clearAll()
+      }
     });
     // this.setState({ ingredientlist: ingredientlist })
   }
@@ -163,7 +172,7 @@ class InGredentsInput extends React.Component {
       }
     }
   }
-  
+
   updateRecipes = checkedItems => {
     this.setState({ refresh: false })
     let items = [];
@@ -454,7 +463,7 @@ class InGredentsInput extends React.Component {
               onPress={() => this._onSaveUserSubscription()}
               marginTop={height(5)}
               //loading={this.state.loading}
-              onPress={() => { this.props.navigation.navigate('Login') }}
+              onPress={() => { this.props.navigation.navigate('ManagePackge') }}
             />
 
 
