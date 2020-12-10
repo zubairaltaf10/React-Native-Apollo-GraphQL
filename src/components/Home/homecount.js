@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet,Platform,StatusBar, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal} from "react-native";
+import { View, Text, Image, StyleSheet,Platform,StatusBar, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal,Share} from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -222,6 +222,28 @@ else {
    SNACKBAR.simple('Please complete your paymnet then to subscibe this package');
  }
 }
+
+onShare = async () => {
+  try {
+    const result = await Share.share({
+      message:
+        'React Native | A framework for building native apps using React',
+    });
+
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
   render() {
     const  currentsubscription  = this.state.currentsubscription;
     // currentsubscription.person_limit = 3
@@ -538,7 +560,7 @@ else {
             </View>
             <View style={{flex:0.25,flexDirection:'row',margin:7}}>
             <Icon name="adduser" type="AntDesign" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
-            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Invite Friends</Text>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}} onPress={this.onShare}>Invite Friends</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </View>
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>

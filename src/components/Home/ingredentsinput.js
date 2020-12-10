@@ -269,10 +269,10 @@ class InGredentsInput extends React.Component {
 
   checkItem = (name, fromSearch) => {
     let ingredientlist = [...this.state.ingredientlist]
-    if (this.state.checkedItemsLength == this.state.limit) {
-      this.setState({ viewloginmodel: true })
-      return;
-    }
+    // if (this.state.checkedItemsLength == this.state.limit) {
+    //   this.setState({ viewloginmodel: true })
+    //   return;
+    // }
     if (fromSearch == true) {
       ingredientlist.filter(ingredient => {
         console.log("from search", ingredient)
@@ -317,6 +317,10 @@ class InGredentsInput extends React.Component {
               ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
             }
             else {
+              if(this.state.checkedItemsLength == this.state.limit) {
+                this.setState({ viewloginmodel: true })
+                return;
+              }
               if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1) {
                 ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
                 item.clicked = true
