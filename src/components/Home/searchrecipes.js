@@ -44,13 +44,18 @@ const getToken = async () => {
 }
 const token = getToken();
 const authLink = setContext((_, { headers }) => {
-  console.log('token ', token)
-  return {
-    headers: {
-      ...headers,
-      authorization: token._W != "" ? `Bearer ${token._W}` : "",
+  AsyncStorage.getItem('user')
+  .then(userData => JSON.parse(userData))
+  .then(userData =>{
+    const Token = userData.access_token
+     console.log('token ' , Token)
+    return {
+      headers: {
+        ...headers,
+        authorization: `Bearer `+Token ,
+      }
     }
-  }
+  })
 })
 const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({
