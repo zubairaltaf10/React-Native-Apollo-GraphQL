@@ -147,6 +147,7 @@ class InGredentsInput extends React.Component {
   }
 
   searchRecipes = (from) => {
+    
     let checkedItems = []
 
     this.state.ingredientlist.filter(ingredient => {

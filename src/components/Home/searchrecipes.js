@@ -28,35 +28,15 @@ import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import { _ } from 'lodash';
 // import RBSheet from "react-native-raw-bottom-sheet";
-const getToken = async () => {
-  let token;
-
-  // get the authentication token from local storage if it exists
-  let user = await AsyncStorage.getItem("user")
-  user = JSON.parse(user)
-  if (user != null) {
-    token = user.access_token
-    return token
-  } else {
-    return ""
+const authLink = setContext(async (req, {headers}) => {
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
+    ...headers,
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
   }
-
-}
-const token = getToken();
-const authLink = setContext((_, { headers }) => {
-  AsyncStorage.getItem('user')
-  .then(userData => JSON.parse(userData))
-  .then(userData =>{
-    const Token = userData.access_token
-     console.log('token ' , Token)
-    return {
-      headers: {
-        ...headers,
-        authorization: `Bearer `+Token ,
-      }
-    }
-  })
 })
+// 
 const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({
   link: ApolloLink.from([authLink, uploadLink]),

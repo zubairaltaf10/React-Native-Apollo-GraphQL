@@ -212,6 +212,7 @@ class UpdateProfile extends Component {
       })
       .then((res) => {
         this.setState({loading:false})
+        this.updateupdatelocalstorage()
         SNACKBAR.simple('Profile updated successfully.');
       })
       .catch((err) => {
@@ -579,7 +580,7 @@ onrequestModelclose = () =>
           {mutation => (
         <PrimaryButton
               loading={this.state.loading}
-              title="   Update   "
+              title="   UPDATE   "
               onPress={() => { this.onSubmit() }}
               marginTop={30}
             />

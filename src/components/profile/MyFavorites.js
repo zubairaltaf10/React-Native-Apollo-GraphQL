@@ -32,42 +32,20 @@ const resetAction = StackActions.reset({
     actions: [NavigationActions.navigate({ routeName: 'MyFaviourites' })],
 });
 
-const getToken = async () => {
-    let token;
-  
-    // get the authentication token from local storage if it exists
-    let user = await AsyncStorage.getItem("user")
-    user = JSON.parse(user)
-    if(user != null)
-    {
-      token = user.access_token
-       return token
-    }else
-    {
-      return ""
-    }
-      
+const authLink = setContext(async (req, {headers}) => {
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
+    ...headers,
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
   }
-  const token = getToken();
-  const  authLink =  setContext((_, { headers } )  =>  {
-    AsyncStorage.getItem('user')
-    .then(userData => JSON.parse(userData))
-    .then(userData =>{
-      const Token = userData.access_token
-       console.log('token ' , Token)
-      return {
-        headers: {
-          ...headers,
-          authorization: `Bearer `+Token ,
-        }
-      }
-    })
-  })
-  const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
-  const client = new ApolloClient({
-    link: ApolloLink.from([ authLink, uploadLink ]),
-    cache : new InMemoryCache(),
-  });
+})
+// 
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+const client = new ApolloClient({
+  link: ApolloLink.from([authLink, uploadLink]),
+  cache: new InMemoryCache(),
+});
 class MyFavorites extends React.Component {
     async componentDidMount() {
        
@@ -128,7 +106,7 @@ class MyFavorites extends React.Component {
                  recipe_id: recipeId }
            })
              .then(async (data) => {
-                 SNACKBAR.simple("Added in favourite") ; 
+                 SNACKBAR.simple("Unfavourite successfully") ; 
              })
              .catch((err) => {
               // this.setState({loading:false})

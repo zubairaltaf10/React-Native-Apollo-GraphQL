@@ -20,44 +20,23 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
+import AsyncStorage from '@react-native-community/async-storage';
+import {  equipments } from './ingredientslist.json'
 import {_} from 'lodash';
-const getToken = async () => {
-    let token;
-  
-    // get the authentication token from local storage if it exists
-    let user = await AsyncStorage.getItem("user")
-    user = JSON.parse(user)
-    if(user != null)
-    {
-      token = user.access_token
-       return token
-    }else
-    {
-      return ""
+const authLink = setContext(async (req, {headers}) => {
+    const user = await AsyncStorage.getItem('user')
+    let token = JSON.parse(user)
+    return {
+      ...headers,
+      headers: { authorization: token ? `Bearer ${token. access_token}` : null }
     }
-      
-  }
-  const token = getToken();
-  const  authLink =  setContext((_, { headers } )  =>  {
-    AsyncStorage.getItem('user')
-    .then(userData => JSON.parse(userData))
-    .then(userData =>{
-      const Token = userData.access_token
-       console.log('token ' , Token)
-      return {
-        headers: {
-          ...headers,
-          authorization: `Bearer `+Token ,
-        }
-      }
-    })
   })
+  // 
   const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
   const client = new ApolloClient({
-    link: ApolloLink.from([ authLink, uploadLink ]),
-    cache : new InMemoryCache(),
+    link: ApolloLink.from([authLink, uploadLink]),
+    cache: new InMemoryCache(),
   });
-  
 const regex = /(<([^>]+)>)/ig;
 const data = [
     {
@@ -78,7 +57,21 @@ class RecipesDetails extends React.Component {
     
     async componentDidMount() {
         console.log('ddddddd ',this.props.navigation.getParam('id'))
-      this.setState({loading:true})
+        let allequipments = [];
+        //allequipments = JSON.parse(equipments);
+        var eq1 = {"__typename": "AITEquipmentType", "image": "https://spoonacular.com/cdn/equipment_100x100/stock-pot.jpg", "name": "pot"}
+        var eq2 =  {"__typename": "AITEquipmentType", "image": "https://spoonacular.com/cdn/equipment_100x100/roasting-pan.jpg", "name": "roasting pan"}
+        var eq3 = {"__typename": "AITEquipmentType", "image": "https://spoonacular.com/cdn/equipment_100x100/oven.jpg", "name": "oven"}
+       
+        allequipments.push(eq1)
+        allequipments.push(eq2)
+        allequipments.push(eq3)
+
+        
+        console.log(allequipments)
+        this.setState({allequipments:allequipments})
+
+      this.setState({loading:false})
       client.query({
         query: query,
         variables: {
@@ -366,13 +359,15 @@ class RecipesDetails extends React.Component {
                   <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15}}>Equipment Required</Text>
                   
                   
-              <View style={{flexDirection:'row',width:'100%',height:'19%'}}>
-              <ScrollView style={{flexDirection:'row',width:'100%'}} horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
+              <View style={{flexDirection:'row',width:'100%',height:'25%'}}>
+              <ScrollView style={{flexDirection:'row',width:'100%', maxHeight: 450}} horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
               { this.state.allequipments?.map((x ) =>
-                  <View style={{backgroundColor:'white',flexWrap:'wrap',borderRadius:12,marginTop:10, marginRight:10,paddingHorizontal:20,paddingVertical:10}}>
+                  <View style={{backgroundColor:'white', width:120,  borderRadius:12,marginTop:10, marginRight:10,paddingHorizontal:20,paddingVertical:10}}>
                       <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginLeft:5}}>{x.name}</Text>
-                      <Image source={{uri:x.image}} style={[styles.image1,{alignSelf:'center',resizeMode:"contain",marginTop:10}]}>
+                     <View style={{flex: 1 }}>
+                     <Image source={{uri:x.image}} style={[styles.image1,{resizeMode:"contain"}]}>
                         </Image>
+                     </View>
                   </View>
               )}
               </ScrollView>
@@ -435,7 +430,7 @@ const styles = StyleSheet.create({
     image1: {
       //  backgroundColor:'pink',
         resizeMode: "contain",
-        width:'110%',
+        width:100,
         flex:1
       //  height:'10%'
 },

@@ -498,7 +498,7 @@ else {
             <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
             <TouchableOpacity onPress={()=>{
               this.RBSheet.close()
-              this.props.navigation.navigate('Auth')
+              this.props.navigation.navigate('SignupOptions')
               }}>
             <Icon name="user-plus" type="FontAwesome" style={{fontSize: 18,alignSelf:'flex-end'}}
              
@@ -526,7 +526,7 @@ else {
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
             </View>
             <View style={{flex:0.24,flexDirection:'row',margin:7}}>
-            <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Icon name="bookmark" type="Feather" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
              onPress={()=>{
               this.RBSheet.close();
@@ -556,6 +556,7 @@ else {
             </View>
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
             </View>
+            {!_.isEmpty(this.state.loginuser) &&(
             <View style={{flex:0.25,flexDirection:'row',margin:7}} >
             <Icon name="logout" type="MaterialIcons" style={{fontSize: 21,alignSelf:'center',color:COLORS.primary,left:8}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}} 
@@ -566,6 +567,7 @@ else {
               }}>Logout</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </View>
+            )}
           </View>
         </RBSheet>
         </View>
