@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, StyleSheet,Platform,StatusBar, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal,Share} from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
   //TouchableOpacity
@@ -707,4 +706,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default withAuth(HomeCount);
+export default HomeCount;

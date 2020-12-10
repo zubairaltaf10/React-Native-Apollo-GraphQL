@@ -20,7 +20,6 @@ import {GetProfileErrors} from '../../Helpers/GetProfileErrors';
 import {GetPasswordErrors} from '../../Helpers/GetProfileErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
-import {withAuth} from '../../store/hoc/withAuth';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient, } from 'apollo-client';

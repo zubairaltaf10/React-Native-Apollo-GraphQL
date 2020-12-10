@@ -9,7 +9,6 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import { withAuth } from "../../store/hoc/withAuth";
 import LinearGradient from "react-native-linear-gradient";
 import {FONTFAMILY} from '../../Theme/Fonts';
 import PrimaryButton from '../Button/PrimaryButton';

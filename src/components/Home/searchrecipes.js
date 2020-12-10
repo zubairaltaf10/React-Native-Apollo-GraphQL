@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, ImageBackground, StyleSheet, ActivityIndicator, Platform, TouchableOpacity, BackHandler, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
   Spinner

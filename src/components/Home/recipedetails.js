@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, ActivityIndicator ,StatusBar, ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
     Icon,
     Spinner
@@ -512,4 +511,3 @@ glutenFree,
   }
 `;
 export default  withApollo(RecipesDetails);
-// export default withAuth(RecipesDetails)

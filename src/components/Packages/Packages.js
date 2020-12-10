@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   StatusBar
 } from "react-native";
-import { withAuth } from "../../store/hoc/withAuth";
 import Swiper from 'react-native-swiper'
 import { height, width } from "react-native-dimension";
 import PrimaryButton from '../Button/PrimaryButton';
@@ -469,15 +468,3 @@ export default graphql(mutation)(
   graphql(query)(Packages)
 );
 
-// export default graphql(mutation)(
-//   graphql(query, {
-//     options: (props) => {
-//       //const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-//       // return {
-//       //   variables: { userId: userInfo.id },
-//       // };
-//     },
-//   })(Packages)
-// );
-//  const PackagesTab = graphql(query)(Packages);
-//   export default withAuth(PackagesTab);

@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, StyleSheet, Platform, Modal, StatusBar, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
   Spinner
@@ -864,5 +863,3 @@ query cacheIngredients($name: String=""){
 `;
 export default withApollo(InGredentsInput);
 
-//const InGredentsInputTab = graphql(mutation)(InGredentsInput);
-//export default withAuth(InGredentsInputTab);

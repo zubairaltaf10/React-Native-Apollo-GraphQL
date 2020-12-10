@@ -10,7 +10,6 @@ import CountdownCircle from 'react-native-countdown-circle';
 import Axios from 'axios';
 import API from '../../Constants/API.js';
 import AsyncStorage from '@react-native-community/async-storage';
-import {withAuth} from '../../store/hoc/withAuth.js';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -233,5 +232,5 @@ class VerificationForGotPassword extends React.Component {
 
 
 const VerificationForGorPasswordTab = graphql(mutation)(VerificationForGotPassword);
-export default withAuth(VerificationForGorPasswordTab);
+export default VerificationForGorPasswordTab;
 
