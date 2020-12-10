@@ -366,12 +366,12 @@ class RecipesDetails extends React.Component {
                   <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15}}>Equipment Required</Text>
                   
                   
-              <View style={{flexDirection:'row',width:'100%',flex:0.3}}>
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
+              <View style={{flexDirection:'row',width:'100%',height:'19%'}}>
+              <ScrollView style={{flexDirection:'row',width:'100%'}} horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
               { this.state.allequipments?.map((x ) =>
-                  <View style={{backgroundColor:'white',width:'15%',height:'10%',borderRadius:12,marginTop:10, marginRight:10}}>
-                      <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginTop:5,marginLeft:5}}>{x.name}</Text>
-                      <Image source={{uri:x.image}} style={[styles.image1,{alignSelf:'center',resizeMode:"contain"}]}>
+                  <View style={{backgroundColor:'white',flexWrap:'wrap',borderRadius:12,marginTop:10, marginRight:10,paddingHorizontal:20,paddingVertical:10}}>
+                      <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginLeft:5}}>{x.name}</Text>
+                      <Image source={{uri:x.image}} style={[styles.image1,{alignSelf:'center',resizeMode:"contain",marginTop:10}]}>
                         </Image>
                   </View>
               )}
@@ -433,10 +433,11 @@ const styles = StyleSheet.create({
      //   alignSelf: "center",
     },
     image1: {
-        flex: 1,
+      //  backgroundColor:'pink',
         resizeMode: "contain",
-        width:100,
-        height:100
+        width:'110%',
+        flex:1
+      //  height:'10%'
 },
     whitebox: {
         // backgroundColor: 'white',

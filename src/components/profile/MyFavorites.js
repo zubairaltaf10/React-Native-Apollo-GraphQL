@@ -219,7 +219,7 @@ class MyFavorites extends React.Component {
                                 </ImageBackground>
                             </View>
                             <View style={{flex:0.4}}>
-                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails')}>
+                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails', { id: x.id })}>
                             <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>{x.title}</Text>
                             </TouchableOpacity>
                                 {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}

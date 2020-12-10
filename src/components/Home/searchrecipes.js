@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, ImageBackground, StyleSheet, ActivityIndicator, Platform, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
+import { View, Text, Image, ImageBackground, StyleSheet, ActivityIndicator, Platform, TouchableOpacity, BackHandler, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -108,8 +108,18 @@ class SearchRecipes extends React.Component {
     } else {
       console.log('no user found');
     }
-
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
+
+  componentWillUnmount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton = () =>{
+    this.props.navigation.state.params.updateData(this.state.clickedItems);
+    this.props.navigation.goBack();
+    return true;
+}
   constructor(props) {
     super(props);
   }
@@ -193,13 +203,19 @@ class SearchRecipes extends React.Component {
     // this.setState({ingredientlist})
 
   }
+
+  goBack = () => {
+    this.props.navigation.state.params.updateData(this.state.clickedItems);
+    this.props.navigation.goBack();
+  }
+
   render() {
 
     return (
       <View style={{ flex: 1 }}>
         <View style={{ paddingTop: 20, paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
           <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
-            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+            <TouchableOpacity onPress={() => this.goBack()}>
               <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize: 18 }}></Icon>
             </TouchableOpacity>
           </View>

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform,Modal, StatusBar ,TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
+import { View, Text, Image, StyleSheet, Platform, Modal, StatusBar, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
 import { withAuth } from "../../store/hoc/withAuth";
@@ -7,7 +7,7 @@ import {
   Icon,
   Spinner
 } from "native-base";
-import {Metrics} from '../../Theme';
+import { Metrics } from '../../Theme';
 import PrimaryButton from '../Button/PrimaryButton';
 import PrimaryButton2 from '../Button/PrimaryButton2';
 import COLORS from '../../Theme/Colors';
@@ -17,7 +17,7 @@ import { graphql } from "react-apollo";
 import { withApollo } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
-import { NETWORK_INTERFACE,SANDBOX_BRAINTREE } from '../../config';
+import { NETWORK_INTERFACE, SANDBOX_BRAINTREE } from '../../config';
 import MultiSelect from "react-native-multiple-select";
 import ingredientlist from './ingredientslist.json'
 import { Autocomplete, withKeyboardAwareScrollView } from "react-native-dropdown-autocomplete";
@@ -57,9 +57,29 @@ class InGredentsInput extends React.Component {
     checkedItems: [],
     checkedItemsLength: 0,
     showSelected: false,
-    viewloginmodel:false
+    viewloginmodel: false,
+    refresh: true
   }
-  componentDidMount() {
+
+  async componentDidMount() {
+    await this.getRecipes()
+    this._unsubscribe = this.props.navigation.addListener("didFocus", async () => {
+      if (this.state.refresh){
+        let user = await AsyncStorage.getItem('user');
+        if (user) {
+          user = JSON.parse(user).user;
+          this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
+          console.log(this.state.limit)
+        } else {
+          this.setState({ limit: 3 })
+        }
+        this.clearAll()
+      }
+    });
+    // this.setState({ ingredientlist: ingredientlist })
+  }
+
+  getRecipes = async () => {
     this.setState({ loading: true })
     client.query({
       query: getCacheIngredients,
@@ -75,7 +95,7 @@ class InGredentsInput extends React.Component {
         const resultsCount = _(data.data.cacheIngredients.data).groupBy('aisle').map((ingredients, aisle) => ({
           aisle: aisle ? aisle : "Others",
           ingredients,
-          total:ingredients.length
+          total: ingredients.length
         })).value()
         this.setState({ ingredientlist: resultsCount })
         let user = await AsyncStorage.getItem('user');
@@ -83,7 +103,7 @@ class InGredentsInput extends React.Component {
           user = JSON.parse(user).user;
           this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
           console.log(this.state.limit)
-        }else{
+        } else {
           this.setState({ limit: 3 })
         }
       })
@@ -91,13 +111,6 @@ class InGredentsInput extends React.Component {
         this.setState({ loading: false })
         console.log(err)
       })
-    // this.setState({ ingredientlist: ingredientlist })
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-  }
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
   }
 
   _keyboardDidShow(e) {
@@ -107,16 +120,12 @@ class InGredentsInput extends React.Component {
   _keyboardDidHide() {
     this.setState({ bottomHeight: 0 })
   }
-  onrequestViewloginModelclose = () =>
-  {
-    this.setState({viewloginmodel: false})
+  onrequestViewloginModelclose = () => {
+    this.setState({ viewloginmodel: false })
   }
-  
+
   onsearchIngredients = async (ingredient) => {
-    if(ingredient.length <3)
-    {
-      return;
-    }
+    console.log(ingredient + "here")
     client.query({
       query: GetIngredients,
       variables: {
@@ -145,21 +154,46 @@ class InGredentsInput extends React.Component {
       ingredient.ingredients.some(item => {
         if (item.clicked == true) {
           checkedItems.push(item)
-          this.setState({ checkedItems:checkedItems })
+          this.setState({ checkedItems: checkedItems })
         }
       })
     })
-    if (from == 'button') {
-      this.props.navigation.navigate('SearchRecipes', {
-        clickeditems: checkedItems
-      })
-    }
-    else {
-      if (checkedItems.length > 0){
-      this.setState({ showSelected: true })
-     }
+    if (checkedItems.length > 0) {
+      if (from == 'button') {
+        this.props.navigation.navigate('SearchRecipes', {
+          clickeditems: checkedItems,
+          updateData: this.updateRecipes
+        })
+      }
+      else {
+        if (checkedItems.length > 0) {
+          this.setState({ showSelected: true })
+        }
+      }
     }
   }
+
+  updateRecipes = checkedItems => {
+    this.setState({ refresh: false })
+    let items = [];
+    if (checkedItems.length == 0) {
+      this.clearAll()
+    }
+    if (this.state.checkedItems.length != checkedItems.length) {
+      this.state.checkedItems.filter(ingredient => {
+        checkedItems.some(item => {
+          if (item.name != ingredient.name) {
+            let data = { name: "" }
+            data.name = ingredient.name
+            items.push(data)
+          }
+        })
+      })
+      items.forEach(x => {
+        this.onRemove(x)
+      })
+    }
+  };
 
   handleSelectItem = (item, index) => {
     this.aisleAdd(item)
@@ -168,7 +202,7 @@ class InGredentsInput extends React.Component {
     //  console.log(JSON.stringify(item) + "ITEMMMM");
   }
   ingredientAdd = (itemm) => {
-  
+
     let ingredientlist = [...this.state.ingredientlist]
     //  console.log("from search", name.name)
     ingredientlist.filter(ingredient => {
@@ -235,8 +269,8 @@ class InGredentsInput extends React.Component {
 
   checkItem = (name, fromSearch) => {
     let ingredientlist = [...this.state.ingredientlist]
-    if(this.state.checkedItemsLength == this.state.limit){
-      this.setState({viewloginmodel:true})
+    if (this.state.checkedItemsLength == this.state.limit) {
+      this.setState({ viewloginmodel: true })
       return;
     }
     if (fromSearch == true) {
@@ -244,17 +278,17 @@ class InGredentsInput extends React.Component {
         console.log("from search", ingredient)
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
-            if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1){
-            item.clicked = true
+            if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1) {
+              item.clicked = true
             }
-            if (item.clicked == true){
+            if (item.clicked == true) {
               ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
               this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
             }
             else {
-              ingredient.checked = ingredient.checked -1 
+              ingredient.checked = ingredient.checked - 1
               this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
-            }            
+            }
           }
         })
       })
@@ -265,7 +299,7 @@ class InGredentsInput extends React.Component {
       ingredientlist.filter(ingredient =>
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
-           
+
             // if (this.state.checkedItemsLength + 1 > parseInt(this.state.limit)){
             //   item.clicked = false
             //   this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
@@ -277,51 +311,50 @@ class InGredentsInput extends React.Component {
             //   ingredient.checked = ingredient.checked -1 
             // }
             // this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
-            if (item.clicked == true){
+            if (item.clicked == true) {
               item.clicked = false
-              this.setState({checkedItemsLength : this.state.checkedItemsLength == 0 ? 0 :this.state.checkedItemsLength -1})
+              this.setState({ checkedItemsLength: this.state.checkedItemsLength == 0 ? 0 : this.state.checkedItemsLength - 1 })
               ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
             }
             else {
-              if ( parseInt(this.state.limit) >= this.state.checkedItemsLength + 1 ){
+              if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1) {
                 ingredient.checked ? ingredient.checked = ingredient.checked + 1 : ingredient.checked = 1
-                  item.clicked = true
-                  this.setState({checkedItemsLength:this.state.checkedItemsLength + 1})
-            }
+                item.clicked = true
+                this.setState({ checkedItemsLength: this.state.checkedItemsLength + 1 })
+              }
             }
           }
         }))
     }
     this.setState({ ingredientlist })
   }
-    //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
+  //console.log(JSON.stringify(ingredientlist) + "list=>>>>>>>>>>>>>>>>>>>>>>>")
   payment = (amount) => {
     BraintreeDropIn.show({
       clientToken: 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpGVXpJMU5pSXNJbXRwWkNJNklqSXdNVGd3TkRJMk1UWXRjMkZ1WkdKdmVDSXNJbWx6Y3lJNkltaDBkSEJ6T2k4dllYQnBMbk5oYm1SaWIzZ3VZbkpoYVc1MGNtVmxaMkYwWlhkaGVTNWpiMjBpZlEuZXlKbGVIQWlPakUyTURZNE5EYzVORFVzSW1wMGFTSTZJbUU1TURsa00yUTBMVGcyTkdNdE5ERXhOaTA0WkRBMExURTFZMkUyTlRRM1ptWXhZU0lzSW5OMVlpSTZJbUo1Wm01blluTnpOVGh5T1dJeWVEVWlMQ0pwYzNNaU9pSm9kSFJ3Y3pvdkwyRndhUzV6WVc1a1ltOTRMbUp5WVdsdWRISmxaV2RoZEdWM1lYa3VZMjl0SWl3aWJXVnlZMmhoYm5RaU9uc2ljSFZpYkdsalgybGtJam9pWW5sbWJtZGljM00xT0hJNVlqSjROU0lzSW5abGNtbG1lVjlqWVhKa1gySjVYMlJsWm1GMWJIUWlPbVpoYkhObGZTd2ljbWxuYUhSeklqcGJJbTFoYm1GblpWOTJZWFZzZENKZExDSnpZMjl3WlNJNld5SkNjbUZwYm5SeVpXVTZWbUYxYkhRaVhTd2liM0IwYVc5dWN5STZlMzE5LnM2Mko3VDQza2tMRnhFNWpJMmdPUXNTUlFUMDI4TVNQc2lhejFoR1F2UUtyd2ZXZkZZWE9sWExBT2g5Y0RPWUcxWlBSb2dNd2NjcUY1cXhFZFo3SjRBIiwiY29uZmlnVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzL2J5Zm5nYnNzNThyOWIyeDUvY2xpZW50X2FwaS92MS9jb25maWd1cmF0aW9uIiwiZ3JhcGhRTCI6eyJ1cmwiOiJodHRwczovL3BheW1lbnRzLnNhbmRib3guYnJhaW50cmVlLWFwaS5jb20vZ3JhcGhxbCIsImRhdGUiOiIyMDE4LTA1LTA4IiwiZmVhdHVyZXMiOlsidG9rZW5pemVfY3JlZGl0X2NhcmRzIl19LCJjbGllbnRBcGlVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvYnlmbmdic3M1OHI5YjJ4NS9jbGllbnRfYXBpIiwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwibWVyY2hhbnRJZCI6ImJ5Zm5nYnNzNThyOWIyeDUiLCJhc3NldHNVcmwiOiJodHRwczovL2Fzc2V0cy5icmFpbnRyZWVnYXRld2F5LmNvbSIsImF1dGhVcmwiOiJodHRwczovL2F1dGgudmVubW8uc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbSIsInZlbm1vIjoib2ZmIiwiY2hhbGxlbmdlcyI6W10sInRocmVlRFNlY3VyZUVuYWJsZWQiOnRydWUsImFuYWx5dGljcyI6eyJ1cmwiOiJodHRwczovL29yaWdpbi1hbmFseXRpY3Mtc2FuZC5zYW5kYm94LmJyYWludHJlZS1hcGkuY29tL2J5Zm5nYnNzNThyOWIyeDUifSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImJpbGxpbmdBZ3JlZW1lbnRzRW5hYmxlZCI6dHJ1ZSwiZW52aXJvbm1lbnROb05ldHdvcmsiOnRydWUsInVudmV0dGVkTWVyY2hhbnQiOmZhbHNlLCJhbGxvd0h0dHAiOnRydWUsImRpc3BsYXlOYW1lIjoiV2hhdCBZb3UgR290PyIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJicmFpbnRyZWVDbGllbnRJZCI6Im1hc3RlcmNsaWVudDMiLCJtZXJjaGFudEFjY291bnRJZCI6IndoYXR5b3Vnb3QiLCJjdXJyZW5jeUlzb0NvZGUiOiJFVVIifX0=',
-   //   merchantIdentifier: 'applePayMerchantIdentifier',
+      //   merchantIdentifier: 'applePayMerchantIdentifier',
       googlePayMerchantId: 'byfngbss58r9b2x5',
-   //   countryCode: 'US',    //apple pay setting
+      //   countryCode: 'US',    //apple pay setting
       currencyCode: 'USD',   //apple pay setting
-   //   merchantName: 'Your Merchant Name for Apple Pay',
-      orderTotal:amount.toString(),
+      //   merchantName: 'Your Merchant Name for Apple Pay',
+      orderTotal: amount.toString(),
       googlePay: true,
       applePay: false,
       vaultManager: false,
       cardDisabled: false,
       darkTheme: true,
     })
-    .then(result => 
-      {
-       this.executePayment(result.nonce,amount.toString())
+      .then(result => {
+        this.executePayment(result.nonce, amount.toString())
       })
-    .catch((error) => {
-      if (error.code === 'USER_CANCELLATION') {
-        // update your UI to handle cancellation
-      } else {
-        console.log(error)
-        // update your UI to handle other errors
-      }
-    });
+      .catch((error) => {
+        if (error.code === 'USER_CANCELLATION') {
+          // update your UI to handle cancellation
+        } else {
+          console.log(error)
+          // update your UI to handle other errors
+        }
+      });
   }
 
   executePayment = (nounce, amount) => {
@@ -340,7 +373,7 @@ class InGredentsInput extends React.Component {
         console.log(data)
       })
       .catch((err) => {
-        this.setState({loading:false})
+        this.setState({ loading: false })
         console.log(err)
       })
   }
@@ -352,30 +385,30 @@ class InGredentsInput extends React.Component {
       ingredient.ingredients.some(item => {
         if (item.name == itemm.name) {
           item.clicked == true ? item.clicked = false : item.clicked = true
-        //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
-        if (item.clicked == false){
-          ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
-          this.setState({checkedItemsLength : this.state.checkedItemsLength == 0 ? 0 :this.state.checkedItemsLength -1})
+          //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+          if (item.clicked == false) {
+            ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
+            this.setState({ checkedItemsLength: this.state.checkedItemsLength == 0 ? 0 : this.state.checkedItemsLength - 1 })
+          }
+          else {
+            this.setState({ checkedItemsLength: this.state.checkedItemsLength + 1 })
+          }
         }
-        else {
-          this.setState({checkedItemsLength:this.state.checkedItemsLength + 1})
-        }  
-      }
-     
-    }))
+
+      }))
 
     checkedItems = checkedItems.filter(item => item.name != itemm.name);
-    if (checkedItems.length == 0){
-      this.setState({showSelected:false})
+    if (checkedItems.length == 0) {
+      this.setState({ showSelected: false })
     }
-      //   this.setState({checkedItems})
-      this.setState({checkedItems})
-      this.setState({ingredientlist})
+    //   this.setState({checkedItems})
+    this.setState({ checkedItems })
+    this.setState({ ingredientlist })
 
   }
 
   clearAll = () => {
-    this.setState({checkedItemsLength: 0})
+    this.setState({ checkedItemsLength: 0 })
     let ingredientlist = [...this.state.ingredientlist]
     let checkedItems = [...this.state.checkedItems]
     ingredientlist.filter(ingredient =>
@@ -383,17 +416,17 @@ class InGredentsInput extends React.Component {
         if (item.clicked = true) {
           item.clicked = false
           ingredient.checked = 0
-        //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
-      }
-    }))
+          //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
+        }
+      }))
 
     checkedItems = checkedItems.filter(item => item.clicked == true);
-    if (checkedItems.length == 0){
-      this.setState({showSelected:false})
+    if (checkedItems.length == 0) {
+      this.setState({ showSelected: false })
     }
-      //   this.setState({checkedItems})
-      this.setState({checkedItems})
-      this.setState({ingredientlist})
+    //   this.setState({checkedItems})
+    this.setState({ checkedItems })
+    this.setState({ ingredientlist })
   }
   render() {
     // console.log(this.props.data.results ? this.props.data.results : null)
@@ -405,43 +438,43 @@ class InGredentsInput extends React.Component {
       //    <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
       // </View>
       <View style={{ flex: 1 }}>
-      <StatusBar translucent backgroundColor="transparent" />
-       <Modal
-      animationType="fade"
-      transparent={true}
-      
-      visible={this.state.viewloginmodel}
-      onRequestClose={this.onrequestViewloginModelclose}>
-      <View style={styles.overlay} onTouchEnd={this.onrequestViewloginModelclose} />
-      <View onTouchEnd={this.onrequestViewloginModelclose}
-        style={[
-          styles.modelContainer,
-          {
-            marginTop:  Metrics.screenHeight / 2.5,
-          },
-        ]}>
-        <Text style={styles.modeltext} >
-        To add an other Ingredent, you will need to subcribe a plan
+        <StatusBar translucent backgroundColor="transparent" />
+        <Modal
+          animationType="fade"
+          transparent={true}
+
+          visible={this.state.viewloginmodel}
+          onRequestClose={this.onrequestViewloginModelclose}>
+          <View style={styles.overlay} onTouchEnd={this.onrequestViewloginModelclose} />
+          <View onTouchEnd={this.onrequestViewloginModelclose}
+            style={[
+              styles.modelContainer,
+              {
+                marginTop: Metrics.screenHeight / 2.5,
+              },
+            ]}>
+            <Text style={styles.modeltext} >
+              To add an other Ingredent, you will need to subcribe a plan
         </Text>
-        
-      
-        <PrimaryButton
-            title= "           VIEW PLAN            " 
-            onPress={() => this._onSaveUserSubscription()}
-            marginTop={height(5)}
-            //loading={this.state.loading}
-            onPress={()=>{this.props.navigation.navigate('ManagePackge') }}
-          />
-      
-        
-      </View>
-    </Modal>
+
+
+            <PrimaryButton
+              title="           View Plan            "
+              onPress={() => this._onSaveUserSubscription()}
+              marginTop={height(5)}
+              //loading={this.state.loading}
+              onPress={() => { this.props.navigation.navigate('ManagePackge') }}
+            />
+
+
+          </View>
+        </Modal>
         <View style={{ flex: 0.9 }}>
 
-          <View style={{paddingTop: 20, paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+          <View style={{ paddingTop: 20, paddingBottom: 20, backgroundColor: COLORS.primary, flexDirection: 'row' }}>
             <View style={{ flex: 0.1, marginTop: height(5), marginLeft: 10 }}>
-              <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
-              <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10,fontSize:18 }}></Icon>
+              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize: 18 }}></Icon>
               </TouchableOpacity>
             </View>
             <View style={{ flex: 0.8 }}>
@@ -466,11 +499,12 @@ class InGredentsInput extends React.Component {
                   />)}
                 placeholder={'Search Ingredients'}
                 //  fetchDataUrl={apiUrl}
-                //  onChangeText={(val) => this.onsearchIngredients(val)}
+                onChangeText={(val) => this.onsearchIngredients(val)}
                 fetchData={(val) => this.onsearchIngredients(val)}
-                minimumCharactersCount={2}
+                minimumCharactersCount={0}
                 highlightText
                 valueExtractor={item => item.name}
+                // data={this.state.searchResults}
                 //  rightContent={true}
                 // rightTextExtractor={item => item.properties}
                 noDataText={'No ingredient found'}
@@ -483,6 +517,7 @@ class InGredentsInput extends React.Component {
                 //            separatorStyle={{backgroundcolor:'pink'}}
                 listFooterStyle={{ height: 0.1, marginTop: 3 }}
                 containerStyle={{ fontSize: 20 }}
+              //  valueExtractor={item => item.name}
               //  overlayStyle={{fontSize:20}}
               // containerStyle={{borderColor:'pink',borderRadius:10}}
               />
@@ -539,7 +574,7 @@ class InGredentsInput extends React.Component {
                       <View style={{ flexDirection: 'row', flexGrow: 1, flexWrap: 'wrap' }}>
                         <Image style={{ height: 24, marginTop: 13, width: '5%', marginLeft: 15 }} source={require('../../assets/Ingredients/dairy.png')}></Image>
                         <Text style={{ marginTop: 15, marginLeft: 12, width: '63%', fontSize: 12, flexShrink: 0.2, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{item.aisle}</Text>
-                <Text style={{ marginTop: 17, width: '20%', fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{!item.checked ? 0 : item.checked}/{item.total} Selected</Text>
+                        <Text style={{ marginTop: 17, width: '20%', fontSize: 10, fontFamily: FONTFAMILY.regular, color: '#868CA9' }}>{!item.checked ? 0 : item.checked}/{item.total} Selected</Text>
                       </View>
                       <View style={{ borderWidth: 0.6, borderColor: '#rgba(9, 56, 149, 0.1)', marginTop: 7 }}>
                       </View>
@@ -603,15 +638,15 @@ class InGredentsInput extends React.Component {
                   }}>CLEAR ALL</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row',flexWrap:'wrap',marginBottom:'10%' }}>
-              {this.state.checkedItems.map((x)=>
-              <View style={styles.bottomtags}>
-                <Text style={styles.tagstext}
-                 >{x.name}</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: '10%' }}>
+              {this.state.checkedItems.map((x) =>
+                <View style={styles.bottomtags}>
+                  <Text style={styles.tagstext}
+                  >{x.name}</Text>
                   <TouchableOpacity style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }} onPress={() => this.onRemove(x)}>
-                <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
+                    <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
                   </TouchableOpacity>
-              </View>
+                </View>
               )}
             </View>
 
@@ -751,7 +786,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4F4F8",
     paddingHorizontal: 7,
     paddingVertical: 5,
-    marginBottom:10,
+    marginBottom: 10,
     flexWrap: 'wrap',
     // paddingHorizontal: 15,
     //  width:'17%',
@@ -762,7 +797,7 @@ const styles = StyleSheet.create({
     //  backgroundColor: 'black',
     marginLeft: 10
   },
-  
+
   overlay: {
     backgroundColor: '#f2f2f4',
     ...StyleSheet.absoluteFillObject,
@@ -779,7 +814,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontFamily: FONTFAMILY.regular,
-    marginHorizontal:'10%'
+    marginHorizontal: '10%'
   },
   modelSubheading: {
     marginTop: 10,
