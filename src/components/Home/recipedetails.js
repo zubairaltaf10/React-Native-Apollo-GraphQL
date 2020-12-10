@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, ActivityIndicator ,StatusBar, ImageBackground, StyleSheet, ScrollView, TouchableOpacity, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
     Icon,
     Spinner
@@ -20,44 +19,23 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
+import AsyncStorage from '@react-native-community/async-storage';
+import {  equipments } from './ingredientslist.json'
 import {_} from 'lodash';
-const getToken = async () => {
-    let token;
-  
-    // get the authentication token from local storage if it exists
-    let user = await AsyncStorage.getItem("user")
-    user = JSON.parse(user)
-    if(user != null)
-    {
-      token = user.access_token
-       return token
-    }else
-    {
-      return ""
+const authLink = setContext(async (req, {headers}) => {
+    const user = await AsyncStorage.getItem('user')
+    let token = JSON.parse(user)
+    return {
+      ...headers,
+      headers: { authorization: token ? `Bearer ${token. access_token}` : null }
     }
-      
-  }
-  const token = getToken();
-  const  authLink =  setContext((_, { headers } )  =>  {
-    AsyncStorage.getItem('user')
-    .then(userData => JSON.parse(userData))
-    .then(userData =>{
-      const Token = userData.access_token
-       console.log('token ' , Token)
-      return {
-        headers: {
-          ...headers,
-          authorization: `Bearer `+Token ,
-        }
-      }
-    })
   })
+  // 
   const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
   const client = new ApolloClient({
-    link: ApolloLink.from([ authLink, uploadLink ]),
-    cache : new InMemoryCache(),
+    link: ApolloLink.from([authLink, uploadLink]),
+    cache: new InMemoryCache(),
   });
-  
 const regex = /(<([^>]+)>)/ig;
 const data = [
     {
@@ -78,7 +56,9 @@ class RecipesDetails extends React.Component {
     
     async componentDidMount() {
         console.log('ddddddd ',this.props.navigation.getParam('id'))
-      this.setState({loading:true})
+        
+
+      this.setState({loading:false})
       client.query({
         query: query,
         variables: {
@@ -87,7 +67,7 @@ class RecipesDetails extends React.Component {
       })
         .then(async (data) => {
           this.setState({loading:false})
-          console.log(data.data.recipe.instructions[0])
+          console.log('rec', data.data.recipe)
         
         this.setState({recDetail:data.data.recipe})
 
@@ -196,7 +176,23 @@ class RecipesDetails extends React.Component {
                     </ScrollView>
                 ) }
                 {item.index == 3 && (
-                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}></Text>
+                    {/* <ScrollView style={{flex:1, maxHeight: 200 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
+									  this.setState({enabled:false }); }}
+									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
+									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
+                   { this.state.recDetail.nutrition.nutrients?.map((x) =>
+                   
+                      <View style={{flex:1, flexDirection: 'row',justifyContent: 'space-between',}}> 
+                    <View style={{flex:0.6, margin:5}}>
+                    <Text numberOfLines={1} style={{ width: 200 , fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.title}</Text>
+                    </View>
+                    <View style={{flex:0.4,  margin:5}}>
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-end', color: '#868CA9' }}>{x.amount + " " + x.unit }</Text>
+                    </View>
+                    </View> 
+                   
+                    )}
+                    </ScrollView> */}
                 ) }
                 </View>
             </View>
@@ -314,18 +310,12 @@ class RecipesDetails extends React.Component {
                                 type="EvilIcons" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>{this.state.recDetail.readyInMinutes}</Text>
                         </View>
-                        {/* <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                name="clock"
-                                type="EvilIcons" />
-                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>25 mins</Text>
+                        <View style={{ backgroundColor: this.state.recDetail.vegetarian  != true ? '#ff3a55' : '#43e871', height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>Vegetarian</Text>
                         </View>
-                        <View style={{ backgroundColor: COLORS.primary, height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                name="clock"
-                                type="EvilIcons" />
-                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>25 mins</Text>
-                        </View> */}
+                        <View style={{ backgroundColor: this.state.recDetail.glutenFree  != true ? '#ff3a55' : '#43e871', height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>Gluten-Free</Text>
+                        </View>
                     </ScrollView>
                 </View>
                 <View style={{ flex:0.45, marginHorizontal: 15 }}>
@@ -366,13 +356,15 @@ class RecipesDetails extends React.Component {
                   <Text style={{fontFamily:FONTFAMILY.medium,fontSize:15}}>Equipment Required</Text>
                   
                   
-              <View style={{flexDirection:'row',width:'100%',height:'19%'}}>
-              <ScrollView style={{flexDirection:'row',width:'100%'}} horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
+              <View style={{flexDirection:'row',width:'100%',height:'25%'}}>
+              <ScrollView style={{flexDirection:'row',width:'100%', maxHeight: 450}} horizontal={true} showsHorizontalScrollIndicator={false} nestedScrollEnabled={true}>
               { this.state.allequipments?.map((x ) =>
-                  <View style={{backgroundColor:'white',flexWrap:'wrap',borderRadius:12,marginTop:10, marginRight:10,paddingHorizontal:20,paddingVertical:10}}>
+                  <View style={{backgroundColor:'white', width:110,  borderRadius:12,marginTop:10, marginRight:10,paddingHorizontal:5,paddingVertical:10}}>
                       <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,color:'#868CA9',alignSelf:'center',marginLeft:5}}>{x.name}</Text>
-                      <Image source={{uri:x.image}} style={[styles.image1,{alignSelf:'center',resizeMode:"contain",marginTop:10}]}>
+                     <View style={{flex: 1 }}>
+                     <Image source={{uri:x.image}} style={[styles.image1,{resizeMode:"contain"}]}>
                         </Image>
+                     </View>
                   </View>
               )}
               </ScrollView>
@@ -435,7 +427,7 @@ const styles = StyleSheet.create({
     image1: {
       //  backgroundColor:'pink',
         resizeMode: "contain",
-        width:'110%',
+        width:100,
         flex:1
       //  height:'10%'
 },
@@ -485,6 +477,15 @@ query recipe($id: Int!){
       aggregateLikes,
       healthScore,
       cheap,
+      nutrition {
+        nutrients{
+                                title,
+                                amount,
+                                unit,
+                              }
+      },
+vegetarian,
+glutenFree,
       instructions{
         name,
        steps{
@@ -510,4 +511,3 @@ query recipe($id: Int!){
   }
 `;
 export default  withApollo(RecipesDetails);
-// export default withAuth(RecipesDetails)

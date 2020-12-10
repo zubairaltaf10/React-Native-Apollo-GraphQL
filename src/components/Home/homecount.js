@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, StyleSheet,Platform,StatusBar, TouchableOpacity, TouchableWithoutFeedback, Button, Keyboard,KeyboardAvoidingView,Modal,Share} from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
   Icon,
   //TouchableOpacity
@@ -24,6 +23,7 @@ import * as Linking from 'expo-linking';
 import PaypalUI from '../Payment/PaypalUI'
 import { parse } from "graphql";
 import SNACKBAR from "../../Helpers/SNACKBAR";
+import WideBanner from '../Ads/WideBanner.js';
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
@@ -520,7 +520,7 @@ onShare = async () => {
             <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
             <TouchableOpacity onPress={()=>{
               this.RBSheet.close()
-              this.props.navigation.navigate('Auth')
+              this.props.navigation.navigate('SignupOptions')
               }}>
             <Icon name="user-plus" type="FontAwesome" style={{fontSize: 18,alignSelf:'flex-end'}}
              
@@ -548,7 +548,7 @@ onShare = async () => {
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
             </View>
             <View style={{flex:0.24,flexDirection:'row',margin:7}}>
-            <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Icon name="bookmark" type="Feather" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
              onPress={()=>{
               this.RBSheet.close();
@@ -578,6 +578,7 @@ onShare = async () => {
             </View>
             <View style={{borderWidth:0.2,borderColor:'#868CA9',marginHorizontal:15}}>
             </View>
+            {!_.isEmpty(this.state.loginuser) &&(
             <View style={{flex:0.25,flexDirection:'row',margin:7}} >
             <Icon name="logout" type="MaterialIcons" style={{fontSize: 21,alignSelf:'center',color:COLORS.primary,left:8}}></Icon>
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}} 
@@ -588,9 +589,13 @@ onShare = async () => {
               }}>Logout</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </View>
+            )}
           </View>
         </RBSheet>
         </View>
+        {this.state.currentsubscription.name == "Basic" &&(
+        <WideBanner/>
+        )}
       </View>
     );
   }
@@ -701,4 +706,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default withAuth(HomeCount);
+export default HomeCount;

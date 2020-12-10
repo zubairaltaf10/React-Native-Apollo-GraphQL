@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, ActivityIndicator,StatusBar, TouchableOpacity, ImageBackground, StyleSheet, Platform, TouchableWithoutFeedback, Button, Keyboard, KeyboardAvoidingView, Modal } from "react-native";
 import { width, height } from "react-native-dimension";
 import { Input, Toast } from "native-base";
-import { withAuth } from "../../store/hoc/withAuth";
 import {
     Icon,
     Spinner
@@ -26,53 +25,49 @@ import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import AsyncStorage from '@react-native-community/async-storage';
 import { StackActions, NavigationActions } from 'react-navigation';
-
+import { _ } from 'lodash';
 const resetAction = StackActions.reset({
     index: 0,
     actions: [NavigationActions.navigate({ routeName: 'MyFaviourites' })],
 });
 
-const getToken = async () => {
-    let token;
-  
-    // get the authentication token from local storage if it exists
-    let user = await AsyncStorage.getItem("user")
-    user = JSON.parse(user)
-    if(user != null)
-    {
-      token = user.access_token
-       return token
-    }else
-    {
-      return ""
-    }
-      
+const authLink = setContext(async (req, {headers}) => {
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
+    ...headers,
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
   }
-  const token = getToken();
-  const  authLink =  setContext((_, { headers } )  =>  {
-    AsyncStorage.getItem('user')
-    .then(userData => JSON.parse(userData))
-    .then(userData =>{
-      const Token = userData.access_token
-       console.log('token ' , Token)
-      return {
-        headers: {
-          ...headers,
-          authorization: `Bearer `+Token ,
-        }
-      }
-    })
-  })
-  const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
-  const client = new ApolloClient({
-    link: ApolloLink.from([ authLink, uploadLink ]),
-    cache : new InMemoryCache(),
-  });
+})
+// 
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+const client = new ApolloClient({
+  link: ApolloLink.from([authLink, uploadLink]),
+  cache: new InMemoryCache(),
+});
 class MyFavorites extends React.Component {
     async componentDidMount() {
-       
-  
-       this.setState({loading:true})
+      //DevSettings.reload()
+      this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
+        console.log('check')
+        this.loaddata();
+       });
+       this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
+       let user = await AsyncStorage.getItem('user');
+   if (user) {
+     user = JSON.parse(user).user;
+     var subcription = user.user_subscription.subscription
+     this.setState({ currentsubscription: subcription });
+     console.log('user ', user);
+     this.setState({ loginuser: user });
+     console.log('user subcription found in localstorage', this.state.currentsubscription);
+   } else {
+    console.log('no user found');
+   }
+    }
+    async loaddata(){
+     // DevSettings.reload()
+      this.setState({loading:true})
       client.query({
         query: query,
         // variables: {
@@ -82,34 +77,18 @@ class MyFavorites extends React.Component {
         .then(async (data) => {
           this.setState({loading:false})
           console.log( 'my fav' , data.data.userFavourites)
-        
+
         this.setState({recipes:data.data.userFavourites})
         this.setState({backup:data.data.userFavourites})
-        let user = await AsyncStorage.getItem('user');
-          if (user) {
-            user = JSON.parse(user).user;
-            this.setState({limit:user.user_subscription.subscription.ingredient_limit})
-            console.log(this.state.limit)
-          }
+        
         })
         .catch((err) => {
           this.setState({loading:false})
           console.log(err)
         })
-          this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
-          let user = await AsyncStorage.getItem('user');
-      if (user) {
-        user = JSON.parse(user).user;
-        var subcription = user.user_subscription.subscription
-        this.setState({ currentsubscription: subcription });
-        console.log('user ', user);
-        this.setState({ loginuser: user });
-        console.log('user subcription found in localstorage', this.state.currentsubscription);
-      } else {
-       console.log('no user found');
-      }
-     
+       
     }
+
     constructor(props) {
         super(props);
 
@@ -119,7 +98,7 @@ class MyFavorites extends React.Component {
         loading:false,
         backup:[]
     }
-    onUnfav = (recipeId ) => {
+    onUnfav = async (recipeId ) => {
         console.log(recipeId)
             // this.setState({loading:true})
             client.mutate({
@@ -128,7 +107,12 @@ class MyFavorites extends React.Component {
                  recipe_id: recipeId }
            })
              .then(async (data) => {
-                 SNACKBAR.simple("Added in favourite") ; 
+              var evens = _.remove(this.state.recipes, function(n) {
+                return n.id == recipeId;
+              });
+              this.setState({recipes:evens})
+              SNACKBAR.simple("Unfavourite successfully") ; 
+              await this.loaddata();
              })
              .catch((err) => {
               // this.setState({loading:false})

@@ -9,7 +9,6 @@ import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
 import authStyles from '../../Styles/auth.styles';
-import {withAuth} from '../../store/hoc/withAuth';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -188,5 +187,5 @@ mutation updateForgottenPassword($email: String!, $password: String! , $token: S
 `;
 
 const ResetPasswordTab = graphql(mutation)(ResetPassword);
-export default withAuth(ResetPasswordTab);
+export default ResetPasswordTab;
 

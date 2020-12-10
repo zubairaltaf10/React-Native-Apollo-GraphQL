@@ -16,7 +16,6 @@ import styles from '../../Styles/auth.styles';
 import {GetSignupErrors} from '../../Helpers/GetErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
-import {withAuth} from '../../store/hoc/withAuth';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
@@ -302,4 +301,4 @@ mutation register($firstname: String!, $lastname: String! ,$email: String!, $pas
 }
 `;
 const SignupTab = graphql(mutation)(Signup);
-export default withAuth(SignupTab);
+export default SignupTab;

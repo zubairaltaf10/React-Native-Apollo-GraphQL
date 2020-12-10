@@ -20,7 +20,6 @@ import {GetProfileErrors} from '../../Helpers/GetProfileErrors';
 import {GetPasswordErrors} from '../../Helpers/GetProfileErrors';
 import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import COLORS from '../../Theme/Colors';
-import {withAuth} from '../../store/hoc/withAuth';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient, } from 'apollo-client';
@@ -212,6 +211,7 @@ class UpdateProfile extends Component {
       })
       .then((res) => {
         this.setState({loading:false})
+        this.updateupdatelocalstorage()
         SNACKBAR.simple('Profile updated successfully.');
       })
       .catch((err) => {
@@ -579,7 +579,7 @@ onrequestModelclose = () =>
           {mutation => (
         <PrimaryButton
               loading={this.state.loading}
-              title="   Update   "
+              title="   UPDATE   "
               onPress={() => { this.onSubmit() }}
               marginTop={30}
             />

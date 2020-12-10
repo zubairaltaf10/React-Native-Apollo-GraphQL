@@ -10,7 +10,6 @@ import {ApplicationStyles} from '../../Theme/index.js';
 import Axios from 'axios';
 import API from '../../Constants/API';
 import {checkEmail} from '../../Helpers/Validations';
-import {withAuth} from '../../store/hoc/withAuth';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -110,4 +109,4 @@ mutation forgotPassword($email: String!){
 }
 `;
 const ForgotPasswordTab = graphql(mutation)(ForgotPassword);
-export default withAuth(ForgotPasswordTab);
+export default ForgotPasswordTab;

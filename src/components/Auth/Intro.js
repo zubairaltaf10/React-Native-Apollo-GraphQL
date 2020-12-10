@@ -12,7 +12,6 @@ import {
   Icon,
 } from "native-base";
 import AppIntroSlider from 'react-native-app-intro-slider';
-import { withAuth } from "../../store/hoc/withAuth";
 import LinearGradient from "react-native-linear-gradient";
 import { height, width } from "react-native-dimension";
 import {FONTFAMILY} from '../../Theme/Fonts';
@@ -338,5 +337,5 @@ class Intro extends React.Component {
       }
     }
 
-export default withAuth(Intro);
+export default Intro;
 

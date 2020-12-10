@@ -16,7 +16,6 @@ import ErrorLabel from '../ErrorLabel/ErrorLabel';
 import {GetSignupErrors} from '../../Helpers/GetErrors';
 import COLORS from '../../Theme/Colors';
 import AsyncStorage from '@react-native-community/async-storage';
-import {withAuth} from '../../store/hoc/withAuth';
 import SNACKBAR from '../../Helpers/SNACKBAR';
 import { NETWORK_INTERFACE } from '../../config';
 import { ApolloClient } from 'apollo-client';
@@ -261,4 +260,4 @@ mutation login($email: String!, $password: String!){
 }
 `;
 const LoginTab = graphql(mutation)(Login);
-export default withAuth(LoginTab);
+export default LoginTab;
