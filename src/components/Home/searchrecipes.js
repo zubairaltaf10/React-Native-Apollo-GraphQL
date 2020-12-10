@@ -318,7 +318,7 @@ class SearchRecipes extends React.Component {
                   Selected Ingredients
             </Text>
                 <View style={[styles.addmore]} >
-                  <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
+                  <TouchableOpacity onPress={() => this.goBack()}>
                     <Text style={styles.addmoretext}>Add more</Text>
                   </TouchableOpacity>
                 </View>
