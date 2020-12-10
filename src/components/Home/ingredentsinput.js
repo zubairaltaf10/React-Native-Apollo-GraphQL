@@ -517,7 +517,7 @@ class InGredentsInput extends React.Component {
                 //            separatorStyle={{backgroundcolor:'pink'}}
                 listFooterStyle={{ height: 0.1, marginTop: 3 }}
                 containerStyle={{ fontSize: 20 }}
-                valueExtractor={item => item.name}
+              //  valueExtractor={item => item.name}
               //  overlayStyle={{fontSize:20}}
               // containerStyle={{borderColor:'pink',borderRadius:10}}
               />
