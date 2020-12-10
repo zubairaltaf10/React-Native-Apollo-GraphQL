@@ -181,16 +181,15 @@ class InGredentsInput extends React.Component {
     }
     if (this.state.checkedItems.length != checkedItems.length) {
       this.state.checkedItems.filter(ingredient => {
-        checkedItems.some(item => {
-          if (item.name != ingredient.name) {
-            let data = { name: "" }
-            data.name = ingredient.name
-            items.push(data)
-          }
-        })
+        if (checkedItems.findIndex(x=>x.name == ingredient.name)< 0){
+          let data = { name: ""}
+          data.name = ingredient.name
+          items.push(data)
+        }
       })
+      this.setState({checkedItemsLength:this.state.checkedItems.length - items.length})
       items.forEach(x => {
-        this.onRemove(x)
+        this.onRemove(x,true)
       })
     }
   };
@@ -382,7 +381,9 @@ class InGredentsInput extends React.Component {
       })
   }
 
-  onRemove = (itemm) => {
+  onRemove = (itemm,fromUpdate) => {
+    console.log(this.state.checkedItemsLength)
+   // this.setState({ checkedItemsLength: 0 })
     let ingredientlist = [...this.state.ingredientlist]
     let checkedItems = [...this.state.checkedItems]
     ingredientlist.filter(ingredient =>
@@ -392,7 +393,9 @@ class InGredentsInput extends React.Component {
           //  this.setState({ checkedItemsLength: item.clicked == false ? this.state.checkedItemsLength - 1 : this.state.checkedItemsLength + 1 })
           if (item.clicked == false) {
             ingredient.checked ? ingredient.checked = ingredient.checked - 1 : 0
-            this.setState({ checkedItemsLength: this.state.checkedItemsLength == 0 ? 0 : this.state.checkedItemsLength - 1 })
+           if (fromUpdate != true){
+              this.setState({ checkedItemsLength: this.state.checkedItemsLength == 0 ? 0 : this.state.checkedItemsLength - 1 })
+           }
           }
           else {
             this.setState({ checkedItemsLength: this.state.checkedItemsLength + 1 })
@@ -405,7 +408,6 @@ class InGredentsInput extends React.Component {
     if (checkedItems.length == 0) {
       this.setState({ showSelected: false })
     }
-    //   this.setState({checkedItems})
     this.setState({ checkedItems })
     this.setState({ ingredientlist })
 
@@ -647,7 +649,7 @@ class InGredentsInput extends React.Component {
                 <View style={styles.bottomtags}>
                   <Text style={styles.tagstext}
                   >{x.name}</Text>
-                  <TouchableOpacity style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }} onPress={() => this.onRemove(x)}>
+                  <TouchableOpacity style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }} onPress={() => this.onRemove(x,false)}>
                     <Icon name="circle-with-cross" type="Entypo" style={{ fontSize: 14, paddingLeft: 12, color: COLORS.primary }}></Icon>
                   </TouchableOpacity>
                 </View>
