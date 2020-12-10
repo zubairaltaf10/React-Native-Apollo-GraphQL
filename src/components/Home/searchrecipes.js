@@ -363,8 +363,8 @@ mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
 `;
 const query = gql`
 
-query recipes($ingredients: [String!]!){
-    recipes(ingredients:$ingredients)
+query recipes($ingredients: [String!]!, $limit: Int){
+    recipes(ingredients:$ingredients , limit : $limit)
     {
         id,
       title,

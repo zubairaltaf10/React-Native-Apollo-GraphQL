@@ -24,6 +24,7 @@ import * as Linking from 'expo-linking';
 import PaypalUI from '../Payment/PaypalUI'
 import { parse } from "graphql";
 import SNACKBAR from "../../Helpers/SNACKBAR";
+import WideBanner from '../Ads/WideBanner.js';
 //const [animateToNumber, setAnimateToNumber] = 0;
 const onRequestClose = false;
 class HomeCount extends React.Component {
@@ -593,6 +594,9 @@ onShare = async () => {
           </View>
         </RBSheet>
         </View>
+        {this.state.currentsubscription.name == "Basic" &&(
+        <WideBanner/>
+        )}
       </View>
     );
   }
