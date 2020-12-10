@@ -18,34 +18,13 @@ import { createHttpLink } from 'apollo-link-http';
 import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
-
-
-const getToken = async () => {
-  let token;
-
-  // get the authentication token from local storage if it exists
-  let user = await AsyncStorage.getItem("user")
-  user = JSON.parse(user)
-  console.log('user ' , user)
-  if(user != null)
-  {
-    token = user.access_token
-     return token
-  }else
-  {
-    return ""
-  }
-    
-}
-const token =  getToken();
-const  authLink =  setContext((_, { headers } )  =>  {
-  console.log('token ' , token)
-return {
-  headers: {
+const authLink = setContext(async (req, {headers}) => {
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
     ...headers,
-    authorization: token._W  != ""? `Bearer ${token._W}` : "",
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
   }
-}
 })
 const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({

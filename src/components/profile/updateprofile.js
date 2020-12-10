@@ -43,7 +43,26 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as mime from 'react-native-mime-types';
 import { ReactNativeFile } from 'apollo-upload-client';
+import { withApollo } from 'react-apollo';
+import { createUploadLink } from 'apollo-upload-client'
+import { ApolloLink } from 'apollo-link';
+import { parse } from 'graphql';
+//import {client} from '../../config/apploclient'
 const onRequestClose = false;
+const authLink = setContext(async (req, {headers}) => {
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
+    ...headers,
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
+  }
+})
+// 
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+const client = new ApolloClient({
+  link: ApolloLink.from([authLink, uploadLink]),
+  cache: new InMemoryCache(),
+});
 
 class UpdateProfile extends Component {
   
@@ -60,6 +79,7 @@ class UpdateProfile extends Component {
         date:null,
         bio:"",
         date_of_birth : new Date(),
+        
         loading:false,
         image:"",
         deleteaccountpassword:"",
@@ -81,7 +101,9 @@ class UpdateProfile extends Component {
         password:"",
         confirmPassword:""
       },
-      
+      loading:false,
+      passswordloading:false,
+      deleteloading:false,
       deletemodal:false
     };
     
@@ -169,39 +191,36 @@ class UpdateProfile extends Component {
     //this.props.navigation.navigate('ResetPassword');
    console.log('date' , this.state.date)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    //this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
+    this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
       console.log(this.state.formData.id)
       
-     // if (this.state.errors.length === 0) {
+      if (this.state.errors.length === 0) {
         this.setState({loading:true})
         let firstName = this.state.formData.first_name;
         let lastName = this.state.formData.last_name; 
-        this.props
+        client
       .mutate({
+        mutation: updatemutation,
         variables: {
-          ID: this.state.formData.id,
-          firstname: firstName,
-          lastname:lastName,
-         // email:this.state.formData.email,
+          ID:  parseInt(this.state.formData.id),
+          firstname: this.state.formData.first_name,
+          lastname:this.state.formData.last_name,
           DateofBirth: this.state.date,
           bio: this.state.formData.bio,
-          profile_image: this.state.image
+          profile_image: this.state.image == "" ? null : this.state.image
         },
       })
       .then((res) => {
         this.setState({loading:false})
-        console.log('updated')
+        SNACKBAR.simple('Profile updated successfully.');
       })
       .catch((err) => {
-
         this.setState({loading:false})
-       // var error = JSON.stringify(err);
         console.log(err)
-      
-        
+        SNACKBAR.simple('Error in updating profile');
       });
-   // }
-   // });
+   }
+   });
   };
    generateRNFile(uri, name) {
     return uri ? new ReactNativeFile({
@@ -258,9 +277,10 @@ class UpdateProfile extends Component {
       console.log(this.state.errors)
       
       if (this.state.errors.length === 0) {
-        this.setState({loading:true})
-        this.props
+        this.setState({passswordloading:true})
+        client
       .mutate({
+        mutation: mutation,
         variables: {
           old_password:this.state.passworddata.old_password,
           password:this.state.passworddata.password,
@@ -268,12 +288,15 @@ class UpdateProfile extends Component {
         },
       })
       .then((res) => {
-        this.setState({loading:false})
+        this.setState({passswordloading:false})
+        this.setState({changepasswordmodel:false})
         SNACKBAR.simple('Password updated.');
       })
       .catch((err) => {
-        this.setState({loading:false})
-        SNACKBAR.simple('error' , err);
+        this.setState({passswordloading:false})
+        console.log(err)
+        SNACKBAR.simple('Error in updating password');
+
       });
     }
     });
@@ -318,9 +341,28 @@ onrequestModelclose = () =>
  {
    this.setState({deletemodal: true})
  }
+ deleteaccount = () =>{
+   this.setState({deleteloading:true})
+        client
+      .mutate({
+        mutation: deleteaccountmutation,
+        variables:{ password: this.state.formData.deleteaccountpassword}
+      })
+      .then((res) => {
+        this.setState({deleteloading:false})
+        SNACKBAR.simple("account has been deleted")
+        this.logout();
+      })
+      .catch((err) => {
+        SNACKBAR.simple("Error in delete account")
+        this.setState({deleteloading:false})
+        console.log(err)
+      });
+
+ }
   render() {
     return (
-      <ApolloProvider>
+     
         <Content style={styles.profilecontainer}>
         <StatusBar translucent backgroundColor="transparent" />
         <UpdatePassword
@@ -329,7 +371,7 @@ onrequestModelclose = () =>
           isPasswordFieldSecure={this.state.isPasswordFieldSecure}
           isnewPasswordFieldSecure={this.state.isnewPasswordFieldSecure}
           isConfirmPasswordFieldSecure={this.state.isConfirmPasswordFieldSecure}
-          //user={this.props.auth.user}
+          loading={this.state.passswordloading }
           handleSecurityVerification={this.handleSecurityVerification}
           handleSecurity2={this.handleSecurity2}
           handleSecurity3={this.handleSecurity3}
@@ -386,22 +428,15 @@ onrequestModelclose = () =>
               </TouchableOpacity>
             </View>
             
-            <Mutation
-        
-            mutation={ deleteaccountmutation}
-            variables={{ password: this.state.formData.deleteaccountpassword}}
-            onError={() =>{ SNACKBAR.simple("Error in delete account") ;  }}
-            onCompleted={ () => { this.logout() } }
-          >
-          {mutation => (
+          
         <PrimaryButton
-              loading={this.state.loading}
-              title="   Delete Account   "
-              onPress={mutation}
+              loading={this.state.deleteloading}
+              title="   DELETE ACCOUNT   "
+              onPress={()=>{ this.deleteaccount()}}
               marginTop={5}
             />
-            )}
-            </Mutation>
+          
+            
       </View>
     </Modal>
         <View style={{ paddingTop:20, paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -529,8 +564,7 @@ onrequestModelclose = () =>
             </View>
             {/* <WideBanner /> */}
           </Form>
-        </Content>
-        <View style={{alignItems:'center' , paddingBottom:'7%' }} >
+          <View style={{alignItems:'center' , paddingBottom:'7%' }} >
         <Mutation
         context={{hasUpload: true}}
             mutation={ updatemutation}
@@ -546,13 +580,14 @@ onrequestModelclose = () =>
         <PrimaryButton
               loading={this.state.loading}
               title="   Update   "
-              onPress={mutation}
+              onPress={() => { this.onSubmit() }}
               marginTop={30}
             />
             )}
             </Mutation>
         </View>
-        </ApolloProvider>
+        </Content>
+       
 
     );
   }
@@ -600,8 +635,8 @@ mutation updatePassword($old_password: String!, $password: String! , $password_c
 } 
 `;
 
- const UpdateProfileTab = graphql(mutation)
- (UpdateProfile);
-export default withAuth(UpdateProfileTab);
+//  const UpdateProfileTab = graphql(mutation)
+//  (withApollo);
+export default withApollo(UpdateProfile);
 
 

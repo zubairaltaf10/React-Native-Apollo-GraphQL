@@ -42,7 +42,16 @@ class ManagePackages extends Component {
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
           console.log('user subcription found in localstorage', this.state.currentsubscription);
-          
+          if(subcription.name == "Basic")
+          {
+            this.state.cardClicked = "Basic";
+            this.state.cardName='Basic';
+            this.state.default='Basic';
+          }else{
+            this.state.cardClicked = "Standard";
+            this.state.cardName='Standard';
+            this.state.default='Standard';
+          }
           if(this.state.currentsubscription.name == "Basic"){
             let data = packageSlider.filter(p=>p.name == "Standard");
             console.log(data[0].Slider)

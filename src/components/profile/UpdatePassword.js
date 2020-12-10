@@ -20,6 +20,7 @@ const SecurityQuestion = ({
   handleSecurity3,
   errors,
   updatepassword,
+  loading,
   isConfirmPasswordFieldSecure,
   user = {},
 }) => {
@@ -146,7 +147,7 @@ const SecurityQuestion = ({
               title="RESET PASSWORD"
               marginTop={8}
               onPress={updatepassword}
-              //loading={this.state.loading}
+              loading={loading}
             />
       </View>
     </Modal>
