@@ -57,7 +57,8 @@ class InGredentsInput extends React.Component {
     checkedItemsLength: 0,
     showSelected: false,
     viewloginmodel: false,
-    refresh: true
+    refresh: true,
+    user:{}
   }
 
   async componentDidMount() {
@@ -67,10 +68,12 @@ class InGredentsInput extends React.Component {
         let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;
+          this.setState({user})
           this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
           console.log(this.state.limit)
         } else {
           this.setState({ limit: 3 })
+          this.setState({user:null})
         }
         this.clearAll()
       }
@@ -628,6 +631,7 @@ class InGredentsInput extends React.Component {
                 title="SEARCH RECIPES"
                 onPress={() => this.searchRecipes('button')}
                 marginTop={height(40)}
+                checkeditems={this.state.checkedItemsLength > 0 ? true : false}
               // loading={this.state.loading}
               />
             </View>
