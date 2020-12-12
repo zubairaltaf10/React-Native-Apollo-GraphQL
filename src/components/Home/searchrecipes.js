@@ -96,7 +96,7 @@ class SearchRecipes extends React.Component {
 
   handleBackButton = () =>{
     this.props.navigation.state.params.updateData(this.state.clickedItems);
-    this.props.navigation.goBack();
+    this.props.navigation.goBack(null);
     return true;
 }
   constructor(props) {
@@ -300,18 +300,21 @@ class SearchRecipes extends React.Component {
             ref={ref => {
               this.RBSheet = ref;
             }}
-            height={170}
+            height={180}
             openDuration={400}
             customStyles={{
               container: {
                 //    justifyContent: "center",
                 //   alignItems: "center",
+               // flex:0.1,
+             //  alignSelf:'flex-start',
+                flexWrap:'wrap',
                 borderTopEndRadius: 15
               }
             }}
           >
-
-            <View style={{ flex: 1, paddingTop: 10 }}>
+            <ScrollView style={{ flex: 1, paddingTop: 10}}>
+            <View style={{ flex: 1, paddingTop: '1%',paddingBottom:'5%' }}>
               <View style={styles.alternativeLayoutButtonContainer}>
                 <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, marginTop: 10, color: '#474956' }}>
                   Selected Ingredients
@@ -343,6 +346,7 @@ class SearchRecipes extends React.Component {
 
 
             </View>
+            </ScrollView>
           </RBSheet>
         </View>
       </View>

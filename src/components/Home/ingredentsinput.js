@@ -27,6 +27,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: NETWORK_INTERFACE }),
@@ -170,7 +171,7 @@ class InGredentsInput extends React.Component {
       }
       else {
         if (checkedItems.length > 0) {
-          this.setState({ showSelected: true })
+          this.RBSheet.open()
         }
       }
     }
@@ -436,6 +437,7 @@ class InGredentsInput extends React.Component {
     //   this.setState({checkedItems})
     this.setState({ checkedItems })
     this.setState({ ingredientlist })
+    this.RBSheet.close()
   }
   render() {
     // console.log(this.props.data.results ? this.props.data.results : null)
@@ -613,7 +615,6 @@ class InGredentsInput extends React.Component {
           </View>
 
         </View>
-        {!this.state.showSelected ?
           <View style={{ flexDirection: 'row', position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, height: '11%', backgroundColor: 'white', borderRadius: 10 }}>
 
             <View style={{ flex: 0.3, alignItems: 'center', justifyContent: 'center' }}>
@@ -636,9 +637,27 @@ class InGredentsInput extends React.Component {
               />
             </View>
           </View>
-          :
-          <View style={{ position: 'absolute', left: 0, right: 0, bottom: this.state.bottomHeight, backgroundColor: 'white', borderRadius: 10 }}>
-            <View style={{ flexDirection: 'row', height: '30%', marginTop: 10, width: '100%', marginHorizontal: 15 }}>
+          
+          <RBSheet
+            ref={ref => {
+              this.RBSheet = ref;
+            }}
+            height={180}
+            openDuration={400}
+            customStyles={{
+              container: {
+                //    justifyContent: "center",
+                //   alignItems: "center",
+               // flex:0.1,
+             //  alignSelf:'flex-start',
+              //  flexWrap:'wrap',
+                borderTopEndRadius: 15
+              }
+            }}
+          >
+            <ScrollView>
+          <View style={{ left: 0, right: 0,marginTop:'3%',bottom: this.state.bottomHeight, backgroundColor: 'white', borderRadius: 10 }}>
+            <View style={{ flexDirection: 'row', width: '100%', marginHorizontal: 15 }}>
               <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#474956', alignSelf: 'center', width: '60%' }}>Selected Ingredients</Text>
               <View style={styles.bottombutton}>
                 <Text style={styles.bottombuttonText}
@@ -648,7 +667,7 @@ class InGredentsInput extends React.Component {
                   }}>CLEAR ALL</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: '10%' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: '6%',marginTop:'2%' }}>
               {this.state.checkedItems.map((x) =>
                 <View style={styles.bottomtags}>
                   <Text style={styles.tagstext}
@@ -661,7 +680,9 @@ class InGredentsInput extends React.Component {
             </View>
 
           </View>
-        }
+          </ScrollView>
+          </RBSheet>
+        
       </View>
 
 
