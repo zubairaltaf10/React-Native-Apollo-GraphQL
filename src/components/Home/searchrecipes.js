@@ -62,8 +62,8 @@ class SearchRecipes extends React.Component {
         this.setState({ loading: false })
         console.log(data.data.recipes)
 
-        this.setState({ recipes: data.data.recipes })
-        this.setState({ backup: data.data.recipes })
+        this.setState({ recipes: data.data.recipes, backup: data.data.recipes })
+     
         let user = await AsyncStorage.getItem('user');
         if (user) {
           user = JSON.parse(user).user;

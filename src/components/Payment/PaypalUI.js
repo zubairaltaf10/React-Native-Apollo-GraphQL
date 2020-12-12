@@ -90,7 +90,7 @@ const PaypalUI = async (show,amount) => {
             // update your UI to handle cancellation
           } else {
             console.log(error.toString())
-            SNACKBAR.simple(error.toString());
+            SNACKBAR.simple("Error in payment");
             // update your UI to handle other errors
           }
         });

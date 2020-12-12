@@ -48,9 +48,8 @@ class HomeCount extends React.Component {
       return;
     }
     var subcription = user.user_subscription.subscription
-    this.setState({ currentsubscription: subcription });
-    console.log('user ', user);
-    this.setState({ loginuser: user });
+    this.setState({ currentsubscription: subcription , loginuser: user });
+   
     console.log('user subcription found in localstorage', this.state.currentsubscription);
   } else {
    console.log('no user found');
@@ -96,8 +95,11 @@ _keyboardDidHide() {
 }
 IncrementItem = () => {
   
+  if(this.state.clicks > 998){
+    return;
+  }
 
-console.log(this.state.currentsubscription)
+
    if(_.isEmpty(this.state.currentsubscription))
    {
     if((this.state.clicks + 1) > 1)
@@ -151,15 +153,7 @@ console.log(this.state.currentsubscription)
     }
     
   }
-  check = async ()=>{
-    
-if (this.state.paid == true){
-  console.log("trueeeee")
-}
-else {
-  console.log("Falseese")
-}
-  }
+  
   RateApp = () => {
     Linking.openURL("https://play.google.com/store/apps");
   }

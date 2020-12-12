@@ -108,14 +108,8 @@ class Packages extends Component {
      this.setState({packageSlider:  data[0].Slider})
    }
     console.log("nameee"+model.name)
-   await this.setState({default:''})
-   await this.setState({cardClicked:model.name})
-   await this.setState({cardName:model.name})
-   await this.setState({subscription_id:model.id})
-   await this.setState({priceperyear:model.amount_per_year})
-   await this.setState({pricepermonth:model.amount_per_month})
-
-    console.log("dsadasdasd" +this.state.cardClicked)
+   this.setState({default:'', cardClicked:model.name, cardName:model.name,pricepermonth:model.amount_per_month, subscription_id:model.id , priceperyear:model.amount_per_year})
+       console.log("dsadasdasd" +this.state.cardClicked)
   }
   onSubmit = async (amount , subcription, type) =>{
      if(subcription == "Basic"){
@@ -153,14 +147,14 @@ class Packages extends Component {
       },
     })
     .then((res) => {
-      this.setState({loading:false})
-      this.setState({yellowloading:false})
+      this.setState({loading:false, yellowloading:false})
+     
       this.updateupdatelocalstorage(res.data.addUserSubscription.subscription)
      
     })
     .catch((err) => {
-      this.setState({loading:false})
-      this.setState({yellowloading:false})
+      this.setState({loading:false, yellowloading:false})
+     
       console.log(JSON.stringify(err));
     });
   }

@@ -78,8 +78,8 @@ class MyFavorites extends React.Component {
           this.setState({loading:false})
           console.log( 'my fav' , data.data.userFavourites)
 
-        this.setState({recipes:data.data.userFavourites})
-        this.setState({backup:data.data.userFavourites})
+        this.setState({recipes:data.data.userFavourites, backup:data.data.userFavourites})
+       
         
         })
         .catch((err) => {

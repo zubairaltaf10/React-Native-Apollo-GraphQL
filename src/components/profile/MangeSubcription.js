@@ -29,9 +29,15 @@ import {_} from 'lodash';
 //(null)
 class ManagePackages extends Component {
   swiperRef = React.createRef()
-    async componentWillMount() {
-       
-         let user = await AsyncStorage.getItem('user');
+    async componentDidMount() {
+      this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
+        console.log('check')
+         this.loaduser();
+       });
+         
+      }
+  loaduser = async () =>{
+    let user = await AsyncStorage.getItem('user');
          console.log('localstorage', user);
         if (user) {
           user = JSON.parse(user).user;
@@ -41,16 +47,7 @@ class ManagePackages extends Component {
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
           console.log('user subcription found in localstorage', this.state.currentsubscription);
-          if(subcription.name == "Basic")
-          {
-            this.state.cardClicked = "Basic";
-            this.state.cardName='Basic';
-            this.state.default='Basic';
-          }else{
-            this.state.cardClicked = "Standard";
-            this.state.cardName='Standard';
-            this.state.default='Standard';
-          }
+          
           if(this.state.currentsubscription.name == "Basic"){
             let data = packageSlider.filter(p=>p.name == "Standard");
             console.log(data[0].Slider)
@@ -65,11 +62,20 @@ class ManagePackages extends Component {
               console.log(data[0].Slider)
                this.setState({packageSlider:  data[0].Slider})
             }
+
+            if(subcription.name == "Basic")
+          {
+            this.setState({cardClicked : "Standard" ,cardName:"Standard" , default: "Standard", pricepermonth: 2.49 , priceperyear:15.99  })
+            console.log('sss')
+            
+          }else{
+            console.log('dddd')
+            this.setState({cardClicked : "Basic" ,cardName:"Basic" , default: "Basic"    })
+          }
         } else {
           this.props.navigation.navigate('Auth');
         }
-      }
-     
+  }  
       
   constructor(props) {
     super(props);
@@ -99,13 +105,7 @@ class ManagePackages extends Component {
           })
         }
       }
-  // componentDidUpdate = async () => {
-  //   console.log(this.props.data);
-  // }
-  //  componentDidMount = async () =>{
-  //    console.log(this.props.data)
-  //   await this.setState({subscriptions:this.props.data ? this.props.data : null})
-  // } 
+  
   getImage = (image) => {
 
     switch (image) {
@@ -153,14 +153,8 @@ class ManagePackages extends Component {
     }
 
     console.log("nameee"+model.name)
-    await this.setState({subscriptionmodel:model})
-   await this.setState({default:''})
-   await this.setState({cardClicked:model.name})
-   await this.setState({cardName:model.name})
-   await this.setState({subscription_id:model.id})
-   await this.setState({priceperyear:model.amount_per_year})
-   await this.setState({pricepermonth:model.amount_per_month})
-
+    this.setState({default:'', cardClicked:model.name, cardName:model.name,pricepermonth:model.amount_per_month, subscription_id:model.id , priceperyear:model.amount_per_year})
+    
     console.log("dsadasdasd" +this.state.cardClicked)
   }
 
@@ -197,13 +191,12 @@ class ManagePackages extends Component {
       },
     })
     .then((res) => {
-      this.setState({loading:false})
-      this.setState({yellowloading:false})
+      this.setState({loading:false, yellowloading:false})
+     
       this.updateupdatelocalstorage( res.data.addUserSubscription.subscription)
     })
     .catch((err) => {
-      this.setState({loading:false})
-      this.setState({yellowloading:false})
+      this.setState({loading:false, yellowloading:false})
       console.log(JSON.stringify(err));
     });
   }
@@ -220,6 +213,16 @@ class ManagePackages extends Component {
          user.user.user_subscription.subscription = subscription; 
         // this.setState({loginuser:user.user.user_subscription.subscription }) ;
          this.setState({currentsubscription:subscription }) ;
+            console.log('ss', this.state.currentsubscription)
+        //  if(this.state.currentsubscription.name == "Basic")
+        //   {
+        //     this.setState({cardClicked : "Standard" ,cardName:"Standard" , default: "Standard" ,  pricepermonth: 2.49 , priceperyear:15.99  })
+        //     console.log('sss')
+            
+        //   }else{
+        //     console.log('dddd')
+        //     this.setState({cardClicked : "Basic" ,cardName:"Basic" , default: "Basic" })
+        //   }
          
        }
        
@@ -264,21 +267,10 @@ class ManagePackages extends Component {
   render() {
     const  currentsubscription  = this.state.currentsubscription;
     const { subscriptions } = this.props.data ? this.props.data : null;
-    console.log( 'sss ' + this.state.allsubscriptions == null)
-    
-      
-    
-    
-    //const { optsubscriptions } = subscriptions;
-    //console.log( 'dddd ' + optsubscriptions)
     if (!subscriptions) {
       return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
-
     }
-  //  const CrdStyle = this.state.cardClicked ? styles.cardStyleClicked : styles.cardStyleSimple
-    //console.log(subscriptions)
     return (
-      
       <View style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor="transparent" />
       <View style={{ paddingTop:20 ,paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -291,13 +283,9 @@ class ManagePackages extends Component {
             <Text style={{ alignSelf: 'center', marginTop: height(4), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Manage Subscription</Text>
           </View>
           <View style={{ flex: 0.2 ,marginTop: height(4), textAlign:'right' , alignItems:'center' , alignContent:'flex-end'}}>
-        {/* <TouchableOpacity style={{flex:1, width:40}} onPress={() =>
-              this.setState({showContextMenu: !this.state.showContextMenu})
-            }> */}
-        
+      
         <Icon onPress={() => { this.setState({showContextMenu: !this.state.showContextMenu})}} name="dots-three-horizontal" type="Entypo" style={{ marginLeft: 10, fontSize:18 }}></Icon>
           </View>
-        {/* </TouchableOpacity> */}
         {this.state.showContextMenu && ( 
           <View style={styles.contextMenu}>
           <Mutation
@@ -412,7 +400,7 @@ class ManagePackages extends Component {
           />
         </View>
         :
-        <View style={{ flex: 0.3 }}>
+        <View style={{ flex: 0.3 , marginTop:20}}>
           <PrimaryButton
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
             onPress={() => this.onSubmit(this.state.pricepermonth, this.state.cardName, "month")}
@@ -492,7 +480,7 @@ const styles = StyleSheet.create({
       },
   wrapper: {},
   slide1: {
-    flex: 0.95,
+    flex: 0.99,
     // height:'60%',  
     justifyContent: 'center',
     alignItems: 'center',

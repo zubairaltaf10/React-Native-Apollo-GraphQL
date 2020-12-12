@@ -27,7 +27,7 @@ const authLink = setContext(async (req, {headers}) => {
     let token = JSON.parse(user)
     return {
       ...headers,
-      headers: { authorization: token ? `Bearer ${token. access_token}` : null }
+      headers: { authorization: token ? `Bearer ${token.access_token}` : null }
     }
   })
   // 
@@ -66,17 +66,14 @@ class RecipesDetails extends React.Component {
         }
       })
         .then(async (data) => {
-          this.setState({loading:false})
-          console.log('rec', data.data.recipe)
+          
+         
         
-        this.setState({recDetail:data.data.recipe})
-
-        const instructions = data.data.recipe.instructions;
+        this.setState({recDetail:data.data.recipe , nutrients:data.data.recipe.nutrition.nutrients })
+               const instructions = data.data.recipe.instructions;
         const allequipments = [];
-        console.log('ins' , instructions)
         const steps  = [];
         _.forEach(instructions, function(value) {
-            console.log(value.steps);
             _.forEach(value.steps, function(step) {
                
                 steps.push(step)
@@ -94,11 +91,10 @@ class RecipesDetails extends React.Component {
           });
 
         
-        console.log(allequipments)
         this.setState({allequipments:allequipments})
         this.setState({allsteps:steps})
         console.log('final step' , steps)
-       
+        this.setState({loading:false})
 
         })
         .catch((err) => {
@@ -134,11 +130,12 @@ class RecipesDetails extends React.Component {
         recDetail:{},
         loading:true,
         allequipments:[],
-        allsteps:[]
+        nutrients:[],
+        allsteps:[],
     }
 
     _renderItem = ({ item }) => {
-        console.log(item.index)
+       
         return (
          
          
@@ -176,11 +173,11 @@ class RecipesDetails extends React.Component {
                     </ScrollView>
                 ) }
                 {item.index == 3 && (
-                    {/* <ScrollView style={{flex:1, maxHeight: 200 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
+                    <ScrollView style={{flex:1, maxHeight: 200 }} nestedScrollEnabled={true} onTouchStart={(ev) => { 
 									  this.setState({enabled:false }); }}
 									  onMomentumScrollEnd={(e) => { this.setState({ enabled:true }); }}
 									onScrollEndDrag={(e) => { this.setState({ enabled:true }); }}>
-                   { this.state.recDetail.nutrition.nutrients?.map((x) =>
+                   { this.state.nutrients?.map((x) =>
                    
                       <View style={{flex:1, flexDirection: 'row',justifyContent: 'space-between',}}> 
                     <View style={{flex:0.6, margin:5}}>
@@ -192,7 +189,7 @@ class RecipesDetails extends React.Component {
                     </View> 
                    
                     )}
-                    </ScrollView> */}
+                    </ScrollView>
                 ) }
                 </View>
             </View>
@@ -221,34 +218,13 @@ class RecipesDetails extends React.Component {
         this.setState({tabheaderArray:a})
         this._slider.goToSlide(index)
 
-        console.log(this.state.tabheaderArray)
     }
 
     viewfull = () => {
         this.setState({viewfull:true})
     }
     render() {
-        // const  recipeDetail  = this.props.data.recipe ? this.props.data.recipe : null;
-        // console.log(this.props.data.recipe)
-        // this.state.recDetail = recipeDetail;
-        // const instructions = recipeDetail.instructions.setps;
-        // const allequipments = [];
-        // if(instructions)
-        // {
-        // _.forEach(instructions, function(value) {
-        //     console.log(value);
-        //     _.forEach(value.equipment, function(equipment) {
-        //         allequipments.push(equipment)
-        //       });
-
-        //   });
-        // }
-        // console.log(allequipments)
-        // console.log('ins ',instructions)
-        // if (!recipeDetail) {
-        //   return <ActivityIndicator style={styles.spinner}   /> 
-    
-        //}
+        
         return (
             <View>
             { this.state.loading ? 

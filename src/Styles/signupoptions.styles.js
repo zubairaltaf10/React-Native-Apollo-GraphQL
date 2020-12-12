@@ -128,6 +128,7 @@ justifyContent: "center"
     marginTop:4
   },
   logo: {
+    
     width: 112,
     height: 72,
   },
@@ -162,6 +163,8 @@ orview:{
   textAlign: 'center',
   alignItems: 'center',
   margin:20,
+  height: 35,
+
 },
 absolute: {
   position: "absolute",
