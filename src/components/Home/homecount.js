@@ -32,7 +32,7 @@ class HomeCount extends React.Component {
      console.log('check')
       this.loadloginuser();
     });
-    //loadloginuser();
+    loadloginuser();
   this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
  }

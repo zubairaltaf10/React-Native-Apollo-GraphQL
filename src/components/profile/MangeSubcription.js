@@ -34,7 +34,7 @@ class ManagePackages extends Component {
         console.log('check')
          this.loaduser();
        });
-         
+       this.loaduser();
       }
   loaduser = async () =>{
     let user = await AsyncStorage.getItem('user');
@@ -271,6 +271,7 @@ class ManagePackages extends Component {
       return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
     }
     return (
+      // <ScrollView>
       <View style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor="transparent" />
       <View style={{ paddingTop:20 ,paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
@@ -313,7 +314,7 @@ class ManagePackages extends Component {
          )}  
       
         </View>
-        <View >
+        <View  styles={{marginBottom:10}}>
           <Text style={styles.toptext}>Your current plan </Text>
           <View >
          
@@ -330,9 +331,9 @@ class ManagePackages extends Component {
           <Text style={styles.upgradetext}>Upgrade your plan</Text>
         </View>
        
-        <View style={{ flex: 0.8 }}>
+        <View style={{ flex: 0.75 }}>
         
-          <Swiper     ref={(ref) => this._slider = ref} style={styles.wrapper} 
+          <Swiper     ref={(ref) => this._slider = ref} style={styles.wrapper } 
             dot={
               <View
                 style={{
@@ -348,7 +349,7 @@ class ManagePackages extends Component {
               />
             }
             paginationStyle={{
-              bottom: undefined, left: undefined, top: height(30), right: 0, alignItems: 'center', width: '100%', position: 'absolute'
+              bottom: undefined, left: undefined, top: height(27), right: 0, alignItems: 'center', width: '100%', position: 'absolute'
             }}
             loop
             activeDot={
@@ -391,7 +392,7 @@ class ManagePackages extends Component {
           </Swiper>
         </View>
         {this.state.cardName == 'Basic' ?
-          <View style={{ flex: 0.11,marginTop:height(5) }}>
+          <View style={{ flex: 0.11, }}>
           <PrimaryButton
             title="CONTINUE"
             onPress={() => this.onSubmit(0,this.state.cardName, "month" )}
@@ -400,7 +401,7 @@ class ManagePackages extends Component {
           />
         </View>
         :
-        <View style={{ flex: 0.3 , marginTop:20}}>
+        <View style={{ flex: 0.26 }}>
           <PrimaryButton
             title={ "SUBSCRIBE £" + this.state.pricepermonth + " / MONTH" }
             onPress={() => this.onSubmit(this.state.pricepermonth, this.state.cardName, "month")}
@@ -415,7 +416,7 @@ class ManagePackages extends Component {
           />
         </View>
       }
-        <View style={{ flex: 0.4 , marginTop:20, marginBottom:10}}>
+        <View style={{ flex: 0.40 , marginTop:30, marginBottom:2}}>
         
           <View style={{ flexDirection: 'row' }}>
             <ScrollView
@@ -440,7 +441,7 @@ class ManagePackages extends Component {
           </View>
 
       </View>
-
+      // </ScrollView>
     );
   }
 }
@@ -480,14 +481,15 @@ const styles = StyleSheet.create({
       },
   wrapper: {},
   slide1: {
-    flex: 0.99,
+    flex: 0.80,
     // height:'60%',  
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    marginVertical: height(5.5),
+     marginVertical: '2%',
     marginHorizontal:20,
     borderRadius: 5
+    
   },
   slide2: {
     flex: 0.95,
