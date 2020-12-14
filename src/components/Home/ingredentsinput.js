@@ -182,7 +182,9 @@ class InGredentsInput extends React.Component {
     let items = [];
     if (checkedItems.length == 0) {
       this.clearAll()
+      return
     }
+    else {
     if (this.state.checkedItems.length != checkedItems.length) {
       this.state.checkedItems.filter(ingredient => {
         if (checkedItems.findIndex(x=>x.name == ingredient.name)< 0){
@@ -195,6 +197,7 @@ class InGredentsInput extends React.Component {
       items.forEach(x => {
         this.onRemove(x,true)
       })
+    }
     }
   };
 
@@ -494,7 +497,7 @@ class InGredentsInput extends React.Component {
           </View>
           <View>
             <View style={{ marginTop: height(3), marginLeft: 17, zIndex: 1 }}>
-              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>Select at least {this.state.limit} ingredients</Text>
+              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>{this.state.limit > 6 ? "You can select as many as you want" : 'Select at least' + this.state.limit + 'ingredients'}</Text>
 
               <Autocomplete
                 //  key={shortid.generate()}
@@ -770,10 +773,11 @@ const styles = StyleSheet.create({
     //  borderBottomWidth: 1,
     //  borderColor: "",
     // paddingVertical: 13,
-    paddingLeft: 20,
-    paddingRight: 20,
-    width: "92%",
+    marginLeft: '5%',
+ //   paddingRight: '5%',
+    width: "85%",
     maxHeight: 200,
+    backgroundColor:'white'
     // justifyContent: "flex-start",
   },
   container: {
@@ -782,7 +786,7 @@ const styles = StyleSheet.create({
   },
   plus: {
     position: "absolute",
-    left: 25,
+    left: 10,
     top: 10,
     fontSize: 22,
     // flex: 0.1, 
