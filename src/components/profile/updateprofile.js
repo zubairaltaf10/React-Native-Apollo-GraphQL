@@ -191,7 +191,7 @@ class UpdateProfile extends Component {
    console.log('date' , this.state.date)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
-      console.log(this.state.image)
+      console.log(this.state)
       
       if (this.state.errors.length === 0) {
         this.setState({loading:true})
