@@ -283,7 +283,7 @@ onShare = async () => {
           marginTop={40}
         />
         <PrimaryButton2
-            title= "           VIEW PLAN            " 
+            title= "           VIEW PLANS            " 
             onPress={()=>{this.props.navigation.navigate('ManagePackge') }}
             marginTop={height(10)}
             //loading={this.state.loading}

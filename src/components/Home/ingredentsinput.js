@@ -470,7 +470,7 @@ class InGredentsInput extends React.Component {
 
 
             <PrimaryButton
-              title="           VIEW PLAN            "
+              title="           VIEW PLANS            "
               onPress={() => this._onSaveUserSubscription()}
               marginTop={height(5)}
               //loading={this.state.loading}

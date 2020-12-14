@@ -153,7 +153,7 @@ class UpdateProfile extends Component {
         this.setState({userimage:response.uri})
         this.setState({isuserimage:true})
         const file =  this.generateRNFile(response.uri, response.fileName)
-
+        console.log(file)
         this.setState({image:file})
        // setAvatar({uri: response.uri});userimage
         // here we can call a API to upload image on server
@@ -191,7 +191,7 @@ class UpdateProfile extends Component {
    console.log('date' , this.state.date)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
-      console.log(this.state.formData.id)
+      console.log(this.state.image)
       
       if (this.state.errors.length === 0) {
         this.setState({loading:true})
@@ -295,7 +295,14 @@ class UpdateProfile extends Component {
       .catch((err) => {
         this.setState({passswordloading:false})
         console.log(err)
-        SNACKBAR.simple('Error in updating password');
+        if(err.graphQLErrors.length > 0)
+        {
+          var mess = err.graphQLErrors[0].message
+          if(mess.includes("Validation")){
+            SNACKBAR.simple('Old password is incorrect');
+          }
+        }
+        
 
       });
     }
@@ -354,9 +361,17 @@ onrequestModelclose = () =>
         this.logout();
       })
       .catch((err) => {
-        SNACKBAR.simple("Error in delete account")
+        
         this.setState({deleteloading:false})
         console.log(err)
+
+        if(err.graphQLErrors.length > 0)
+        {
+          var mess = err.graphQLErrors[0].message
+          if(mess.includes("Authentication")){
+            SNACKBAR.simple('Password is incorrect');
+          }
+        }
       });
 
  }
@@ -446,7 +461,7 @@ onrequestModelclose = () =>
          </TouchableOpacity>
           </View>
           <View style={{ flex: 0.8 }}>
-            <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Account Setting</Text>
+            <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>Account Settings</Text>
           </View>
         </View>
       
@@ -528,7 +543,13 @@ onrequestModelclose = () =>
               //value={this.state.formData.date_of_birth}
               onFocus={this.showDatepicker}
             />
-            
+            <TouchableOpacity
+                style={styles.eyeIcon}
+                >
+                <Icon name="calendar" type="MaterialCommunityIcons" style={{fontSize: 16, color: COLORS.primary}}></Icon>
+                 
+               
+              </TouchableOpacity>
             <DateTimePicker
             isVisible={this.state.show}
             onConfirm={this.handleDatePicked}
@@ -557,8 +578,8 @@ onrequestModelclose = () =>
 
       <View style={{flex:0.25,flexDirection:'row',margin:17, padding:10, backgroundColor:'#fff'}}>
         <TouchableOpacity style={{flex:1,flexDirection:'row', backgroundColor:'#fff'}} onPress={this.deletemodel}>
-            <Icon name="delete" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
-            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}>Delete my account</Text>
+            <Icon name="delete" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:'#FF3A55',left:5}}></Icon>
+            <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#FF3A55',alignSelf:'center',top:2,marginLeft:15}}>Delete my account</Text>
             <Icon name="chevron-right" type="Entypo" style={{fontSize: 16,alignSelf:'center'}}></Icon>
             </TouchableOpacity>
             </View>

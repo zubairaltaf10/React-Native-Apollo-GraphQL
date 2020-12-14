@@ -72,11 +72,12 @@ class MyFavorites extends React.Component {
         query: query,
         // variables: {
           
-        // }
+        // }cache
+        cache:false
       })
         .then(async (data) => {
           this.setState({loading:false})
-          console.log( 'my fav' , data.data.userFavourites)
+          console.log( 'my fav' , data.data)
 
         this.setState({recipes:data.data.userFavourites, backup:data.data.userFavourites})
        
