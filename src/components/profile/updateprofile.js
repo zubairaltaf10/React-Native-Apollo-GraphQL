@@ -116,7 +116,7 @@ class UpdateProfile extends Component {
   };
   handleDatePicked = date => {
         let _date = this.convertDateToString(date);
-    console.log("date want to show", _date);
+   
     this.setState({ date: _date });
     this.hideDateTimePicker();
   };
@@ -128,7 +128,10 @@ class UpdateProfile extends Component {
    if (user) {
      user = JSON.parse(user).user;
      this.setState({ formData: user });
-     console.log('form data' , this.state.formData);
+    
+     if(this.state.formData.profile_image != null){
+       this.setState({ isuserimage: true});
+     }
      this.setState({date: this.state.formData.date_of_birth})
 
 
@@ -138,12 +141,11 @@ class UpdateProfile extends Component {
 
  }
   handlePicker = () => {
-    // console.log('edit');
+   
     ImagePicker.showImagePicker({}, (response) => {
-      //console.log('Response = ', response);
-
+      
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
@@ -153,7 +155,7 @@ class UpdateProfile extends Component {
         this.setState({userimage:response.uri})
         this.setState({isuserimage:true})
         const file =  this.generateRNFile(response.uri, response.fileName)
-        console.log(file)
+       
         this.setState({image:file})
        // setAvatar({uri: response.uri});userimage
         // here we can call a API to upload image on server
@@ -188,10 +190,9 @@ class UpdateProfile extends Component {
   }
   onSubmit = () => {
     //this.props.navigation.navigate('ResetPassword');
-   console.log('date' , this.state.date)
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetProfileErrors(this.state.formData)}, () => {
-      console.log(this.state)
+    
       
       if (this.state.errors.length === 0) {
         this.setState({loading:true})
@@ -216,7 +217,6 @@ class UpdateProfile extends Component {
       })
       .catch((err) => {
         this.setState({loading:false})
-        console.log(err)
         SNACKBAR.simple('Error in updating profile');
       });
    }
@@ -225,14 +225,13 @@ class UpdateProfile extends Component {
    generateRNFile(uri, name) {
     return uri ? new ReactNativeFile({
       uri,
-      type: mime.lookup(uri) || 'image',
+      type: mime.lookup(uri) || 'image/jpg',
       name,
     }) : null;
   }
   async updateupdatelocalstorage()
   {
     let user = await AsyncStorage.getItem('user');
-    console.log(user)
    if (user) {
      user = JSON.parse(user);
      user.user.first_name= this.state.formData.first_name; 
@@ -251,7 +250,7 @@ class UpdateProfile extends Component {
 
   let users = await AsyncStorage.getItem('user');
    if (user) {
-    console.log('user ss' , users)
+    //console.log('user ss' , users)
      
    }
 
@@ -271,10 +270,7 @@ class UpdateProfile extends Component {
     }
   };
   updatepassword = () => {
-    console.log(this.state.passworddata)
-    //LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetPasswordErrors(this.state.passworddata)}, () => {
-      console.log(this.state.errors)
       
       if (this.state.errors.length === 0) {
         this.setState({passswordloading:true})
@@ -329,7 +325,6 @@ class UpdateProfile extends Component {
     })
   };
   async logout() {
-    console.log('ssss')
     try {
         await AsyncStorage.removeItem('user'); 
         this.props.navigation.navigate('Auth'); 
@@ -363,7 +358,7 @@ onrequestModelclose = () =>
       .catch((err) => {
         
         this.setState({deleteloading:false})
-        console.log(err)
+        //console.log(err)
 
         if(err.graphQLErrors.length > 0)
         {

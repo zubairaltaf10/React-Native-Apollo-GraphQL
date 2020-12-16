@@ -16,7 +16,6 @@ async componentDidMount(){
   let user = await AsyncStorage.getItem('user');
     if (user) {
       user = JSON.parse(user).user;
-      console.log(user)
       if(user != undefined){
       if(user.email_verified_at != null){
         if(user.user_subscription == null){

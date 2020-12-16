@@ -20,7 +20,8 @@ import { setContext } from 'apollo-link-context';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
 import AsyncStorage from '@react-native-community/async-storage';
-import {  equipments } from './ingredientslist.json'
+import {  equipments } from './ingredientslist.json';
+import SNACKBAR from '../../Helpers/SNACKBAR';
 import {_} from 'lodash';
 const authLink = setContext(async (req, {headers}) => {
     const user = await AsyncStorage.getItem('user')
@@ -55,8 +56,7 @@ const data = [
 class RecipesDetails extends React.Component {
     
     async componentDidMount() {
-        console.log('ddddddd ',this.props.navigation.getParam('id'))
-        
+       
 
       this.setState({loading:false})
       client.query({
@@ -66,9 +66,6 @@ class RecipesDetails extends React.Component {
         }
       })
         .then(async (data) => {
-          
-         
-        
         this.setState({recDetail:data.data.recipe , nutrients:data.data.recipe.nutrition.nutrients })
                const instructions = data.data.recipe.instructions;
         const allequipments = [];
@@ -83,31 +80,33 @@ class RecipesDetails extends React.Component {
                   });
               });
           });
-          
-
           _.forEach(allequipments, function(equipment) {
-            
             equipment.image = "https://spoonacular.com/cdn/equipment_100x100/" + equipment.image;
           });
-
-        
         this.setState({allequipments:allequipments})
         this.setState({allsteps:steps})
-        console.log('final step' , steps)
+        
         this.setState({loading:false})
 
         })
         .catch((err) => {
           this.setState({loading:false})
-          console.log(err)
+          
         })
-      
+        let user = await AsyncStorage.getItem('user');
+        if (user) {
+          user = JSON.parse(user).user;
+          this.setState({ loginuser: user });
+        } else {
+          console.log('no user found');
+        }
      
     }
     constructor(props) {
         super(props);
     }
     state = {
+        loginuser: {},
         currentSlide: 0,
         viewfull : false,
         tabheaderArray: [
@@ -223,6 +222,28 @@ class RecipesDetails extends React.Component {
     viewfull = () => {
         this.setState({viewfull:true})
     }
+    onAddfav = (recipeId) => {
+        //console.log(this.state.loginuser.id)
+        // this.setState({loading:true})
+        client.mutate({
+          mutation: mutation,
+          variables: {
+            user_id: this.state.loginuser.id,
+            recipe_id: recipeId
+          }
+        })
+          .then(async (data) => {
+            var recepi = this.state.recDetail;
+           
+            recepi.fav = true;
+            this.setState({recDetail: recepi})
+            SNACKBAR.simple("Added in favourite");
+          })
+          .catch((err) => {
+            // this.setState({loading:false})
+            console.log(err)
+          })
+      };
     render() {
         
         return (
@@ -246,9 +267,17 @@ class RecipesDetails extends React.Component {
                                         </View>
                                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
                                             <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
-                                                <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
-                                                    name="favorite-border"
-                                                    type="MaterialIcons" />
+                                            <TouchableOpacity onPress={() => { this.onAddfav(this.state.recDetail.id); }}>
+                              {this.state.recDetail.fav == true && (
+                                <Icon style={{ fontSize: 18, marginTop: 3, alignSelf: 'center', color: COLORS.primary }}
+                                  name="favorite"
+                                  type="Fontisto" />)}
+                              {this.state.recDetail.fav != true && (
+                                <Icon style={{ fontSize: 18, marginTop: 3, alignSelf: 'center', color: COLORS.primary }}
+                                  name="bookmark"
+                                  type="Feather" />
+                              )}
+                            </TouchableOpacity>
                                             </View>
                                         </View>
                                     </View>
@@ -435,7 +464,16 @@ const styles = StyleSheet.create({
         marginHorizontal:10
       }
 })
-
+const mutation = gql`
+mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
+    addUserFavourite(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    user_id
+  }
+}
+`;
 const query = gql`
 
 query recipe($id: Int!){

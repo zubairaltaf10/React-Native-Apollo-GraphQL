@@ -44,12 +44,17 @@ const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({
   link: ApolloLink.from([authLink, uploadLink]),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+    }
+  }
 });
 class MyFavorites extends React.Component {
     async componentDidMount() {
       //DevSettings.reload()
       this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
-        console.log('check')
+        
         this.loaddata();
        });
        this.setState({clickedItems:this.props.navigation.getParam('clickeditems')})
@@ -58,27 +63,45 @@ class MyFavorites extends React.Component {
      user = JSON.parse(user).user;
      var subcription = user.user_subscription.subscription
      this.setState({ currentsubscription: subcription });
-     console.log('user ', user);
+    
      this.setState({ loginuser: user });
-     console.log('user subcription found in localstorage', this.state.currentsubscription);
+     //console.log('user subcription found in localstorage', this.state.currentsubscription);
    } else {
     console.log('no user found');
    }
     }
     async loaddata(){
      // DevSettings.reload()
+     const authLink = setContext(async (req, {headers}) => {
+      const user = await AsyncStorage.getItem('user')
+      let token = JSON.parse(user)
+      return {
+        ...headers,
+        headers: { authorization: token ? `Bearer ${token. access_token}` : null }
+      }
+    })
+    const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
+    const sclient = new ApolloClient({
+      link: ApolloLink.from([ authLink, uploadLink ]),
+      cache : new InMemoryCache(),
+      defaultOptions: {
+        watchQuery: {
+          fetchPolicy: 'no-cache',
+        }
+      }
+    });
       this.setState({loading:true})
-      client.query({
+      sclient.query({
         query: query,
         // variables: {
           
         // }cache
-        cache:false
+        pollInterval: 0,
+        partialRefetch:true
       })
         .then(async (data) => {
           this.setState({loading:false})
-          console.log( 'my fav' , data.data)
-
+          
         this.setState({recipes:data.data.userFavourites, backup:data.data.userFavourites})
        
         

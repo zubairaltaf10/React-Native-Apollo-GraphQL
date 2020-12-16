@@ -157,7 +157,6 @@ class Intro extends React.Component {
     };
     
     _onDone = () => {
-        console.log(this.state.currentSlide)
        this.props.navigation.navigate("SignupOptions")
       }
      handleNext = () => {
@@ -305,7 +304,6 @@ class Intro extends React.Component {
               if (index == 0) {
                 this.state.dotsArray.find((element)=> {
                   if (element.isActive == true){
-                    console.log(element)
                     element.isActive = false
                   }
                 });
@@ -314,7 +312,6 @@ class Intro extends React.Component {
               if (index == 1) {
                 this.state.dotsArray.find((element)=> {
                   if (element.isActive == true){
-                    console.log(element)
                     element.isActive = false
                   }
                 });
@@ -323,7 +320,6 @@ class Intro extends React.Component {
               if (index == 2) {
                 this.state.dotsArray.find((element)=> {
                   if (element.isActive == true){
-                    console.log(element)
                     element.isActive = false
                   }
                 });

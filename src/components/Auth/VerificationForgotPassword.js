@@ -66,7 +66,6 @@ class VerificationForGotPassword extends React.Component {
   };
    
   verifyCode = async () => {
-     console.log(this.state.userInput.length) 
      if (this.state.userInput.length < 4){
       SNACKBAR.simple('Please enter the provided code');
       return;
@@ -79,12 +78,10 @@ class VerificationForGotPassword extends React.Component {
         },
       })
       .then((res) => {
-        console.log(res.data.verifyPasswordResetCode)
         this.setState({loading:false})
         if (res.data.verifyPasswordResetCode.status === "true") {
           
           const type = this.props.navigation.getParam('type');
-          console.log(type + "type")
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
@@ -98,10 +95,7 @@ class VerificationForGotPassword extends React.Component {
            
       })
       .catch((err) => {
-        //console.log(err)
         this.setState({loading:false})
-       // SNACKBAR.simple(JSON.stringify(err));
-        //console.log(JSON.stringify(err))
         if(err.graphQLErrors != null)
         {
           SNACKBAR.simple(err);
@@ -145,7 +139,6 @@ class VerificationForGotPassword extends React.Component {
   colors = ['#ff595f', '#e42959'];
 
   render() {
-    //console.log('verificationCode', this.state.verificationCode);
     return (
      
             <Content style={styles.container}>

@@ -71,7 +71,6 @@ class InGredentsInput extends React.Component {
           user = JSON.parse(user).user;
           this.setState({user})
           this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
-          console.log(this.state.limit)
         } else {
           this.setState({ limit: 3 })
           this.setState({user:null})
@@ -92,9 +91,7 @@ class InGredentsInput extends React.Component {
     })
       .then(async (data) => {
         this.setState({ loading: false })
-        // await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
-        console.log(data.data.cacheIngredients.data)
-        //  this.setState({ selectedIngredients: data.data.cacheIngredients.data })
+        
         const resultsCount = _(data.data.cacheIngredients.data).groupBy('aisle').map((ingredients, aisle) => ({
           aisle: aisle ? aisle : "Others",
           ingredients,
@@ -105,7 +102,7 @@ class InGredentsInput extends React.Component {
         if (user) {
           user = JSON.parse(user).user;
           this.setState({ limit: parseInt(user.user_subscription.subscription.ingredient_limit) })
-          console.log(this.state.limit)
+       
         } else {
           this.setState({ limit: 3 })
         }
@@ -128,7 +125,7 @@ class InGredentsInput extends React.Component {
   }
 
   onsearchIngredients = async (ingredient) => {
-    console.log(ingredient + "here")
+   
     client.query({
       query: GetIngredients,
       variables: {
@@ -137,7 +134,7 @@ class InGredentsInput extends React.Component {
     })
       .then(async (data) => {
         await this.setState({ searchResults: data.data.ingredientAutoCompleteSearch })
-        console.log(data.data.ingredientAutoCompleteSearch)
+       
       })
       .catch((err) => {
         console.log(err)
@@ -203,14 +200,12 @@ class InGredentsInput extends React.Component {
 
   handleSelectItem = (item, index) => {
     this.aisleAdd(item)
-    // this.ingredientAdd(item)
     this.checkItem(item, true)
-    //  console.log(JSON.stringify(item) + "ITEMMMM");
+    
   }
   ingredientAdd = (itemm) => {
 
     let ingredientlist = [...this.state.ingredientlist]
-    //  console.log("from search", name.name)
     ingredientlist.filter(ingredient => {
       if (ingredient.aisle == itemm.aisle) {
         let obj = { name: "" }
@@ -226,36 +221,26 @@ class InGredentsInput extends React.Component {
   }
 
   aisleAdd = (item) => {
-    console.log(item.aisle)
+ 
     let ingredientlist = [...this.state.ingredientlist]
     let obj = { aisle: "" }
-    //  if(ingredientlist.filter(ingredient=>ingredient.aisle == item.aisle).length == 0){
-    //    console.log("andar")
-    //    obj.aisle = item.aisle
-    //    console.log("obj",obj)
-    //    ingredientlist.push(obj)
-    //    this.setState(ingredientlist)
-    //  }
+    
     const a = _.filter(ingredientlist, ing => ing.aisle == item.aisle);
     if (a.length == 0) {
       obj.aisle = item.aisle
       ingredientlist.unshift(obj)
     }
     ingredientlist.filter(ingredient => {
-      //  console.log(ingredient.aisle +"Sa   "+item.aisle)
+     
       if (ingredient.aisle == item.aisle) {
-        console.log("tryyy", ingredient)
         let obj = { name: "" }
         if (ingredient.ingredients != undefined) {
-          //   ingredient.ingredients.some(item => {
           if (ingredient.ingredients.filter(x => x.name == item.name).length <= 0) {
-            console.log("not undefined")
             obj.name = item.name
             ingredient.ingredients.push(obj)
           }
         }
         else {
-          console.log("===> undefined")
           let arr = []
           let obj = { name: "" }
           obj.name = item.name
@@ -269,7 +254,6 @@ class InGredentsInput extends React.Component {
     this.setState({ ingredientlist })
   }
   onDropdownClose = () => {
-    console.log('closed')
   }
 
 
@@ -281,7 +265,6 @@ class InGredentsInput extends React.Component {
     // }
     if (fromSearch == true) {
       ingredientlist.filter(ingredient => {
-        console.log("from search", ingredient)
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
             if (parseInt(this.state.limit) >= this.state.checkedItemsLength + 1) {
@@ -301,7 +284,7 @@ class InGredentsInput extends React.Component {
 
     }
     else {
-      console.log(JSON.stringify(name.name) + "name")
+     // console.log(JSON.stringify(name.name) + "name")
       ingredientlist.filter(ingredient =>
         ingredient.ingredients.some(item => {
           if (item.name == name.name) {
@@ -380,17 +363,16 @@ class InGredentsInput extends React.Component {
       }
     })
       .then(async (data) => {
-        console.log(data)
+       
       })
       .catch((err) => {
         this.setState({ loading: false })
-        console.log(err)
+       
       })
   }
 
   onRemove = (itemm,fromUpdate) => {
-    console.log(this.state.checkedItemsLength)
-   // this.setState({ checkedItemsLength: 0 })
+    
     let ingredientlist = [...this.state.ingredientlist]
     let checkedItems = [...this.state.checkedItems]
     ingredientlist.filter(ingredient =>
@@ -443,14 +425,11 @@ class InGredentsInput extends React.Component {
     this.RBSheet.close()
   }
   render() {
-    // console.log(this.props.data.results ? this.props.data.results : null)
+    
     const { selectedIngredients } = this.state;
     const { scrollToInput, onDropdownClose, onDropdownShow } = this.props;
 
     return (
-      // <View style={{ flex: 1 }} behavior="padding">
-      //    <Text style={{ alignSelf: 'center', marginTop: height(4.5), fontFamily: FONTFAMILY.regular, fontSize: 16 }}>My ingredients</Text>
-      // </View>
       <View style={{ flex: 1 }}>
         <StatusBar translucent backgroundColor="transparent" />
         <Modal
@@ -497,7 +476,7 @@ class InGredentsInput extends React.Component {
           </View>
           <View>
             <View style={{ marginTop: height(3), marginLeft: 17, zIndex: 1 }}>
-              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>{this.state.limit > 6 ? "You can select as many as you want" : 'Select at least' + this.state.limit + 'ingredients'}</Text>
+              <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9' }}>{this.state.limit > 6 ? "You can select as many as you want" : 'Select at least ' + this.state.limit + ' ingredients'}</Text>
 
               <Autocomplete
                 //  key={shortid.generate()}

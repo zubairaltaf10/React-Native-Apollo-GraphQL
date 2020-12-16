@@ -43,7 +43,7 @@ const SecurityQuestion = ({
     setKeyboardVisible(false);
   };
   const Clicktest = () => {
-    console.log('sss')
+   
   };
 
   return (

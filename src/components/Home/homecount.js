@@ -29,16 +29,15 @@ const onRequestClose = false;
 class HomeCount extends React.Component {
   async componentWillMount() {
     this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
-     console.log('check')
+     
       this.loadloginuser();
     });
-    loadloginuser();
+    this.loadloginuser();
   this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
  }
  loadloginuser = async  () =>
  {
-  console.log('user check')
   let user = await AsyncStorage.getItem('user');
   if (user) {
     user = JSON.parse(user).user;
@@ -50,9 +49,7 @@ class HomeCount extends React.Component {
     var subcription = user.user_subscription.subscription
     this.setState({ currentsubscription: subcription , loginuser: user });
    
-    console.log('user subcription found in localstorage', this.state.currentsubscription);
   } else {
-   console.log('no user found');
   }
  }
   constructor(props) {
@@ -75,15 +72,13 @@ class HomeCount extends React.Component {
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-    //console.log(JSON.stringify(this.state.paid) + "resulttt")
-
+   
   }
 
 componentWillUnmount() {
   this.RBSheet.open()
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
-  //  console.log(JSON.stringify(this.state.paid) + "resulttt")
 }
 
 _keyboardDidShow(e) {
@@ -140,8 +135,6 @@ IncrementItem = () => {
   }
 
 
-  console.log(this.state.clicks , this.state.currentsubscription.person_limit)
-
     if( parseInt(this.state.clicks) >  parseInt(this.state.currentsubscription.person_limit))
     {
       this.setState({modal: true});
@@ -162,15 +155,10 @@ IncrementItem = () => {
     this.props.navigation.navigate('Auth');
   }
   async removeItemValue() {
-    console.log('ssss')
     try {
        var abc = await AsyncStorage.removeItem('user'); 
        let user = await AsyncStorage.getItem('user');
-  if (user) {
-    console.log('not log out');
-  } else {
-   console.log('log out');
-  }
+  
         this.props.navigation.navigate('Auth'); 
       }
     catch(exception) {
@@ -199,7 +187,7 @@ IncrementItem = () => {
  }
  OpenMangneSub = () =>
  {
-   console.log(this.state.loginuser)
+  
    if(_.isEmpty(this.state.loginuser)){
   this.setState({viewloginmodel:true})
    }else{
@@ -240,11 +228,7 @@ onShare = async () => {
 
   render() {
     const  currentsubscription  = this.state.currentsubscription;
-    // currentsubscription.person_limit = 3
-    // console.log( 'currentsubscription ' + currentsubscription.person_limit)
-    // if (!currentsubscription) {
-    //   return <ActivityIndicator style={styles.spinner} color={Colors.primary} /> 
-    // }
+    
     return (
       <View style={{ flex: 1,backgroundColor: this.state.modal ? "transparent" : null,opacity: this.state.modal ? 0.03 : 1}} behavior="padding">
         

@@ -51,7 +51,6 @@ class ForgotPassword extends React.Component {
     .catch((err) => {
       SNACKBAR.simple(JSON.stringify(err));
       this.setState({loading:false})
-      console.log(JSON.stringify(err));
     });
   };
 

@@ -31,45 +31,41 @@ class ManagePackages extends Component {
   swiperRef = React.createRef()
     async componentDidMount() {
       this._unsubscribe = this.props.navigation.addListener("didFocus", () => {
-        console.log('check')
+      //  console.log('check')
          this.loaduser();
        });
        this.loaduser();
       }
   loaduser = async () =>{
     let user = await AsyncStorage.getItem('user');
-         console.log('localstorage', user);
+        // console.log('localstorage', user);
         if (user) {
           user = JSON.parse(user).user;
           this.setState({ loginuser: user });
-          console.log('user localstorage', this.state.loginuser);
+          //console.log('user localstorage', this.state.loginuser);
           
           var subcription = user.user_subscription.subscription
           this.setState({ currentsubscription: subcription });
-          console.log('user subcription found in localstorage', this.state.currentsubscription);
+          //console.log('user subcription found in localstorage', this.state.currentsubscription);
           
           if(this.state.currentsubscription.name == "Basic"){
             let data = packageSlider.filter(p=>p.name == "Standard");
-            console.log(data[0].Slider)
              this.setState({packageSlider:  data[0].Slider})
           }else if(this.state.currentsubscription.name == "Standard"){
               let data = packageSlider.filter(p=>p.name == "Basic");
-              console.log(data[0].Slider)
                this.setState({packageSlider:  data[0].Slider})
             }else
             {
               let data = packageSlider.filter(p=>p.name == "Basic");
-              console.log(data[0].Slider)
                this.setState({packageSlider:  data[0].Slider})
             }
 
             if(subcription.name == "Basic")
           {
             this.setState({cardClicked : "Standard" ,cardName:"Standard" , default: "Standard", pricepermonth: 2.49 , priceperyear:15.99  })
-            console.log('sss')
+          
             
           }else{
-            console.log('dddd')
             this.setState({cardClicked : "Basic" ,cardName:"Basic" , default: "Basic"    })
           }
         } else {
@@ -136,26 +132,24 @@ class ManagePackages extends Component {
     if(model.name == "Basic")
     {
      let data = packageSlider.filter(p=>p.name == "Basic");
-     console.log(data[0].Slider)
+     //console.log(data[0].Slider)
       this.setState({packageSlider:  data[0].Slider})
     }
     if(model.name == "Standard")
     {
      let data = packageSlider.filter(p=>p.name == "Standard");
-     console.log(data[0].Slider)
+    // console.log(data[0].Slider)
       this.setState({packageSlider:  data[0].Slider})
     }
     if(model.name == "Premium")
     {
      let data = packageSlider.filter(p=>p.name == "Premium");
-     console.log(data[0].Slider)
       this.setState({packageSlider:  data[0].Slider})
     }
 
-    console.log("nameee"+model.name)
     this.setState({default:'', cardClicked:model.name, cardName:model.name,pricepermonth:model.amount_per_month, subscription_id:model.id , priceperyear:model.amount_per_year})
     
-    console.log("dsadasdasd" +this.state.cardClicked)
+   
   }
 
   onSubmit = async (amount , subcription, type) =>{
@@ -182,7 +176,7 @@ class ManagePackages extends Component {
 }
   _onSaveUserSubscription = async (type) => {
     type == "month" ?this.setState({loading:true}) :this.setState({yellowloading:true})
-    console.log(this.state.subscription_id);
+    
     this.props
     .mutate({
       variables: {
@@ -203,26 +197,17 @@ class ManagePackages extends Component {
   async updateupdatelocalstorage(subscription)
       {
         this.setState({loading:false})
-        console.log(subscription);
         
         let user = await AsyncStorage.getItem('user');
-        console.log(user)
+        
        if (user) {
          user = JSON.parse(user);
          user.user.user_subscription == null ? user.user.user_subscription = {subscription : {} } : user.user.user_subscription 
          user.user.user_subscription.subscription = subscription; 
         // this.setState({loginuser:user.user.user_subscription.subscription }) ;
          this.setState({currentsubscription:subscription }) ;
-            console.log('ss', this.state.currentsubscription)
-        //  if(this.state.currentsubscription.name == "Basic")
-        //   {
-        //     this.setState({cardClicked : "Standard" ,cardName:"Standard" , default: "Standard" ,  pricepermonth: 2.49 , priceperyear:15.99  })
-        //     console.log('sss')
             
-        //   }else{
-        //     console.log('dddd')
-        //     this.setState({cardClicked : "Basic" ,cardName:"Basic" , default: "Basic" })
-        //   }
+        
          
        }
        
@@ -235,7 +220,6 @@ class ManagePackages extends Component {
     }
     async cancelsubcriptionfromlocalstorage()
       {
-        console.log('ssss')
         SNACKBAR.simple("Subscription cancel successfully") 
         let user = await AsyncStorage.getItem('user');
       
@@ -254,7 +238,6 @@ class ManagePackages extends Component {
         } 
          user.user.user_subscription.subscription= basicsub; 
         let bb = await this.setState({currentsubscription:basicsub }) ;
-       console.log('update' , this.state.currentsubscription)
       let nn =  await AsyncStorage.setItem('user', JSON.stringify(user))
        SNACKBAR.simple("Subscription shifted to  basic") 
        }

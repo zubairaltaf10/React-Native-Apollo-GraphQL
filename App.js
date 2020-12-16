@@ -29,6 +29,11 @@ const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const client = new ApolloClient({
   link: ApolloLink.from([ authLink, uploadLink ]),
   cache : new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+    }
+  }
 });
 
 // const client = new ApolloClient({

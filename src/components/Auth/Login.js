@@ -72,8 +72,6 @@ class Login extends Component {
         this.setState({loading:true})
        let email =  this.state.formData.userNameOrEmail;
        let password = this.state.formData.loginPassword; 
-      // let email = "testuser12@mailinator.com";
-      // let password = "P@ssw0rd";  
       this.props.mutate({
         variables: {
           email: email,
@@ -81,12 +79,9 @@ class Login extends Component {
         },
       })
       .then((res) => {
-       // localStorage.setItem("userInfo", JSON.stringify(res.data.user));
-        console.log("userInfo ", res.data.login.access_token)
         if(res.data.login.user.email_verified_at != null)
         {
           this.setState({loading:false})
-         // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
              AsyncStorage.setItem('user', JSON.stringify(res.data.login)).then(
         () => {
           if(res.data.login.user.user_subscription == null)
@@ -114,8 +109,6 @@ class Login extends Component {
         }        
       })
       .catch((err) => {
-       // SNACKBAR.simple(JSON.stringify(err));
-        console.log(err)
         if(err.graphQLErrors != null)
         {
           this.setState({loading:false})

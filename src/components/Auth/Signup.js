@@ -66,11 +66,8 @@ class Signup extends Component {
   };
   
   onSubmit = () => {
-    //this.props.navigation.navigate('ResetPassword');
-   
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     this.setState({errors: GetSignupErrors(this.state.formData)}, () => {
-      console.log(this.state.errors.length)
       if(this.state.isOnToggleSwitch == false)
       {
         SNACKBAR.simple("Please check term and condition.");
@@ -93,14 +90,12 @@ class Signup extends Component {
         },
       })
       .then((res) => {
-        console.log(res.data);
          let user = {
           access_token:"",
           user:{}
          }
          user.access_token = res.data.register.tokens.access_token;
          user.user = res.data.register.tokens.user;
-         console.log('sssign ' ,user);
         AsyncStorage.setItem('user', JSON.stringify(user)).then(
           () => {
            
@@ -113,10 +108,7 @@ class Signup extends Component {
           email:email});
       })
       .catch((err) => {
-        console.log(err)
         this.setState({loading:false})
-       // var error = JSON.stringify(err);
-       // console.log(error)
         if(err.graphQLErrors.length > 0)
         {
           var mess = err.graphQLErrors[0].message

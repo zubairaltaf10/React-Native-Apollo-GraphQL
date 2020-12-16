@@ -51,13 +51,13 @@ class Packages extends Component {
   //   console.log(this.props.data);
   // }
   componentDidMount = async () =>{
-     console.log(this.props.data)
+     //g(this.props.data)
     let user = await AsyncStorage.getItem('user');
-    console.log("signup ", user)
+    //console.log("signup ", user)
    // DevSettings.reload()
      
      let data = packageSlider.filter(p=>p.name == "Basic");
-     console.log(data[0].Slider)
+     //console.log(data[0].Slider)
       this.setState({packageSlider:  data[0].Slider})
 
   } 
@@ -92,24 +92,21 @@ class Packages extends Component {
     if(model.name == "Basic")
    {
     let data = packageSlider.filter(p=>p.name == "Basic");
-    console.log(data[0].Slider)
      this.setState({packageSlider:  data[0].Slider})
    }
    if(model.name == "Standard")
    {
     let data = packageSlider.filter(p=>p.name == "Standard");
-    console.log(data[0].Slider)
-     this.setState({packageSlider:  data[0].Slider})
+    this.setState({packageSlider:  data[0].Slider})
    }
    if(model.name == "Premium")
    {
     let data = packageSlider.filter(p=>p.name == "Premium");
-    console.log(data[0].Slider)
      this.setState({packageSlider:  data[0].Slider})
    }
-    console.log("nameee"+model.name)
+  
    this.setState({default:'', cardClicked:model.name, cardName:model.name,pricepermonth:model.amount_per_month, subscription_id:model.id , priceperyear:model.amount_per_year})
-       console.log("dsadasdasd" +this.state.cardClicked)
+    
   }
   onSubmit = async (amount , subcription, type) =>{
      if(subcription == "Basic"){
@@ -137,8 +134,8 @@ class Packages extends Component {
     type == "month" ?this.setState({loading:true}) :this.setState({yellowloading:true})
     let user = await AsyncStorage.getItem('user');
     user = JSON.parse(user).user;
-    console.log(user.id)
-    console.log(this.state.subscription_id)
+   // console.log(user.id)
+   // console.log(this.state.subscription_id)
     this.props
     .mutate({
       variables: {
@@ -155,16 +152,16 @@ class Packages extends Component {
     .catch((err) => {
       this.setState({loading:false, yellowloading:false})
      
-      console.log(JSON.stringify(err));
+     // console.log(JSON.stringify(err));
     });
   }
   async updateupdatelocalstorage(subscription)
       {
         this.setState({loading:false})
-        console.log(subscription);
+       // console.log(subscription);
         
         let user = await AsyncStorage.getItem('user');
-        console.log(user)
+       // console.log(user)
        if (user) {
          user = JSON.parse(user);
          user.user.user_subscription == null ? user.user.user_subscription = {subscription : {} } : user.user.user_subscription 

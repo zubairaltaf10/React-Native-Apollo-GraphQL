@@ -89,7 +89,7 @@ const PaypalUI = async (show,amount) => {
            //   return reject(false)
             // update your UI to handle cancellation
           } else {
-            console.log(error.toString())
+           // console.log(error.toString())
             SNACKBAR.simple("Error in payment");
             // update your UI to handle other errors
           }
@@ -109,14 +109,14 @@ const PaypalUI = async (show,amount) => {
             }
           })
             .then(async (data) => {
-              console.log(data + "running")
+              //console.log(data + "running")
               SNACKBAR.simple('Successfully Paid');
               return resolve(true)
   
             })
             .catch((err) => {
               SNACKBAR.simple(err.toString());
-              console.log(err)
+              //console.log(err)
               return reject(false)
             })
            // return true
@@ -127,7 +127,7 @@ const PaypalUI = async (show,amount) => {
       })
       }).catch((err) => {
         SNACKBAR.simple(err.toString());
-        console.log(err)
+       // console.log(err)
         return reject(false)
       })
 

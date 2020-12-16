@@ -80,9 +80,7 @@ class SignupOptions extends Component {
       LoginManager.setLoginBehavior(behavior);
       LoginManager.logInWithPermissions(["public_profile", "email"]).then(
         result => {
-          console.log(result)
           if (result.isCancelled) {
-            console.log("Login cancelled");
           } else {
             AccessToken.getCurrentAccessToken().then(data => {
               const { accessToken } = data;
@@ -90,7 +88,6 @@ class SignupOptions extends Component {
                // this.props.navigation.navigate('Packages')
                this.socailLogin(accessToken, "facebook")
               }
-              console.log(accessToken);
             });
           }
         },
@@ -101,18 +98,14 @@ class SignupOptions extends Component {
     };  
     socailLogin(token, provider){
 
-      console.log()
-           // this.setState({loading:true})
-           console.log(token)
            client.mutate({
             mutation: mutation,
             variables: { provider: provider,
                 token: token }
           })
             .then(async (data) => {
-              console.log(data)
-                SNACKBAR.simple("Added") ; 
-                  // AsyncStorage.setItem('user', JSON.stringify(this.props.auth.user))
+                //SNACKBAR.simple("Added") ; 
+                  
              AsyncStorage.setItem('user', JSON.stringify(data.data.socialLogin)).then(
               () => {
                 if(data.data.socialLogin.user.user_subscription == null)
@@ -126,7 +119,6 @@ class SignupOptions extends Component {
             );
             })
             .catch((err) => {
-             // this.setState({loading:false})
               console.log(err)
             })
             
@@ -138,18 +130,11 @@ class SignupOptions extends Component {
           offlineAccess: true,
           webClientId:'385438711043-edeemv3ksoregibfrma5725veeveikqh.apps.googleusercontent.com',
         });
-        console.log(userInfo)
         var id_token = await GoogleSignin.getTokens();
-        //this.props.navigation.navigate('Packages')
-        //const email = userInfo.user.email;
-        console.log(id_token.accessToken)
-        //const name = userInfo.user.name;
+        
         this.socailLogin(id_token.accessToken, "google")
-       // const password = userInfo.user.id + name;
   
       } catch (error) {
-        console.log(error);
-        console.log("error");
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
           errorMessage = error.code;
           // user cancelled the login flow

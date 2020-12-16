@@ -62,7 +62,6 @@ class Verification extends React.Component {
   };
    
   verifyCode = async () => {
-     console.log(this.state.userInput.length) 
      if (this.state.userInput.length < 4){
       SNACKBAR.simple('Please enter the provided code');
       return;
@@ -75,14 +74,11 @@ class Verification extends React.Component {
         },
       })
       .then((res) => {
-        console.log(res)
         this.setState({loading:false})
         if (res.data.verifyEmail.status) {
 
          this.updateusersession();
-          console.log(JSON.stringify(res.data.verifyEmail.status))
           const type = this.props.navigation.getParam('type');
-          console.log(type + "type")
       if (type === 'ResetPassword') {
         this.props.navigation.navigate('ResetPassword', {
           email: this.props.navigation.getParam('email'),
@@ -100,15 +96,8 @@ class Verification extends React.Component {
            
       })
       .catch((err) => {
-        //console.log(err)
         this.setState({loading:false})
-       // SNACKBAR.simple(JSON.stringify(err));
-        //console.log(JSON.stringify(err))
-        if(err.graphQLErrors != null)
-        {
-         // SNACKBAR.simple(err);
-
-        }
+        
        });
       
       
@@ -116,7 +105,6 @@ class Verification extends React.Component {
   };
    updateusersession  = async () => {
     let user = await AsyncStorage.getItem('user');
-    console.log(user)
    if (user) {
      user = JSON.parse(user);
      user.user.email_verified_at = new Date().toString()
@@ -151,7 +139,6 @@ class Verification extends React.Component {
       this.setState({resendTime: 60});
     })
     .catch((err) => {
-      console.log(JSON.stringify(err));
     });
    
   };
@@ -160,7 +147,6 @@ class Verification extends React.Component {
   colors = ['#ff595f', '#e42959'];
 
   render() {
-    //console.log('verificationCode', this.state.verificationCode);
     return (
      
             <Content style={styles.container}>

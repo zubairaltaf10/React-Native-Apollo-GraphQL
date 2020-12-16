@@ -58,9 +58,7 @@ class ResetPassword extends React.Component {
           })
           .catch((err) => {            
             this.setState({loading:false})
-            console.log(JSON.stringify(err));
             SNACKBAR.simple(JSON.stringify(err));
-            console.log(JSON.stringify(err));
           });
         }
       },

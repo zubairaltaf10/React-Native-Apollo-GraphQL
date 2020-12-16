@@ -49,7 +49,6 @@ class SearchRecipes extends React.Component {
       ingregents.push(value.name)
     });
 
-    console.log('selected item ', ingregents)
     this.setState({ loading: true })
     client.query({
       query: query,
@@ -60,7 +59,6 @@ class SearchRecipes extends React.Component {
     })
       .then(async (data) => {
         this.setState({ loading: false })
-        console.log(data.data.recipes)
 
         this.setState({ recipes: data.data.recipes, backup: data.data.recipes })
      
@@ -68,12 +66,12 @@ class SearchRecipes extends React.Component {
         if (user) {
           user = JSON.parse(user).user;
           this.setState({ limit: user.user_subscription.subscription.ingredient_limit })
-          console.log(this.state.limit)
+          //console.log(this.state.limit)
         }
       })
       .catch((err) => {
         this.setState({ loading: false })
-        console.log(err)
+        //console.log(err)
       })
     this.setState({ clickedItems: this.props.navigation.getParam('clickeditems') })
     let user = await AsyncStorage.getItem('user');
@@ -81,11 +79,8 @@ class SearchRecipes extends React.Component {
       user = JSON.parse(user).user;
       var subcription = user.user_subscription.subscription
       this.setState({ currentsubscription: subcription });
-      console.log('user ', user);
       this.setState({ loginuser: user });
-      console.log('user subcription found in localstorage', this.state.currentsubscription);
     } else {
-      console.log('no user found');
     }
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
@@ -113,8 +108,6 @@ class SearchRecipes extends React.Component {
   }
 
   onAddfav = (recipeId) => {
-    console.log(this.state.loginuser.id)
-    // this.setState({loading:true})
     client.mutate({
       mutation: mutation,
       variables: {
@@ -123,17 +116,20 @@ class SearchRecipes extends React.Component {
       }
     })
       .then(async (data) => {
+        var recepies = this.state.recipes;
+        var selectedrec = recepies.filter(p=>p.id == recipeId);
+        selectedrec[0].fav = true;
+        this.setState({recipes: recepies})
         SNACKBAR.simple("Added in favourite");
       })
       .catch((err) => {
         // this.setState({loading:false})
-        console.log(err)
+       // console.log(err)
       })
-
   };
   async updateupdatelocalstorage(subscription) {
     let user = await AsyncStorage.getItem('user');
-    console.log(user)
+    //console.log(user)
     if (user) {
       user = JSON.parse(user);
       user.user.first_name = this.state.formData.first_name;
@@ -232,14 +228,6 @@ class SearchRecipes extends React.Component {
 
                     <View style={styles.imagebox}>
                       <ImageBackground source={{ uri: x.image }} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
-                        {/* <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
-                         
-                                        <TouchableOpacity  onPress={() => {this.onAddfav(x.id)}}>
-                                        <Icon style={{ fontSize: 18, alignSelf: 'center', color: COLORS.primary }}
-                                            name="favorite-border"
-                                            type="MaterialIcons" />
-                                            </TouchableOpacity>
-                                    </View> */}
                         <View style={{ height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                           <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
                             <TouchableOpacity onPress={() => { this.onAddfav(x.id); x.fav = true }}>
@@ -252,7 +240,6 @@ class SearchRecipes extends React.Component {
                                   name="bookmark"
                                   type="Feather" />
                               )}
-
                             </TouchableOpacity>
                           </ImageBackground>
                         </View>
