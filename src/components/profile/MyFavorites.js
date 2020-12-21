@@ -211,41 +211,30 @@ class MyFavorites extends React.Component {
                   
                             <View style={{ flex: 1, marginTop: height(3) }}>
                         <View style={styles.whitebox}>
-                        
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.navigation.navigate('RecipeDetails', { id: x.id })}>
                             <View style={styles.imagebox}>
+                            
                                 <ImageBackground source={{uri:x.image}} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
                                     <View style={{ backgroundColor: '#FFFFFF', opacity: 0.7, height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                                     <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
                                     <TouchableOpacity  onPress={() => {this.onUnfav(x.id) }}>
                                         <Icon style={{ fontSize: 18, marginTop:7, alignSelf: 'center', color: COLORS.primary }}
-                                            name="bookmark"
-                                            type="Feather" />
+                                            name="favorite"
+                                            type="Fontisto" />
                                             </TouchableOpacity>
                                             </ImageBackground>
                                     </View>
                                     
                                 </ImageBackground>
+                                
                             </View>
                             <View style={{flex:0.4}}>
-                            <TouchableOpacity style={{flex:1}} onPress={()=>this.props.navigation.navigate('RecipeDetails', { id: x.id })}>
                             <Text style={{fontFamily:FONTFAMILY.regular,fontSize:16,alignSelf:'flex-start',marginHorizontal: 11}}>{x.title}</Text>
+                            
+                              
+                            </View>
                             </TouchableOpacity>
-                                {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}
-                            </View>
-                            {/* <View style={{flex:0.22,flexDirection:'row'}}>
-                            <View style={{ backgroundColor: '#43E871', height: 35, width: 90, borderRadius: 15, justifyContent: 'center',marginHorizontal:11,flexDirection:'row',alignItems:'center'}}>
-                                        <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                            name="bar-chart-2"
-                                            type="Feather" />
-                                        <Text style={{fontSize:13,fontFamily:FONTFAMILY.regular,marginLeft:5,marginTop:5,color:'white'}}>Easy</Text>
-                            </View>
-                            <View style={{ backgroundColor:COLORS.primary, height: 35, width: 90, borderRadius: 15, justifyContent: 'center',marginHorizontal:11,flexDirection:'row',alignItems:'center'}}>
-                                        <Icon style={{ fontSize: 20, alignSelf: 'center', color: 'white' }}
-                                            name="clock"
-                                            type="EvilIcons" />
-                                        <Text style={{fontSize:13,fontFamily:FONTFAMILY.regular,marginLeft:5,marginTop:5,color:'white'}}>25 mins</Text>
-                                    </View>
-                            </View> */}
+                           
                         </View>
                     </View>
                     ) }

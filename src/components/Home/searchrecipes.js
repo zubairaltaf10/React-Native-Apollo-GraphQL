@@ -107,24 +107,34 @@ class SearchRecipes extends React.Component {
     isfav: false
   }
 
-  onAddfav = (recipeId) => {
+  onAddfav = (recipe) => {
+    console.log(recipe.fav)
+    console.log(recipe.fav != true ? "addUserFavourite" : "removeUserFavourite")
     client.mutate({
-      mutation: mutation,
+      mutation: recipe.fav != true ? addUserFavourite : removeUserFavourite,
       variables: {
         user_id: this.state.loginuser.id,
-        recipe_id: recipeId
+        recipe_id: recipe.id
       }
     })
       .then(async (data) => {
+        console.log(recipe.fav)
         var recepies = this.state.recipes;
-        var selectedrec = recepies.filter(p=>p.id == recipeId);
-        selectedrec[0].fav = true;
-        this.setState({recipes: recepies})
+        var selectedrec = recepies.filter(p=>p.id == recipe.id);
+        
+        
+        if(recipe.fav != true)
+        {
+          selectedrec[0].fav = true;
         SNACKBAR.simple("Added in favourite");
+        }else
+        {
+          selectedrec[0].fav = false;
+          SNACKBAR.simple("Unfavourite successfully") ; 
+        }
+        this.setState({recipes: recepies})
       })
       .catch((err) => {
-        // this.setState({loading:false})
-       // console.log(err)
       })
   };
   async updateupdatelocalstorage(subscription) {
@@ -225,12 +235,14 @@ class SearchRecipes extends React.Component {
                 <View style={{ flex: 1, marginTop: height(3) }}>
                   <View style={styles.whitebox}>
 
-
+                  <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.navigation.navigate('RecipeDetails', { id: x.id })}>
                     <View style={styles.imagebox}>
+                   
                       <ImageBackground source={{ uri: x.image }} resizeMode={'cover'} imageStyle={{ borderRadius: 12 }} style={styles.image}>
                         <View style={{ height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
+                        
                           <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
-                            <TouchableOpacity onPress={() => { this.onAddfav(x.id); x.fav = true }}>
+                            <TouchableOpacity activeOpacity={1} onPress={() => { this.onAddfav(x); }}>
                               {x.fav == true && (
                                 <Icon style={{ fontSize: 18, marginTop: 7, alignSelf: 'center', color: COLORS.primary }}
                                   name="favorite"
@@ -242,6 +254,7 @@ class SearchRecipes extends React.Component {
                               )}
                             </TouchableOpacity>
                           </ImageBackground>
+                        
                         </View>
                         <View style={{
                           backgroundColor: '#F4F4F8', opacity: 0.9, flexDirection: 'row', height: 24, paddingHorizontal: 5,
@@ -254,16 +267,17 @@ class SearchRecipes extends React.Component {
                           <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, marginRight: 5 }}>{x.likes}</Text>
                         </View>
                       </ImageBackground>
+                      
                     </View>
 
-                    <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.navigation.navigate('RecipeDetails', { id: x.id })}>
+                   
                       <View style={{ flex: 0.4 }}>
 
                         <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 16, alignSelf: 'flex-start', marginHorizontal: 11 }}>{x.title}</Text>
                         {/* <Text style={{fontFamily:FONTFAMILY.regular,fontSize:12,alignSelf:'flex-start',marginHorizontal: 11,color:'#868CA9'}}>by biggerbolderbaking.com</Text> */}
                       </View>
-                    </TouchableOpacity>
-
+                    
+</TouchableOpacity>
                   </View>
                 </View>
               )}
@@ -341,7 +355,7 @@ class SearchRecipes extends React.Component {
     )
   }
 }
-const mutation = gql`
+const addUserFavourite = gql`
 mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
     addUserFavourite(input:{
     user_id: $user_id,
@@ -351,6 +365,17 @@ mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
   }
 }
 `;
+const removeUserFavourite = gql`
+mutation removeUserFavourite($user_id: ID!, $recipe_id: Int!){
+    removeUserFavourite(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    status
+  }
+}
+`;
+
 const query = gql`
 
 query recipes($ingredients: [String!]!, $limit: Int){
@@ -362,7 +387,8 @@ query recipes($ingredients: [String!]!, $limit: Int){
       unusedIngredients{
         image
       },
-      likes
+      likes,
+      fav,
       
     }
   }

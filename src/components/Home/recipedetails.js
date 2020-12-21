@@ -56,16 +56,17 @@ const data = [
 class RecipesDetails extends React.Component {
     
     async componentDidMount() {
-       
-
-      this.setState({loading:false})
+      
+      let id = this.props.navigation.getParam('id');
+      this.setState({loading:true})
       client.query({
         query: query,
         variables: {
-          id: this.props.navigation.getParam('id')
+          id:  id
         }
       })
         .then(async (data) => {
+          console.log(data.data.recipe)
         this.setState({recDetail:data.data.recipe , nutrients:data.data.recipe.nutrition.nutrients })
                const instructions = data.data.recipe.instructions;
         const allequipments = [];
@@ -90,6 +91,7 @@ class RecipesDetails extends React.Component {
 
         })
         .catch((err) => {
+          console.log(err)
           this.setState({loading:false})
           
         })
@@ -222,22 +224,63 @@ class RecipesDetails extends React.Component {
     viewfull = () => {
         this.setState({viewfull:true})
     }
-    onAddfav = (recipeId) => {
+    onAddfav = (recipe) => {
         //console.log(this.state.loginuser.id)
         // this.setState({loading:true})
         client.mutate({
-          mutation: mutation,
+          mutation:  recipe.fav != true ? addUserFavourite : removeUserFavourite,
           variables: {
             user_id: this.state.loginuser.id,
-            recipe_id: recipeId
+            recipe_id: recipe.id
           }
         })
           .then(async (data) => {
             var recepi = this.state.recDetail;
            
-            recepi.fav = true;
+        if(recepi.fav != true)
+        {
+          recepi.fav = true;
+        SNACKBAR.simple("Added in favourite");
+        }else
+        {
+          recepi.fav = false;
+          SNACKBAR.simple("Unfavourite successfully") ; 
+        }
+        this.setState({recipes: recepi})
+          
+          })
+          .catch((err) => {
+            // this.setState({loading:false})
+            console.log(err)
+          })
+      };
+      onAddLiked = (recipe) => {
+        console.log(this.state.loginuser.id)
+        // this.setState({loading:true})
+
+        client.mutate({
+          mutation:  recipe.Liked != true ? likeRecipe : unlikeRecipe,
+          variables: {
+            user_id: this.state.loginuser.id,
+            recipe_id: recipe.id
+          }
+        })
+          .then(async (data) => {
+            var recepi = this.state.recDetail;
+           
+            if(recipe.Liked != true)
+            {
+              recepi.Liked = true;
+              recepi.aggregateLikes = recepi.aggregateLikes +1
+            SNACKBAR.simple("Recipe liked successfully");
+            }else
+            {
+              recepi.Liked = false;
+              recepi.aggregateLikes = recepi.aggregateLikes - 1
+              SNACKBAR.simple("Recipe UnLike successfully") ; 
+            }
+            
             this.setState({recDetail: recepi})
-            SNACKBAR.simple("Added in favourite");
           })
           .catch((err) => {
             // this.setState({loading:false})
@@ -267,7 +310,7 @@ class RecipesDetails extends React.Component {
                                         </View>
                                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
                                             <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
-                                            <TouchableOpacity onPress={() => { this.onAddfav(this.state.recDetail.id); }}>
+                                            <TouchableOpacity onPress={() => { this.onAddfav(this.state.recDetail); }}>
                               {this.state.recDetail.fav == true && (
                                 <Icon style={{ fontSize: 18, marginTop: 3, alignSelf: 'center', color: COLORS.primary }}
                                   name="favorite"
@@ -287,12 +330,31 @@ class RecipesDetails extends React.Component {
                             <View style={{backgroundColor: 'white', marginHorizontal: 11, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
                                 <View style={{ flexDirection: 'row' }}>
 
-                                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 18, alignSelf: 'flex-start', marginTop: 10, flex: 0.85, marginHorizontal: 10 }}>{this.state.recDetail.title}</Text>
-                                    <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flex: 0.25 }}>
-                                        <Icon style={{ fontSize: 20, color: COLORS.primary }}
+                                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 18, alignSelf: 'flex-start', marginTop: 10, flex: 0.80, marginHorizontal: 10 }}>{this.state.recDetail.title}</Text>
+                                    <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flex: 0.20 }}>
+                                    <TouchableOpacity  style={{ flexDirection: 'row' }} onPress={() => { this.onAddLiked(this.state.recDetail); }}>
+                                    <View  style={{ flex:1, flexDirection: 'row' }}>
+                                                {this.state.recDetail.Liked == true && (
+                                              <View style={{flex:1, flexDirection: 'row'}} >
+                                                  <Icon style={{flex:0.40, marginTop:10,  alignSelf: 'center', fontSize: 20, color: COLORS.primary }}
+                                            name="favorite"
+                                            type="MaterialIcons" />
+                                        <Text style={{ fontSize: 12, flex:0.60,  alignSelf: 'center', fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
+                                        </View>
+                                         )}
+                                        {this.state.recDetail.Liked != true && (
+                                        <View style={{flex:1, flexDirection: 'row'}} > 
+                                          <Icon style={{ flex:0.40, marginTop:8, alignSelf: 'flex-start', fontSize: 20, color: COLORS.primary }}
                                             name="favorite-border"
                                             type="MaterialIcons" />
-                                        <Text style={{ fontSize: 12, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
+                                           <Text style={{ fontSize: 12, flex:0.60, alignSelf: 'flex-end', fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
+                                        </View>
+                                         )}
+                                         </View>
+                                      </TouchableOpacity>
+                                            
+
+                                        
                                     </View>
                                 </View>
                                 <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', marginHorizontal: 11, color: '#868CA9',paddingBottom:10 }}>by {this.state.recDetail.sourceName}</Text>
@@ -464,13 +526,43 @@ const styles = StyleSheet.create({
         marginHorizontal:10
       }
 })
-const mutation = gql`
+const addUserFavourite = gql`
 mutation addUserFavourite($user_id: ID!, $recipe_id: Int!){
     addUserFavourite(input:{
     user_id: $user_id,
     recipe_id:$recipe_id
   }){
     user_id
+  }
+}
+`;
+const removeUserFavourite = gql`
+mutation removeUserFavourite($user_id: ID!, $recipe_id: Int!){
+    removeUserFavourite(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    status
+  }
+}
+`;
+const likeRecipe = gql`
+mutation likeRecipe($user_id: ID!, $recipe_id: Int!){
+  likeRecipe(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    status
+  }
+}
+`;
+const unlikeRecipe = gql`
+mutation unlikeRecipe($user_id: ID!, $recipe_id: Int!){
+  unlikeRecipe(input:{
+    user_id: $user_id,
+    recipe_id:$recipe_id
+  }){
+    status
   }
 }
 `;
@@ -488,6 +580,7 @@ query recipe($id: Int!){
       readyInMinutes,
       sourceName,
       sourceUrl,
+      fav,
       aggregateLikes,
       healthScore,
       cheap,
