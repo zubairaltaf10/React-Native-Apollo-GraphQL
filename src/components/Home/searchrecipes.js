@@ -250,13 +250,15 @@ class SearchRecipes extends React.Component {
                           <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
                             <TouchableOpacity activeOpacity={1} onPress={() => { this.onAddfav(x); }}>
                               {x.fav == true && (
-                                <Icon style={{ fontSize: 18, marginTop: 7, alignSelf: 'center', color: COLORS.primary }}
-                                  name="favorite"
-                                  type="Fontisto" />)}
+                                
+                                  <Image source={require('../../assets/icons/forms/fav.png')}
+                                   style={{marginTop: 7, alignSelf: 'center',alignSelf:'center'}}
+                                  />
+                                  )}
                               {x.fav != true && (
-                                <Icon style={{ fontSize: 18, marginTop: 7, alignSelf: 'center', color: COLORS.primary }}
-                                  name="bookmark"
-                                  type="Feather" />
+                                  <Image source={require('../../assets/icons/forms/unfav.png')}
+                                   style={{alignSelf:'center',  marginTop: 5, alignSelf: 'center'}}
+                                  />
                               )}
                             </TouchableOpacity>
                           </ImageBackground>

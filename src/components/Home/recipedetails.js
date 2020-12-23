@@ -331,13 +331,14 @@ class RecipesDetails extends React.Component {
                                             <View style={{ backgroundColor: '#536f89', height: 32, width: 32, borderRadius: 40, justifyContent: 'center', margin: 15 }}>
                                             <TouchableOpacity onPress={() => { this.onAddfav(this.state.recDetail); }}>
                               {this.state.recDetail.fav == true && (
-                                <Icon style={{ fontSize: 18, marginTop: 3, alignSelf: 'center', color: COLORS.primary }}
-                                  name="favorite"
-                                  type="Fontisto" />)}
+                                <Image source={require('../../assets/icons/forms/fav.png')}
+                                   style={{alignSelf: 'center',alignSelf:'center'}}
+                                  />
+                                  )}
                               {this.state.recDetail.fav != true && (
-                                <Icon style={{ fontSize: 18, marginTop: 3, alignSelf: 'center', color: COLORS.primary }}
-                                  name="bookmark"
-                                  type="Feather" />
+                                <Image source={require('../../assets/icons/forms/unfav.png')}
+                                   style={{alignSelf:'center',  marginTop: 5, alignSelf: 'center'}}
+                                  />
                               )}
                             </TouchableOpacity>
                                             </View>
