@@ -17,6 +17,8 @@ import { createHttpLink } from 'apollo-link-http';
 import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client'
 import { ApolloLink } from 'apollo-link';
+import Toast from "react-native-fast-toast";
+
 const authLink = setContext(async (req, {headers}) => {
   const user = await AsyncStorage.getItem('user')
   let token = JSON.parse(user)
@@ -47,6 +49,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 class App extends React.Component {
+  
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', BackButtonHandler);
   }
@@ -63,7 +66,9 @@ class App extends React.Component {
             NavigationStateHandler(prevState, currentState)
           }
         />
+        <Toast ref={(ref) => global['toast'] = ref} />
         </ApolloProvider>
+        
           );
   //   return (
   //   <Root>

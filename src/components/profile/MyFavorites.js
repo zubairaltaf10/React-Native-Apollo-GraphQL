@@ -110,7 +110,6 @@ class MyFavorites extends React.Component {
           this.setState({loading:false})
           console.log(err)
         })
-       
     }
 
     constructor(props) {
@@ -135,7 +134,7 @@ class MyFavorites extends React.Component {
                 return n.id == recipeId;
               });
               this.setState({recipes:evens})
-              SNACKBAR.simple("Unfavourite successfully") ; 
+              toast.show("Removed from favourites", {textStyle: { color:COLORS.primary },style: { borderRadius:20,width:'80%',backgroundColor:'#000' }, icon:<Icon name="exclamationcircleo" type="AntDesign" style={{ marginLeft:10,color:COLORS.primary,fontSize:14}}></Icon>});
               await this.loaddata();
              })
              .catch((err) => {
