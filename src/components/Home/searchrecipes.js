@@ -210,7 +210,13 @@ class SearchRecipes extends React.Component {
         </View>
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: height(4) }}>
+          {this.state.loading == true &&(
+            <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>Searching for recipes</Text>
+          )}
+          {this.state.loading == false &&(
             <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, color: '#868CA9', alignSelf: 'center', lineHeight: 24 }}>You can make {this.state.recipes.length} recipes with{'\n'}   the ingredients selected</Text>
+          )}
+            
             <View style={styles.search}>
               <Icon style={{ fontSize: 22, flex: 0.1, alignSelf: 'center', color: COLORS.primary }}
                 name="search"

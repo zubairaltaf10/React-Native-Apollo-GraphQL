@@ -22,21 +22,17 @@ import { ApolloLink } from 'apollo-link';
 import AsyncStorage from '@react-native-community/async-storage';
 import {  equipments } from './ingredientslist.json';
 import SNACKBAR from '../../Helpers/SNACKBAR';
+import {client} from '../../config/apploclient'
 import {_} from 'lodash';
 const authLink = setContext(async (req, {headers}) => {
-    const user = await AsyncStorage.getItem('user')
-    let token = JSON.parse(user)
-    return {
-      ...headers,
-      headers: { authorization: token ? `Bearer ${token.access_token}` : null }
-    }
-  })
-  // 
-  const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
-  const client = new ApolloClient({
-    link: ApolloLink.from([authLink, uploadLink]),
-    cache: new InMemoryCache(),
-  });
+  const user = await AsyncStorage.getItem('user')
+  let token = JSON.parse(user)
+  return {
+    ...headers,
+    headers: { authorization: token ? `Bearer ${token. access_token}` : null }
+  }
+})
+const uploadLink = createUploadLink({ uri: NETWORK_INTERFACE });
 const regex = /(<([^>]+)>)/ig;
 const data = [
     {
@@ -59,14 +55,23 @@ class RecipesDetails extends React.Component {
       
       let id = this.props.navigation.getParam('id');
       this.setState({loading:true})
-      client.query({
+      const sclient = new ApolloClient({
+        link: ApolloLink.from([ authLink, uploadLink ]),
+          cache : new InMemoryCache(),
+          defaultOptions: {
+            watchQuery: {
+              fetchPolicy: 'no-cache',
+            }
+          }
+      });  
+      sclient.query({
         query: query,
         variables: {
           id:  id
         }
       })
         .then(async (data) => {
-          console.log(data.data.recipe)
+          
         this.setState({recDetail:data.data.recipe , nutrients:data.data.recipe.nutrition.nutrients })
                const instructions = data.data.recipe.instructions;
         const allequipments = [];
@@ -76,11 +81,18 @@ class RecipesDetails extends React.Component {
                
                 steps.push(step)
                 _.forEach(step.equipment, function(equipment) {
-            
+                  let foundObject = _.find(allequipments, function(e) {
+                    return e.name === equipment.name;
+                  });
+              
+                  if(!foundObject) {
                     allequipments.push(equipment)
+                  }
+                    
                   });
               });
           });
+          console.log(allequipments)
           _.forEach(allequipments, function(equipment) {
             equipment.image = "https://spoonacular.com/cdn/equipment_100x100/" + equipment.image;
           });
@@ -134,6 +146,13 @@ class RecipesDetails extends React.Component {
         nutrients:[],
         allsteps:[],
     }
+    isInt(n){
+      return Number(n) === n && n % 1 === 0;
+  }
+  
+   isFloat(n){
+      return Number(n) === n && n % 1 !== 0;
+  }
 
     _renderItem = ({ item }) => {
        
@@ -162,11 +181,11 @@ class RecipesDetails extends React.Component {
                    { this.state.recDetail.extendedIngredients?.map((x) =>
                    
                       <View style={{flex:1, flexDirection: 'row',justifyContent: 'space-between',}}> 
-                    <View style={{flex:0.7, margin:5}}>
+                    <View style={{flex:0.65, margin:5}}>
                     <Text numberOfLines={1} style={{ width: 200 , fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-start', color: '#868CA9' }}>{x.originalName}</Text>
                     </View>
-                    <View style={{flex:0.3,  margin:5}}>
-                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-end', color: '#868CA9' }}>{x.unit}</Text>
+                    <View style={{flex:0.35,  margin:5}}>
+                    <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 12, alignSelf: 'flex-end', color: '#868CA9' }}> { (Number.isInteger(x.amount) == true ? x.amount : x.amount.toFixed(2))   + " " + x.unit}</Text>
                     </View>
                     </View> 
                    
@@ -336,7 +355,7 @@ class RecipesDetails extends React.Component {
                                     <View  style={{ flex:1, flexDirection: 'row' }}>
                                                 {this.state.recDetail.Liked == true && (
                                               <View style={{flex:1, flexDirection: 'row'}} >
-                                                  <Icon style={{flex:0.40, marginTop:10,  alignSelf: 'center', fontSize: 20, color: COLORS.primary }}
+                                                  <Icon style={{flex:0.40,  alignSelf: 'center', fontSize: 20, color: COLORS.primary }}
                                             name="favorite"
                                             type="MaterialIcons" />
                                         <Text style={{ fontSize: 12, flex:0.60,  alignSelf: 'center', fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
@@ -344,10 +363,10 @@ class RecipesDetails extends React.Component {
                                          )}
                                         {this.state.recDetail.Liked != true && (
                                         <View style={{flex:1, flexDirection: 'row'}} > 
-                                          <Icon style={{ flex:0.40, marginTop:8, alignSelf: 'flex-start', fontSize: 20, color: COLORS.primary }}
+                                          <Icon style={{ flex:0.40, alignSelf: 'center', fontSize: 20, color: COLORS.primary }}
                                             name="favorite-border"
                                             type="MaterialIcons" />
-                                           <Text style={{ fontSize: 12, flex:0.60, alignSelf: 'flex-end', fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
+                                           <Text style={{ fontSize: 12, flex:0.60, alignSelf: 'center', fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5 }}>{this.state.recDetail.aggregateLikes}</Text>
                                         </View>
                                          )}
                                          </View>
@@ -377,11 +396,12 @@ class RecipesDetails extends React.Component {
                                 type="EvilIcons" />
                             <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>{this.state.recDetail.readyInMinutes}</Text>
                         </View>
-                        <View style={{ backgroundColor: this.state.recDetail.vegetarian  != true ? '#ff3a55' : '#43e871', height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>Vegetarian</Text>
+                        <View style={{ backgroundColor: this.state.recDetail.vegetarian  != true ? '#ff3a55' : '#43e871', height: 30,  borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginHorizontal: 15, marginTop: 5, color: 'white' }}>Vegetarian</Text>
                         </View>
-                        <View style={{ backgroundColor: this.state.recDetail.glutenFree  != true ? '#ff3a55' : '#43e871', height: 30, width: 90, borderRadius: 15, justifyContent: 'center', marginHorizontal: 5, flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginLeft: 5, marginTop: 5, color: 'white' }}>Gluten-Free</Text>
+                        <View style={{ backgroundColor: this.state.recDetail.glutenFree  != true ? '#ff3a55' : '#43e871', height: 30,
+                          borderRadius: 15, justifyContent: 'center',  flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ fontSize: 13, fontFamily: FONTFAMILY.regular, marginHorizontal: 15, marginTop: 5, color: 'white' }}>Gluten-Free</Text>
                         </View>
                     </ScrollView>
                 </View>

@@ -473,13 +473,16 @@ onShare = async () => {
               <Text style={{fontFamily:FONTFAMILY.bold,fontSize:17,color:'#fff'}}>{this.state.loginuser.first_name + " " + this.state.loginuser.last_name}</Text>
               <Text style={{fontFamily:FONTFAMILY.regular,fontSize:13,color:'#fff'}}>{this.state.loginuser.bio}</Text>
             </View>
-            <View style={{flex:0.2,margin:15,justifyContent:'center',bottom:4}}>
+            <View style={{flex:0.2,margin:5,justifyContent:'center',bottom:4}}>
             <TouchableOpacity onPress={()=>{
               this.RBSheet.close()
               this.props.navigation.navigate('UpdateProfile')
               }}>
-            <Icon style={{alignSelf:'flex-end', fontSize:18}} name={'edit'} type="MaterialIcons"  onPress={this.handlePicker}/>
-             
+            {/* <Icon style={{alignSelf:'flex-end', fontSize:18}} name={'edit'} type="MaterialIcons"  onPress={this.handlePicker}/> */}
+            <Image 
+                source={require('../../assets/icons/forms/edit-fill.png')}
+                style={{fontSize: 22,alignSelf:'center', width:24, height:24}}
+              />
             </TouchableOpacity>
             </View>
             </View>
@@ -513,8 +516,11 @@ onShare = async () => {
           <View style={{flex:0.73}}>
             <View style={{flex:0.25,flexDirection:'row',margin:7}}>
            
-        
-            <Icon name="folder-open" type="MaterialIcons" style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}></Icon>
+            <Image 
+                source={require('../../assets/icons/forms/subscription.png')}
+                style={{fontSize: 22,alignSelf:'center',color:COLORS.primary,left:5}}
+              />
+            {/* <Icon name="folder-open" type="MaterialIcons" ></Icon> */}
             <Text style={{flex:0.96,fontFamily:FONTFAMILY.regular,fontSize:14,color:'#868CA9',alignSelf:'center',top:2,marginLeft:15}}
             onPress={()=>{
               this.RBSheet.close()

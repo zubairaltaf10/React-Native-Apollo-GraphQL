@@ -227,8 +227,8 @@ class ManagePackages extends Component {
          user = JSON.parse(user);
          let basicsub = {
           "name": "Basic",
-          "person_limit": "1",
-          "ingredient_limit": "3",
+          "person_limit": 3,
+          "ingredient_limit": 3,
           "amount": null,
           "amount_per_year": null,
           "amount_per_month": null,
@@ -434,14 +434,16 @@ const styles = StyleSheet.create({
         fontFamily: FONTFAMILY.medium,
       },
     contextMenu: {
-        right: 10,
+        right: 13,
         backgroundColor: 'white',
-        bottom: -10,
+        bottom: -15,
         position: 'absolute',
         zIndex: 100,
         elevation: 5,
-        width:180,
+        width:190,
         borderRadius: 8,
+        paddingHorizontal:10,
+        paddingVertical:3
       },
       contextMenuLabel: {
         marginLeft: 4,
