@@ -368,7 +368,7 @@ onShare = async () => {
         
           <View style={{ marginTop: height(5), height:height(9) }}>
           <View style={{  marginLeft: 17 }}>
-          <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 26, color: '#28292F' }}>Let's Get Started</Text>
+          <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 26, color: '#28292F' }}>Let's Get Started!</Text>
             <Text style={{ fontFamily: FONTFAMILY.regular, fontSize: 14, color: '#868CA9', marginTop:'8%',alignSelf:'center' }}>Select number of individuals for your recipes</Text>
             
           </View>

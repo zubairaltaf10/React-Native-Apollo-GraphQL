@@ -478,10 +478,12 @@ onrequestModelclose = () =>
                   
             </View>
             <View style={styles.avatareditcircle}>
+            <TouchableOpacity onPress={this.handlePicker}>
             <Image 
                 source={require('../../assets/icons/forms/edit-fill.png')}
                 style={{justifyContent: 'center', alignItems:'center',alignSelf:'center', width:18, height:18}}
               />
+              </TouchableOpacity>
             {/* <Icon style={{justifyContent: 'center', alignItems:'center' , fontSize:18}} name={'edit'} type="MaterialIcons"  onPress={this.handlePicker}/> */}
             </View>
             

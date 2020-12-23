@@ -218,9 +218,9 @@ class MyFavorites extends React.Component {
                                     <View style={{ backgroundColor: '#FFFFFF', opacity: 0.7, height: 32, width: 32, borderRadius: 40, justifyContent: 'center', alignSelf: 'flex-end', margin: 10 }}>
                                     <ImageBackground source={require('../../assets/icons/forms/round.png')} resizeMode={'contain'} style={styles.image1}>
                                     <TouchableOpacity  onPress={() => {this.onUnfav(x.id) }}>
-                                        <Icon style={{ fontSize: 18, marginTop:7, alignSelf: 'center', color: COLORS.primary }}
-                                            name="favorite"
-                                            type="Fontisto" />
+                                    <Image source={require('../../assets/icons/forms/fav.png')}
+                                   style={{ marginTop: 7, alignSelf: 'center',alignSelf:'center'}}
+                                  />
                                             </TouchableOpacity>
                                             </ImageBackground>
                                     </View>

@@ -7,7 +7,8 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  StatusBar
+  StatusBar,
+  Modal
 } from "react-native";
 import Swiper from 'react-native-swiper'
 import { height, width } from "react-native-dimension";
@@ -26,6 +27,7 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import PaypalUI from '../Payment/PaypalUI';
 import packageSlider from '../Packages/packageSlider.json';
 import {_} from 'lodash';
+import {Metrics} from '../../Theme';
 //(null)
 class ManagePackages extends Component {
   swiperRef = React.createRef()
@@ -90,6 +92,7 @@ class ManagePackages extends Component {
       yellowloading:false,
       packageSlider : [],
       allsubscriptions : [],
+      model:false,
     }
   }
 
@@ -243,10 +246,19 @@ class ManagePackages extends Component {
        }
        
     }
-  onBasicSubmit = () => {
+  onCancelSubmit = () => {
      // var res = this._onSaveUserSubscription();
   };
-
+  onrequestModelclose = () =>
+  {
+    this.setState({model: false})
+  }
+  onrequestModelOpen = () =>
+  {
+    console.log('dd')
+    this.setState({model: true});
+  }
+  
   render() {
     const  currentsubscription  = this.state.currentsubscription;
     const { subscriptions } = this.props.data ? this.props.data : null;
@@ -258,6 +270,50 @@ class ManagePackages extends Component {
       <View style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor="transparent" />
       <View style={{ paddingTop:20 ,paddingBottom:20,backgroundColor: COLORS.primary, flexDirection: 'row' }}>
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={this.state.model}
+      onRequestClose={this.onrequestModelclose}>
+      <View style={styles.overlay} onTouchEnd={this.onrequestModelclose} />
+      <View onTouchEnd={this.onrequestModelclose}
+        style={[
+          styles.modelContainer,
+          {
+            marginTop:  Metrics.screenHeight / 5,
+          },
+        ]}>
+        <View>
+          <Text style={{fontFamily:FONTFAMILY.bold, fontSize:14 , alignSelf:'center', alignItems:'center'}}>Are you sure!</Text>
+        </View>
+        <Text style={styles.modeltext} >
+        Do you really want to unsubscribe? Your plan will be automatically downgraded to our free basic plan!
+        </Text>
+        <Mutation
+            mutation={removemutation}
+            variables={{ user_id: this.state.loginuser.id,
+              subscription_id:this.state.subscription_id }}
+             onError={()=>{SNACKBAR.simple("Error") ; }}
+            onCompleted={ () => { this.cancelsubcriptionfromlocalstorage()} }
+          >
+           {mutation => (
+        <PrimaryButton2
+          title="            YES            "
+          marginTop={40}
+          onPress={mutation}
+        />
+        
+            )} 
+  </Mutation>
+        <PrimaryButton
+            title= "           NO            " 
+            onPress={() =>{this.onrequestModelclose()}}
+            marginTop={height(10)}
+            //loading={this.state.loading}
+            onPress={this.ViewPlan }
+          />
+      </View>
+    </Modal>
           <View style={{ flex: 0.1, marginTop: height(4), marginLeft: 10 }}>
           <TouchableOpacity onPress={() => this.props.navigation.goBack(null)}>
             <Icon name="arrowleft" type="AntDesign" style={{ marginLeft: 10, fontSize:18 }}></Icon>
@@ -272,15 +328,8 @@ class ManagePackages extends Component {
           </View>
         {this.state.showContextMenu && ( 
           <View style={styles.contextMenu}>
-          <Mutation
-            mutation={removemutation}
-            variables={{ user_id: this.state.loginuser.id,
-              subscription_id:this.state.subscription_id }}
-             onError={()=>{SNACKBAR.simple("Error") ; }}
-            onCompleted={ () => { this.cancelsubcriptionfromlocalstorage()} }
-          >
-          {mutation => (
-            <TouchableOpacity  onPress={mutation}
+          
+          <TouchableOpacity  onPress={this.onrequestModelOpen}
               >
             <View style={styles.row} >
                <Icon
@@ -291,8 +340,7 @@ class ManagePackages extends Component {
               <Text style={styles.contextMenuLabel} >Cancel Subcription</Text>
               </View>
             </TouchableOpacity>
-            )} 
-             </Mutation>
+             {/* </Mutation> */}
           </View>
          )}  
       
@@ -581,7 +629,42 @@ const styles = StyleSheet.create({
   },
   spinner: {
     marginRight: 20,
-  }
+  },
+  overlay: {
+    backgroundColor: '#f2f2f4',
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.9,
+  },
+  modelHeading: {
+    textAlign: 'center',
+    fontFamily: FONTFAMILY.bold,
+    fontSize: 18,
+  },
+  modeltext: {
+    marginTop: 30,
+    marginBottom:30,
+    color: '#868CA9',
+    textAlign: 'center',
+    fontSize: 15,
+    fontFamily: FONTFAMILY.regular,
+    marginHorizontal:5
+  },
+  modelSubheading: {
+    marginTop: 10,
+    color: 'rgba(106, 106, 106, 1)',
+    textAlign: 'center',
+    fontSize: 13,
+    paddingHorizontal: 20,
+    fontFamily: FONTFAMILY.medium,
+  },
+  modelContainer: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+    marginTop: Metrics.screenHeight / 2.8,
+    padding: 20,
+    elevation: 6,
+    borderRadius: 7,
+  },
 })
 
 const query = gql`
