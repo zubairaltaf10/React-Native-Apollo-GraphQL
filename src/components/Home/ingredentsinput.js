@@ -59,7 +59,8 @@ class InGredentsInput extends React.Component {
     showSelected: false,
     viewloginmodel: false,
     refresh: true,
-    user:{}
+    user:{},
+    title:"Search Recipes"
   }
 
   async componentDidMount() {
@@ -177,6 +178,7 @@ class InGredentsInput extends React.Component {
 
   updateRecipes = checkedItems => {
     this.setState({ refresh: false })
+    this.setState({title:"Update Recipes"})
     let items = [];
     if (checkedItems.length == 0) {
       this.clearAll()
@@ -565,7 +567,7 @@ class InGredentsInput extends React.Component {
             </View>
             <View style={{ flex: 0.8, justifyContent: 'center' }}>
               <PrimaryButton
-                title="SEARCH RECIPES"
+                title={this.state.title}
                 onPress={() => this.searchRecipes('button')}
                 marginTop={height(40)}
                 checkeditems={this.state.checkedItemsLength > 0 ? true : false}

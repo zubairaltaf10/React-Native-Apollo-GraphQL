@@ -126,11 +126,11 @@ class SearchRecipes extends React.Component {
         if(recipe.fav != true)
         {
           selectedrec[0].fav = true;
-        SNACKBAR.simple("Added in favourite");
-        }else
+          toast.show("Added to favourites", {textStyle: { color:COLORS.primary },style: { borderRadius:20,backgroundColor:'#000',alignItems:'center',alignSelf:'center',paddingHorizontal:30 }, icon:<Icon name="checkcircleo" type="AntDesign" style={{ marginLeft:10,color:COLORS.primary,fontSize:14}}></Icon>});
+        } else
         {
           selectedrec[0].fav = false;
-          SNACKBAR.simple("Unfavourite successfully") ; 
+          toast.show("Removed from favourites", {textStyle: { color:COLORS.primary },style: { borderRadius:20,width:'80%',backgroundColor:'#000' }, icon:<Icon name="exclamationcircleo" type="AntDesign" style={{ marginLeft:10,color:COLORS.primary,fontSize:14}}></Icon>});
         }
         this.setState({recipes: recepies})
       })
